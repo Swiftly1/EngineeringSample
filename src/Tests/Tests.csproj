@@ -19,4 +19,9 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Common\Common.csproj" />
+    <ProjectReference Include="..\Text2Abstraction\Text2Abstraction.csproj" />
+  </ItemGroup>
+
 </Project>

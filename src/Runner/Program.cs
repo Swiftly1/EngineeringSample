@@ -7,8 +7,7 @@ namespace Runner
     {
         static void Main()
         {
-            var test = new TextTransformer("abc test a123");
-            test.Walk();
+            var test = new TextTransformer("12 35.5").Walk();
         }
     }
 }

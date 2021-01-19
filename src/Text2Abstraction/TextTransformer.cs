@@ -3,6 +3,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using Text2Abstraction.LexicalElements;
+using System.Globalization;
 
 namespace Text2Abstraction
 {
@@ -18,7 +19,7 @@ namespace Text2Abstraction
             _State = LexingState.Root;
         }
 
-        public void Walk()
+        public List<LexElement> Walk()
         {
             _Elements = new List<LexElement>();
             var otherSyntax = new List<char> { '.', ',', '(', ')', '{', '}' };
@@ -41,6 +42,8 @@ namespace Text2Abstraction
                 Handle(_State);
 
             } while (MoveNext());
+
+            return _Elements;
         }
 
         private void Handle(LexingState state)
@@ -63,7 +66,29 @@ namespace Text2Abstraction
 
         private void HandleNumericalValue()
         {
-            throw new NotImplementedException();
+            var tmp = "";
+
+            do
+            {
+                if (!char.IsNumber(_Current) && _Current != '.' && !char.IsWhiteSpace(_Current))
+                {
+                    Error($"Unexpected character '{_Current}'. Expected number or dot.");
+                }
+
+                if (char.IsWhiteSpace(_Current) || IsLast())
+                {
+                    if (IsLast()) tmp += _Current;
+
+                    if (!int.TryParse(tmp, out var _) && !double.TryParse(tmp, NumberStyles.Float, CultureInfo.InvariantCulture, out var _))
+                        Error($"'{tmp}' is not correct numerical value");
+
+                    var element = new LexNumericalLiteral(tmp, GetDiagnostic());
+                    _Elements.Add(element);
+                    return;
+                }
+
+                tmp += _Current;
+            } while (MoveNext());
         }
 
         private void HandleString()
@@ -71,7 +96,7 @@ namespace Text2Abstraction
             var tmp = "";
             do
             {
-                if (_Current == '"' && HasPreviousElement() && ElementAt(_Index - 1) == '\\')
+                if (_Current == '"' && HasPreviousElement() && ElementAt(_Index - 1) == LexingFacts.EscapeChar)
                 {
                     var element = new LexStringLiteral(tmp, GetDiagnostic());
                     _Elements.Add(element);

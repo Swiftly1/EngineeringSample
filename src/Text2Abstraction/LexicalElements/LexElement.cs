@@ -1,6 +1,6 @@
 ﻿namespace Text2Abstraction.LexicalElements
 {
-    internal class LexElement
+    public class LexElement
     {
         private readonly DiagnosticInfo _diagnostic;
 

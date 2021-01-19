@@ -1,6 +1,6 @@
 ﻿namespace Text2Abstraction.LexicalElements
 {
-    internal class LexStringLiteral : LexElement
+    public class LexStringLiteral : LexElement
     {
         public LexStringLiteral(string tmp, DiagnosticInfo diagnostic) : base(diagnostic)
         {
