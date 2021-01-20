@@ -22,7 +22,6 @@ namespace Text2Abstraction
         public List<LexElement> Walk()
         {
             _Elements = new List<LexElement>();
-            var otherSyntax = new List<char> { '.', ',', '(', ')', '{', '}' };
 
             do
             {
@@ -32,8 +31,8 @@ namespace Text2Abstraction
                     _State = LexingState.Word;
                 else if (char.IsNumber(_Current))
                     _State = LexingState.NumericalValue;
-                else if (otherSyntax.Contains(_Current))
-                    _State = LexingState.OtherSyntax;
+                else if (LexingFacts.OtherTokens.Contains(_Current))
+                    _State = LexingState.Character;
                 else if (_Current == '"')
                     _State = LexingState.String;
                 else
@@ -59,8 +58,26 @@ namespace Text2Abstraction
                 case LexingState.NumericalValue:
                     HandleNumericalValue();
                     break;
+                    case LexingState.Character:
+                    HandleOtherCharacter();
+                    break;
                 case LexingState.WhiteCharacter:
                     break;
+            }
+        }
+
+        private void HandleOtherCharacter()
+        {
+            var diag = GetDiagnostic();
+
+            if (LexingFacts.Char2LexElementMap.ContainsKey(_Current))
+            {
+                var lexElement = LexingFacts.Char2LexElementMap[_Current];
+                _Elements.Add(new LexCharacter(lexElement, diag));
+            }
+            else
+            {
+                Error($"Unknown character '{_Current}'");
             }
         }
 
@@ -121,6 +138,14 @@ namespace Text2Abstraction
 
                     var element = new LexWord(tmp, GetDiagnostic());
                     _Elements.Add(element);
+                    return;
+                }
+
+                if (LexingFacts.OtherTokens.Contains(_Current))
+                {
+                    var element = new LexWord(tmp, GetDiagnostic());
+                    _Elements.Add(element);
+                    MoveBehind();
                     return;
                 }
 

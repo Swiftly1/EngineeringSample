@@ -10,4 +10,10 @@
     <ProjectReference Include="..\Text2Abstraction\Text2Abstraction.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="code.xd">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

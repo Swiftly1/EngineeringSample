@@ -7,7 +7,7 @@
         Word,
         NumericalValue,
         WhiteCharacter,
-        OtherSyntax,
+        Character,
         Unknown
     }
 }

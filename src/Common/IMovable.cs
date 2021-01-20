@@ -21,7 +21,20 @@ namespace Common
             return false;
         }
 
+        protected bool MoveBehind()
+        {
+            if (CanMoveBehind())
+            {
+                _Index--;
+                return true;
+            }
+
+            return false;
+        }
+
         protected bool CanMoveNext() => _Index + 1 < _Collection.Count;
+
+        protected bool CanMoveBehind() => _Collection.Count > 0 && _Index > 0;
 
         protected bool HasPreviousElement() => _Index > 0;
 

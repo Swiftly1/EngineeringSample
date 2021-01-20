@@ -5,7 +5,7 @@ namespace Text2Abstraction.LexicalElements
 {
     public class LexNumericalLiteral : LexElement
     {
-        public LexNumericalLiteral(string tmp, DiagnosticInfo diagnostic) : base(diagnostic)
+        public LexNumericalLiteral(string tmp, DiagnosticInfo diagnostic) : base(LexingElement.Numerical, diagnostic)
         {
             Value = tmp;
         }
@@ -19,5 +19,10 @@ namespace Text2Abstraction.LexicalElements
         public bool IsDouble => Value.Contains(".");
 
         public bool IsInteger => !Value.Contains(".");
+
+        public override string ToString()
+        {
+            return $"Numerical: {Value}";
+        }
     }
 }
