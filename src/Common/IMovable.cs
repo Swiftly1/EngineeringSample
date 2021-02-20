@@ -41,5 +41,18 @@ namespace Common
         protected bool IsLast() => _Index == _Collection.Count - 1;
 
         protected T ElementAt(int index) => _Collection[index];
+
+        protected List<T> TryGetAhead(int count)
+        {
+            if (count <= 0)
+                return new List<T>();
+
+            var list = new List<T>();
+
+            while (count-- > 0 && MoveNext())
+                list.Add(_Current);
+
+            return list; 
+        }
     }
 }

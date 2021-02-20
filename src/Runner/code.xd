@@ -1,7 +1,9 @@
-﻿namespace Test
+﻿a
+b
+namespace Test
 {
 	public void Test()
 	{
-
+		int test = 5;
 	}
 }

@@ -4,9 +4,9 @@ using Text2Abstraction;
 
 namespace Runner
 {
-    static class Program
+    internal static class Program
     {
-        static void Main()
+        private static void Main()
         {
             var code = File.ReadAllText("code.xd");
             var test = new TextTransformer(code).Walk();

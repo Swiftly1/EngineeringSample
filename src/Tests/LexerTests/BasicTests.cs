@@ -8,7 +8,7 @@ namespace Tests
     public class BasicTests
     {
         [Fact]
-        public void Test1()
+        public void Test001()
         {
             var result = new TextTransformer("abc test a123").Walk();
 
@@ -24,7 +24,7 @@ namespace Tests
         }
 
         [Fact]
-        public void Test2()
+        public void Test002()
         {
             var result = new TextTransformer("12 35.5 7.7 6").Walk();
 
@@ -42,7 +42,7 @@ namespace Tests
         }
 
         [Fact]
-        public void Test3()
+        public void Test003()
         {
             var code =
             @"
@@ -55,34 +55,62 @@ namespace Tests
             }
             ";
 
-            var result = new TextTransformer(code).Walk();
+            var transformer = new TextTransformer(code);
+            var result = transformer.Walk();
 
-            Assert.Equal(11, result.Count);
+            Assert.Equal(transformer.Settings.NewLineAware ? 19 : 11, result.Count);
 
-            Assert.True(result[0] is LexWord);
+            Assert.True(result[0] is LexElement);
             Assert.True(result[1] is LexWord);
-            Assert.True(result[2] is LexCharacter);
-            Assert.True(result[3] is LexWord);
-            Assert.True(result[4] is LexWord);
-            Assert.True(result[5] is LexWord);
-            Assert.True(result[6] is LexCharacter);
-            Assert.True(result[7] is LexCharacter);
-            Assert.True(result[8] is LexCharacter);
+            Assert.True(result[2] is LexWord);
+            Assert.True(result[3] is LexElement);
+            Assert.True(result[4] is LexCharacter);
+            Assert.True(result[5] is LexElement);
+            Assert.True(result[6] is LexWord);
+            Assert.True(result[7] is LexWord);
+            Assert.True(result[8] is LexWord);
             Assert.True(result[9] is LexCharacter);
             Assert.True(result[10] is LexCharacter);
+            Assert.True(result[12] is LexCharacter);
+            Assert.True(result[13] is LexElement);
+            Assert.True(result[14] is LexElement);
+            Assert.True(result[15] is LexCharacter);
+            Assert.True(result[16] is LexElement);
+            Assert.True(result[17] is LexCharacter);
+            Assert.True(result[18] is LexElement);
 
-            Assert.Equal("namespace", (result[0] as LexWord).Value);
-            Assert.Equal("Test", (result[1] as LexWord).Value);
-            Assert.Equal("public", (result[3] as LexWord).Value);
-            Assert.Equal("void", (result[4] as LexWord).Value);
-            Assert.Equal("Test", (result[5] as LexWord).Value);
+            Assert.Equal("namespace", (result[1] as LexWord).Value);
+            Assert.Equal("Test", (result[2] as LexWord).Value);
+            Assert.Equal("public", (result[6] as LexWord).Value);
+            Assert.Equal("void", (result[7] as LexWord).Value);
+            Assert.Equal("Test", (result[8] as LexWord).Value);
 
-            Assert.Equal(LexingElement.OpenBracket, (result[2] as LexCharacter).Kind);
-            Assert.Equal(LexingElement.OpenParenthesis, (result[6] as LexCharacter).Kind);
-            Assert.Equal(LexingElement.ClosedParenthesis, (result[7] as LexCharacter).Kind);
-            Assert.Equal(LexingElement.OpenBracket, (result[8] as LexCharacter).Kind);
-            Assert.Equal(LexingElement.ClosedBracket, (result[9] as LexCharacter).Kind);
-            Assert.Equal(LexingElement.ClosedBracket, (result[10] as LexCharacter).Kind);
+            Assert.Equal(LexingElement.OpenBracket, (result[4] as LexCharacter).Kind);
+            Assert.Equal(LexingElement.OpenParenthesis, (result[9] as LexCharacter).Kind);
+            Assert.Equal(LexingElement.ClosedParenthesis, (result[10] as LexCharacter).Kind);
+            Assert.Equal(LexingElement.OpenBracket, (result[12] as LexCharacter).Kind);
+            Assert.Equal(LexingElement.ClosedBracket, (result[15] as LexCharacter).Kind);
+            Assert.Equal(LexingElement.ClosedBracket, (result[17] as LexCharacter).Kind);
+        }
+
+        [Fact]
+        public void Test004()
+        {
+            var transformer = new TextTransformer($"a{Environment.NewLine}b{Environment.NewLine}c");
+            var result = transformer.Walk();
+
+            Assert.Equal(5, result.Count);
+
+            Assert.True(result[1].Kind == LexingElement.NewLine);
+            Assert.True(result[3].Kind == LexingElement.NewLine);
+
+            Assert.True(result[0] is LexWord);
+            Assert.True(result[2] is LexWord);
+            Assert.True(result[4] is LexWord);
+
+            Assert.Equal("a", (result[0] as LexWord).Value);
+            Assert.Equal("b", (result[2] as LexWord).Value);
+            Assert.Equal("c", (result[4] as LexWord).Value);
         }
 
         [Fact]

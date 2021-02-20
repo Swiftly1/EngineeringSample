@@ -8,6 +8,7 @@
         Dot,
         OpenParenthesis,
         ClosedParenthesis,
+        NewLine,
 
         PlusSign,
         MinusSign,
@@ -16,5 +17,20 @@
         Numerical,
         String,
         Word,
+        EqualEqual,
+        BangEqual,
+        MinusEqual,
+        PlusEqual,
+        SlashEqual,
+        StarEqual,
+        GreaterThan,
+        LessThan,
+        LessOrEqual,
+        GreaterOrEqual,
+        Plus,
+        Minus,
+        Slash,
+        Star,
+        Bang,
     }
 }
