@@ -3,7 +3,7 @@ using Text2Abstraction;
 using Text2Abstraction.LexicalElements;
 using Xunit;
 
-namespace Tests
+namespace Tests.LexerTests
 {
     public class BasicTests
     {
@@ -111,6 +111,20 @@ namespace Tests
             Assert.Equal("a", (result[0] as LexWord).Value);
             Assert.Equal("b", (result[2] as LexWord).Value);
             Assert.Equal("c", (result[4] as LexWord).Value);
+        }
+
+        [Fact]
+        public void Test005()
+        {
+            var result = new TextTransformer("\"asd\"").Walk();
+
+            Assert.Single(result);
+
+            Assert.True(result[0].Kind == LexingElement.String);
+
+            Assert.True(result[0] is LexStringLiteral);
+
+            Assert.Equal("asd", (result[0] as LexStringLiteral).Value);
         }
 
         [Fact]

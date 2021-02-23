@@ -1,9 +1,7 @@
-﻿a
-b
-namespace Test
+﻿namespace Test
 {
 	public void Test()
 	{
-		int test = 5;
+		int test = "asd";
 	}
 }

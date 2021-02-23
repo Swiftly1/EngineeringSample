@@ -15,6 +15,8 @@ namespace Text2Abstraction
 
         public int _CurrentLine { get; set; } = 0;
 
+        public int _LastIndexOfNewLine { get; set; } = 0;
+
         public Settings Settings { get; set; } = new Settings();
 
         public TextTransformer(string code)
@@ -76,6 +78,7 @@ namespace Text2Abstraction
             if (_Current.ToString() == Environment.NewLine)
             {
                 _CurrentLine++;
+                _LastIndexOfNewLine = _Index;
 
                 if (Settings.NewLineAware)
                 {
@@ -91,6 +94,7 @@ namespace Text2Abstraction
                 if (ahead.Count == 1 && ahead[0] == '\n')
                 {
                     _CurrentLine++;
+                    _LastIndexOfNewLine = _Index;
 
                     if (Settings.NewLineAware)
                     {
@@ -168,9 +172,10 @@ namespace Text2Abstraction
         private void HandleString()
         {
             var tmp = "";
-            do
+
+            while (MoveNext())
             {
-                if (_Current == '"' && HasPreviousElement() && ElementAt(_Index - 1) == LexingFacts.EscapeChar)
+                if (_Current == '"' && HasPreviousElement() && ElementAt(_Index - 1) != LexingFacts.EscapeChar)
                 {
                     var element = new LexStringLiteral(tmp, GetDiagnostics());
                     _Elements.Add(element);
@@ -178,7 +183,7 @@ namespace Text2Abstraction
                 }
 
                 tmp += _Current;
-            } while (MoveNext());
+            }
 
             Error("Unclosed string");
         }
@@ -216,19 +221,21 @@ namespace Text2Abstraction
 
         public DiagnosticInfo GetDiagnostics()
         {
-            return new DiagnosticInfo();
+            var position = _Index - _LastIndexOfNewLine;
+            return new DiagnosticInfo(_CurrentLine, position, _Current);
         }
 
         private void Error(string s)
         {
             var diag = GetDiagnostics();
 
-            throw new Exception($"{s} {diag}");
+            throw new Exception($"{s} at {diag}");
         }
 
         private void Reset()
         {
             _CurrentLine = 0;
+            _LastIndexOfNewLine = 0;
             _Elements = new List<LexElement>();
         }
     }
