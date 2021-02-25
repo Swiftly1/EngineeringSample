@@ -1,4 +1,4 @@
-﻿namespace Text2Abstraction
+﻿namespace Common.Lexing
 {
     public enum LexingElement
     {
@@ -32,5 +32,9 @@
         Slash,
         Star,
         Bang,
+
+        AccessibilityModifier,
+        Namespace,
+        Type,
     }
 }

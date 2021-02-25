@@ -2,9 +2,9 @@
 
 namespace Text2Abstraction.LexicalElements
 {
-    public class LexStringLiteral : LexElement
+    public class LexKeyword : LexElement
     {
-        public LexStringLiteral(string tmp, DiagnosticInfo diagnostic) : base(LexingElement.String, diagnostic)
+        public LexKeyword(string tmp, LexingElement type, DiagnosticInfo diagnostic) : base(type, diagnostic)
         {
             Value = tmp;
         }
@@ -13,7 +13,7 @@ namespace Text2Abstraction.LexicalElements
 
         public override string ToString()
         {
-            return $"String: {Value}";
+            return $"Keyword: {Value}";
         }
     }
 }

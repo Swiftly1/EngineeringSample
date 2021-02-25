@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Common.Lexing;
 
 namespace Text2Abstraction
 {
@@ -8,6 +9,7 @@ namespace Text2Abstraction
         public const char EscapeChar = '\\';
 
         public static List<char> OtherTokens => Char2LexElementMap.Select(x => x.Key).ToList();
+
 
         public static Dictionary<char, LexingElement> Char2LexElementMap = new Dictionary<char, LexingElement>
         {

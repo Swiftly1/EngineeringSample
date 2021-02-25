@@ -4,6 +4,7 @@ using System.Linq;
 using System.Collections.Generic;
 using Text2Abstraction.LexicalElements;
 using System.Globalization;
+using Common.Lexing;
 
 namespace Text2Abstraction
 {
@@ -192,14 +193,29 @@ namespace Text2Abstraction
         {
             var tmp = "";
 
+            void AddElement()
+            {
+                LexElement element = null;
+
+                if (LanguageFacts.KeywordMapper.TryGetValue(tmp, out var lexingElement))
+                {
+                    element = new LexKeyword(tmp, lexingElement, GetDiagnostics());
+                }
+                else
+                {
+                    element = new LexWord(tmp, GetDiagnostics());
+                }
+
+                _Elements.Add(element);
+            }
+
             do
             {
                 if (char.IsWhiteSpace(_Current) || IsLast())
                 {
                     if (IsLast()) tmp += _Current;
 
-                    var element = new LexWord(tmp, GetDiagnostics());
-                    _Elements.Add(element);
+                    AddElement();
 
                     if (!IsLast())
                         MoveBehind();
@@ -209,8 +225,8 @@ namespace Text2Abstraction
 
                 if (LexingFacts.OtherTokens.Contains(_Current))
                 {
-                    var element = new LexWord(tmp, GetDiagnostics());
-                    _Elements.Add(element);
+                    AddElement();
+
                     MoveBehind();
                     return;
                 }

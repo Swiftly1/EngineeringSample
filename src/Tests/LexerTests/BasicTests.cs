@@ -1,4 +1,5 @@
 ﻿using System;
+using Common.Lexing;
 using Text2Abstraction;
 using Text2Abstraction.LexicalElements;
 using Xunit;
@@ -61,13 +62,13 @@ namespace Tests.LexerTests
             Assert.Equal(transformer.Settings.NewLineAware ? 19 : 11, result.Count);
 
             Assert.True(result[0] is LexElement);
-            Assert.True(result[1] is LexWord);
+            Assert.True(result[1] is LexKeyword);
             Assert.True(result[2] is LexWord);
             Assert.True(result[3] is LexElement);
             Assert.True(result[4] is LexCharacter);
             Assert.True(result[5] is LexElement);
-            Assert.True(result[6] is LexWord);
-            Assert.True(result[7] is LexWord);
+            Assert.True(result[6] is LexKeyword);
+            Assert.True(result[7] is LexKeyword);
             Assert.True(result[8] is LexWord);
             Assert.True(result[9] is LexCharacter);
             Assert.True(result[10] is LexCharacter);
@@ -79,10 +80,10 @@ namespace Tests.LexerTests
             Assert.True(result[17] is LexCharacter);
             Assert.True(result[18] is LexElement);
 
-            Assert.Equal("namespace", (result[1] as LexWord).Value);
+            Assert.Equal("namespace", (result[1] as LexKeyword).Value);
             Assert.Equal("Test", (result[2] as LexWord).Value);
-            Assert.Equal("public", (result[6] as LexWord).Value);
-            Assert.Equal("void", (result[7] as LexWord).Value);
+            Assert.Equal("public", (result[6] as LexKeyword).Value);
+            Assert.Equal("void", (result[7] as LexKeyword).Value);
             Assert.Equal("Test", (result[8] as LexWord).Value);
 
             Assert.Equal(LexingElement.OpenBracket, (result[4] as LexCharacter).Kind);

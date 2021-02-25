@@ -1,4 +1,6 @@
-﻿namespace Text2Abstraction.LexicalElements
+﻿using Common.Lexing;
+
+namespace Text2Abstraction.LexicalElements
 {
     public class LexElement
     {
