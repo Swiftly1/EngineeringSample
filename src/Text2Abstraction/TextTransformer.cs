@@ -20,9 +20,11 @@ namespace Text2Abstraction
 
         public Settings Settings { get; set; } = new Settings();
 
-        public TextTransformer(string code)
+        public TextTransformer(string code, Settings settings = null) : base(code.ToList())
         {
-            _Collection = code.ToList();
+            if (settings != null)
+                Settings = settings;
+
             _State = LexingState.Root;
         }
 

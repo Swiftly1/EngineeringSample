@@ -1,4 +1,4 @@
-﻿namespace Text2Abstraction
+﻿namespace Common
 {
     public class DiagnosticInfo
     {
@@ -17,7 +17,11 @@
 
         public override string ToString()
         {
-            return $"line number '{LineNumber}' at position '{Position}' around character '{Current}'.";
+            return UseTemplate(LineNumber, Position, Current);
         }
+
+        public const string DiagnosticTemplate = "line number '{0}' at position '{1}' at character '{2}'.";
+
+        public static string UseTemplate(params object[] args) => string.Format(DiagnosticTemplate, args);
     }
 }

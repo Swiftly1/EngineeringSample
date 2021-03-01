@@ -1,4 +1,5 @@
-﻿using Common.Lexing;
+﻿using Common;
+using Common.Lexing;
 
 namespace Text2Abstraction.LexicalElements
 {

@@ -5,3 +5,11 @@
 		int test = "asd";
 	}
 }
+
+namespace Test
+{
+	public void Test()
+	{
+		int test = "asd";
+	}
+}

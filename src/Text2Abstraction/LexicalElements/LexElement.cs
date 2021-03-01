@@ -1,16 +1,17 @@
-﻿using Common.Lexing;
+﻿using Common;
+using Common.Lexing;
 
 namespace Text2Abstraction.LexicalElements
 {
     public class LexElement
     {
-        private readonly DiagnosticInfo _diagnostic;
+        public DiagnosticInfo Diagnostics;
 
         public LexingElement Kind { get; }
 
         public LexElement(LexingElement kind, DiagnosticInfo diagnostic)
         {
-            _diagnostic = diagnostic;
+            Diagnostics = diagnostic;
             Kind = kind;
         }
 

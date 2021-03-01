@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using Common;
 using Common.Lexing;
 
 namespace Text2Abstraction.LexicalElements

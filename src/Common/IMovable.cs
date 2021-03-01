@@ -4,6 +4,11 @@ namespace Common
 {
     public abstract class IMovable<T>
     {
+        public IMovable(List<T> Collection)
+        {
+            _Collection = Collection;
+        }
+
         protected List<T> _Collection { get; set; } = new List<T>();
 
         protected int _Index { get; set; } = 0;
@@ -52,7 +57,7 @@ namespace Common
             while (count-- > 0 && MoveNext())
                 list.Add(_Current);
 
-            return list; 
+            return list;
         }
     }
 }
