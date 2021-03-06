@@ -10,13 +10,10 @@
         ClosedParenthesis,
         NewLine,
 
-        PlusSign,
-        MinusSign,
-        MultiplicationSign,
-        DivisionSign,
         Numerical,
         String,
         Word,
+        Equal,
         EqualEqual,
         BangEqual,
         MinusEqual,
@@ -36,5 +33,6 @@
         AccessibilityModifier,
         Namespace,
         Type,
+        Lambda,
     }
 }

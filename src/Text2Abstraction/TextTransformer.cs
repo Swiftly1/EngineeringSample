@@ -73,6 +73,8 @@ namespace Text2Abstraction
                 case LexingState.WhiteCharacter:
                     HandleWhiteCharacter();
                     break;
+                case LexingState.Unknown:
+                    throw new Exception("Unrecognized token");
             }
         }
 
@@ -112,59 +114,63 @@ namespace Text2Abstraction
         private void HandleOtherCharacter()
         {
             var diag = GetDiagnostics();
+            var ordered = LexingFacts.CombinedMap.OrderByDescending(x => x.Key.Length).ToList();
 
-            if (LexingFacts.Char2LexElementMap.ContainsKey(_Current))
+            void AddElement(string tmp)
             {
-                var lexElement = LexingFacts.Char2LexElementMap[_Current];
-                _Elements.Add(new LexCharacter(lexElement, diag));
-                return;
+                var first = ordered.First(x => x.Key == tmp);
+                _Elements.Add(new LexCharacter(first.Value, diag));
             }
 
-            var temp = "";
-            var ordered = LexingFacts.String2OperatorMap.OrderByDescending(x => x.Key.Length);
-            var lookAhead = false;
+            var tmp = "";
             do
             {
-                if (ordered.Any(x => x.Key == temp))
+                var lookUpValue = tmp + _Current;
+                if (LexingFacts.CombinedMapKeys.Contains(lookUpValue))
                 {
-                    lookAhead = true;
+                    tmp += _Current;
+
+                    if (IsLast())
+                    {
+                        AddElement(tmp);
+                        return;
+                    }
                 }
                 else
                 {
-                    if (lookAhead)
-                    {
-                        var first = ordered.First(x => x.Key == temp);
-                        _Elements.Add(new LexCharacter(first.Value, diag));
-                    }
-                    break;
+                    AddElement(tmp);
+                    MoveBehind();
+                    return;
                 }
-
-                temp += _Current;
-            } while (MoveNext() && lookAhead);
+            } while (MoveNext());
         }
 
         private void HandleNumericalValue()
         {
-            var tmp = "";
+            void AddElement(string tmp)
+            {
+                if (!int.TryParse(tmp, out var _) && !double.TryParse(tmp, NumberStyles.Float, CultureInfo.InvariantCulture, out var _))
+                    Error($"'{tmp}' is not correct numerical value");
 
-            var legal = new char[] { '.', ';' };
+                var element = new LexNumericalLiteral(tmp, GetDiagnostics());
+                _Elements.Add(element);
+            }
+
+            var tmp = "";
+            var legal = new char[] { '.' };
 
             do
             {
-                if (!char.IsNumber(_Current) && !char.IsWhiteSpace(_Current) && !legal.Contains(_Current))
+                if (!char.IsNumber(_Current) && !legal.Contains(_Current))
                 {
-                    Error($"Unexpected character '{_Current}'. Expected number or dot.");
+                    AddElement(tmp);
+                    MoveBehind();
+                    return;
                 }
-
-                if (char.IsWhiteSpace(_Current) || _Current == ';' || IsLast())
+                else if (IsLast())
                 {
                     if (IsLast()) tmp += _Current;
-
-                    if (!int.TryParse(tmp, out var _) && !double.TryParse(tmp, NumberStyles.Float, CultureInfo.InvariantCulture, out var _))
-                        Error($"'{tmp}' is not correct numerical value");
-
-                    var element = new LexNumericalLiteral(tmp, GetDiagnostics());
-                    _Elements.Add(element);
+                    AddElement(tmp);
                     return;
                 }
 
@@ -228,7 +234,6 @@ namespace Text2Abstraction
                 if (LexingFacts.OtherTokens.Contains(_Current))
                 {
                     AddElement();
-
                     MoveBehind();
                     return;
                 }

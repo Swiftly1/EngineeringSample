@@ -129,6 +129,53 @@ namespace Tests.LexerTests
         }
 
         [Fact]
+        public void Test006()
+        {
+            var result = new TextTransformer("5==6").Walk();
+
+            Assert.True(result[0].Kind == LexingElement.Numerical);
+            Assert.True(result[0] is LexNumericalLiteral);
+            Assert.Equal("5", (result[0] as LexNumericalLiteral).Value);
+
+            Assert.True(result[1].Kind == LexingElement.EqualEqual);
+            Assert.True(result[1] is LexCharacter);
+
+            Assert.True(result[2].Kind == LexingElement.Numerical);
+            Assert.True(result[2] is LexNumericalLiteral);
+            Assert.Equal("6", (result[2] as LexNumericalLiteral).Value);
+        }
+
+        [Fact]
+        public void Test007()
+        {
+            var result = new TextTransformer("A=>(1+2)").Walk();
+
+            Assert.True(result[0].Kind == LexingElement.Word);
+            Assert.True(result[0] is LexWord);
+            Assert.Equal("A", (result[0] as LexWord).Value);
+
+            Assert.True(result[1].Kind == LexingElement.Lambda);
+            Assert.True(result[1] is LexCharacter);
+
+            Assert.True(result[2].Kind == LexingElement.OpenParenthesis);
+            Assert.True(result[2] is LexCharacter);
+
+            Assert.True(result[3].Kind == LexingElement.Numerical);
+            Assert.True(result[3] is LexNumericalLiteral);
+            Assert.Equal("1", (result[3] as LexNumericalLiteral).Value);
+
+            Assert.True(result[4].Kind == LexingElement.Plus);
+            Assert.True(result[4] is LexCharacter);
+
+            Assert.True(result[5].Kind == LexingElement.Numerical);
+            Assert.True(result[5] is LexNumericalLiteral);
+            Assert.Equal("2", (result[5] as LexNumericalLiteral).Value);
+
+            Assert.True(result[6].Kind == LexingElement.ClosedParenthesis);
+            Assert.True(result[6] is LexCharacter);
+        }
+
+        [Fact]
         public void ChineseTextTest()
         {
             var result = new TextTransformer("早上好 再見 你好").Walk();
