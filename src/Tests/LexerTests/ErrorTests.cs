@@ -1,4 +1,5 @@
 ﻿using System;
+using BenchmarkDotNet.Attributes;
 using Common;
 using Text2Abstraction;
 using Xunit;
@@ -8,6 +9,7 @@ namespace Tests.LexerTests
     public class ErrorTests
     {
         [Fact]
+        [Benchmark]
         public void UnclosedString_001()
         {
             var result = new TextTransformer("\"asd");
@@ -16,6 +18,7 @@ namespace Tests.LexerTests
         }
 
         [Fact]
+        [Benchmark]
         public void UnclosedMultiLineString_002()
         {
             var code = $"{Environment.NewLine}\"asd\"{Environment.NewLine}{new string(' ', 3)}\"qw";

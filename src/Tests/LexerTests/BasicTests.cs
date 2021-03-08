@@ -1,4 +1,5 @@
 ﻿using System;
+using BenchmarkDotNet.Attributes;
 using Common.Lexing;
 using Text2Abstraction;
 using Text2Abstraction.LexicalElements;
@@ -9,6 +10,7 @@ namespace Tests.LexerTests
     public class BasicTests
     {
         [Fact]
+        [Benchmark]
         public void Test001()
         {
             var result = new TextTransformer("abc test a123").Walk();
@@ -25,6 +27,7 @@ namespace Tests.LexerTests
         }
 
         [Fact]
+        [Benchmark]
         public void Test002()
         {
             var result = new TextTransformer("12 35.5 7.7 6").Walk();
@@ -43,6 +46,7 @@ namespace Tests.LexerTests
         }
 
         [Fact]
+        [Benchmark]
         public void Test003()
         {
             var code =
@@ -95,6 +99,7 @@ namespace Tests.LexerTests
         }
 
         [Fact]
+        [Benchmark]
         public void Test004()
         {
             var transformer = new TextTransformer($"a{Environment.NewLine}b{Environment.NewLine}c");
@@ -115,6 +120,7 @@ namespace Tests.LexerTests
         }
 
         [Fact]
+        [Benchmark]
         public void Test005()
         {
             var result = new TextTransformer("\"asd\"").Walk();
@@ -129,6 +135,7 @@ namespace Tests.LexerTests
         }
 
         [Fact]
+        [Benchmark]
         public void Test006()
         {
             var result = new TextTransformer("5==6").Walk();
@@ -146,6 +153,7 @@ namespace Tests.LexerTests
         }
 
         [Fact]
+        [Benchmark]
         public void Test007()
         {
             var result = new TextTransformer("A=>(1+2)").Walk();
@@ -176,6 +184,7 @@ namespace Tests.LexerTests
         }
 
         [Fact]
+        [Benchmark]
         public void ChineseTextTest()
         {
             var result = new TextTransformer("早上好 再見 你好").Walk();
