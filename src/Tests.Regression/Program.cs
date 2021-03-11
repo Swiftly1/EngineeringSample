@@ -3,7 +3,7 @@ using Tests.LexerTests;
 
 namespace Tests.Regression
 {
-    public class Program
+    public static class Program
     {
         static void Main()
         {
