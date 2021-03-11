@@ -10,4 +10,19 @@
     <PackageReference Include="System.Reactive" Version="5.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Update="Appconfig.Designer.cs">
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Appconfig.settings</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Appconfig.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Appconfig.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+
 </Project>
