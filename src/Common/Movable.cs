@@ -1,10 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Common
 {
-    public abstract class IMovable<T>
+    public abstract class Movable<T>
     {
-        public IMovable(List<T> Collection)
+        public Movable(List<T> Collection)
         {
             _Collection = Collection;
         }
@@ -47,17 +49,29 @@ namespace Common
 
         protected T ElementAt(int index) => _Collection[index];
 
-        protected List<T> TryGetAhead(int count)
+        protected (bool Sucess, List<T> Items) TryGetAhead(int count)
         {
+            var originalIndex = _Index;
+
             if (count <= 0)
-                return new List<T>();
+                return (false, new List<T>());
 
             var list = new List<T>();
 
-            while (count-- > 0 && MoveNext())
-                list.Add(_Current);
+            MoveNext();
 
-            return list;
+            do
+            {
+                list.Add(_Current);
+            }
+            while (list.Count < count && MoveNext());
+
+            var success = list.Count == count;
+
+            if (!success)
+            _Index = originalIndex;
+
+            return (success, list);
         }
     }
 }

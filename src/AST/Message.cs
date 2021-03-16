@@ -2,7 +2,7 @@
 
 namespace AST
 {
-    public class Message
+    public sealed class Message
     {
         private Message(DiagnosticInfo diagnosticInfo, string text, MessageKind kind)
         {

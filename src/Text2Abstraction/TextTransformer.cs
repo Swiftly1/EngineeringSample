@@ -8,15 +8,15 @@ using Common.Lexing;
 
 namespace Text2Abstraction
 {
-    public class TextTransformer : IMovable<char>
+    public class TextTransformer : Movable<char>
     {
         private LexingState _State { get; set; }
 
         private List<LexElement> _Elements = new List<LexElement>();
 
-        public int _CurrentLine { get; set; } = 0;
+        private int _CurrentLine { get; set; } = 0;
 
-        public int _LastIndexOfNewLine { get; set; } = 0;
+        private int _LastIndexOfNewLine { get; set; } = 0;
 
         public Settings Settings { get; set; } = new Settings();
 
@@ -96,7 +96,7 @@ namespace Text2Abstraction
             {
                 var ahead = TryGetAhead(1);
 
-                if (ahead.Count == 1 && ahead[0] == '\n')
+                if (ahead.Sucess && ahead.Items[0] == '\n')
                 {
                     _CurrentLine++;
                     _LastIndexOfNewLine = _Index;

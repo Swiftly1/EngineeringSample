@@ -1,6 +1,6 @@
 ﻿using System;
 using System.IO;
-using AST;
+using AST.Builders;
 using Text2Abstraction;
 
 namespace Runner

@@ -13,8 +13,8 @@ namespace Tests.RegressionDiagnostics
     {
         public static void Main()
         {
-            var folderPath = "../../../../Tests.Regression";
-            var resultsPath = "../../../../Tests.Regression/BenchmarkDotNet.Artifacts/results";
+            const string folderPath = "../../../../Tests.Regression";
+            const string resultsPath = "../../../../Tests.Regression/BenchmarkDotNet.Artifacts/results";
             CreateBenchmarkDat(folderPath);
             var data = ReadResults(resultsPath);
 
@@ -85,7 +85,7 @@ namespace Tests.RegressionDiagnostics
 
             process.Start();
 
-            string standard_output = null;
+            string standard_output;
             while ((standard_output = process.StandardOutput.ReadLine()) != null)
             {
                 Console.WriteLine(standard_output);

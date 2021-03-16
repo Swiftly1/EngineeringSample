@@ -2,7 +2,7 @@
 using Common;
 using Text2Abstraction.LexicalElements;
 
-namespace AST
+namespace AST.Miscs
 {
     public class GroupedLexicalElements
     {

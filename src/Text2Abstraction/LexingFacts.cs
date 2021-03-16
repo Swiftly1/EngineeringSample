@@ -43,6 +43,7 @@ namespace Text2Abstraction
             { "{", LexingElement.OpenBracket },
             { "}", LexingElement.ClosedBracket },
             { ".", LexingElement.Dot },
+            { ";", LexingElement.SemiColon },
             { ",", LexingElement.Comma },
             { "=>", LexingElement.Lambda },
         };

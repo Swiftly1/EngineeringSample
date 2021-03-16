@@ -34,5 +34,6 @@
         Namespace,
         Type,
         Lambda,
+        SemiColon,
     }
 }

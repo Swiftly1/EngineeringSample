@@ -9,4 +9,8 @@
     <ProjectReference Include="..\Text2Abstraction\Text2Abstraction.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Trees\Expressions\" />
+  </ItemGroup>
+
 </Project>
