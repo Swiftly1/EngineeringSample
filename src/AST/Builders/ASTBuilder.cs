@@ -20,6 +20,7 @@ namespace AST.Builders
         {
             var splitted = SplitByNamespace();
 
+            /// It's way easier to debug non-Parallel code
             #if DEBUG
                 foreach (var item in splitted)
                 {
