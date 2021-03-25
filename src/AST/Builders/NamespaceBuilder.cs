@@ -15,28 +15,47 @@ namespace AST.Builders
         {
             private readonly ErrorHandler _errors = new ErrorHandler();
 
-            public string NamespaceName { get; set; }
+            private string NamespaceName { get; }
+
+            private DiagnosticInfo Diagnostics { get; }
 
             public NamespaceBuilder(GroupedLexicalElements item) : base(item.Elements)
             {
+                NamespaceName = item.NamespaceName;
+                Diagnostics = item.Diagnostics;
             }
 
             public Node Build()
             {
                 do
                 {
-                    if (MatchesThose(
+                    if (MatchesThose(out var matched,
                         LexingElement.AccessibilityModifier,
                         LexingElement.Type,
                         LexingElement.Word,
-                        LexingElement.OpenParenthesis,
-                        LexingElement.ClosedParenthesis))
+                        LexingElement.OpenParenthesis))
                     {
-                        Console.WriteLine("matched");
+                        var result = TryMatchFunction(matched);
                     }
                 } while (MoveNext());
 
-                return new NamespaceNode(NamespaceName);
+                return new NamespaceNode(Diagnostics, NamespaceName);
+            }
+
+            private Result<FunctionNode> TryMatchFunction(List<LexElement> matched)
+            {
+                var result = GetTillClosed(LexingElement.OpenParenthesis, LexingElement.ClosedParenthesis);
+
+                if (!result.Success)
+                {
+                    _errors.AddError(result.Message, _Current.Diagnostics);
+                }
+
+                var args = result.Data;
+
+                var node = new FunctionNode(_Current.Diagnostics, (matched[2] as LexWord).Value);
+
+                return new Result<FunctionNode>(node);
             }
 
             public new (bool Sucess, List<LexElement> Items) TryGetAhead(int count)

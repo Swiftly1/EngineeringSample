@@ -1,6 +1,11 @@
-﻿namespace AST.Trees
+﻿using Common;
+
+namespace AST.Trees
 {
-    abstract class ScopeableNode : Node
+    public abstract class ScopeableNode : Node
     {
+        public ScopeableNode(DiagnosticInfo diag) : base(diag)
+        {
+        }
     }
 }

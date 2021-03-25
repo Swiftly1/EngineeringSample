@@ -72,7 +72,7 @@ namespace AST.Builders
             {
                 if (group.Elements.Any() && group.Elements.First() is LexKeyword first)
                 {
-                    group.Namespace = first.Value;
+                    group.NamespaceName = first.Value;
                 }
                 else
                 {

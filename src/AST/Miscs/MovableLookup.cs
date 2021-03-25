@@ -28,6 +28,27 @@ namespace Common
             return equals;
         }
 
+        protected bool MatchesThose(out List<LexElement> output, params LexingElement[] items)
+        {
+            var originalIndex = _Index;
+
+            var result = TryGetAhead(items.Length);
+
+            if (!result.Sucess)
+            {
+                output = new List<LexElement>();
+                return false;
+            }
+
+            var equals = result.Items.Select(x => x.Kind).SequenceEqual(items);
+
+            if (!equals)
+                _Index = originalIndex;
+
+            output = result.Items;
+            return equals;
+        }
+
         protected Result<List<LexElement>> GetTillClosed(LexingElement opening, LexingElement closing)
         {
             var openCounter = 0;

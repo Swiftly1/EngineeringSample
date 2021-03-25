@@ -1,10 +1,18 @@
 ﻿using System.Collections.Generic;
+using Common;
 
 namespace AST.Trees
 {
     public abstract class Node
     {
-        public List<Node> Children { get; set; } = new List<Node>();
+        public Node(DiagnosticInfo diag)
+        {
+            Diagnostics = diag;
+        }
+
+        public DiagnosticInfo Diagnostics { get; }
+
+        public List<Node> Children { get; } = new List<Node>();
 
         public Node AddChild(Node n)
         {

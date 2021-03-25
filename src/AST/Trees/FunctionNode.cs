@@ -1,21 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Common;
 
 namespace AST.Trees
 {
-    internal class FunctionNode : ScopeableNode
+    public class FunctionNode : ScopeableNode
     {
-        public FunctionNode()
+        public FunctionNode(DiagnosticInfo diag, string name) : base(diag)
         {
-
+            Name = name;
         }
+
+        public string Name { get; }
 
         public override string ToString()
         {
-            throw new NotImplementedException();
+            return $"Function {Name}";
         }
     }
 }

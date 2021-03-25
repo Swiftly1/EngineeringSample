@@ -1,8 +1,10 @@
-﻿namespace AST.Trees
+﻿using Common;
+
+namespace AST.Trees
 {
     public class NamespaceNode : Node
     {
-        public NamespaceNode(string name)
+        public NamespaceNode(DiagnosticInfo diag, string name) : base(diag)
         {
             Name = name;
         }
