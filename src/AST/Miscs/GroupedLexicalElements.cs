@@ -13,7 +13,7 @@ namespace AST.Miscs
 
         public DiagnosticInfo Diagnostics { get; }
 
-        public string Namespace { get; set; }
+        public string NamespaceName { get; set; }
 
         public List<LexElement> Elements { get; } = new List<LexElement>();
 
@@ -25,7 +25,7 @@ namespace AST.Miscs
 
         public override string ToString()
         {
-            return $"Namespace '{Namespace}' made of {Elements.Count} elements.";
+            return $"Namespace '{NamespaceName}' made of {Elements.Count} elements.";
         }
     }
 }

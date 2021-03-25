@@ -6,7 +6,7 @@
 	}
 }
 
-namespace Test
+namespace Test2
 {
 	public void Test()
 	{

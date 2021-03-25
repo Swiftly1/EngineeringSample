@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 
 namespace Common
 {
@@ -69,7 +67,7 @@ namespace Common
             var success = list.Count == count;
 
             if (!success)
-            _Index = originalIndex;
+                _Index = originalIndex;
 
             return (success, list);
         }
