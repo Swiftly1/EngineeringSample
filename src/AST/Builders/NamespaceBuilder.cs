@@ -4,8 +4,7 @@ using AST.Trees;
 using Text2Abstraction.LexicalElements;
 using System.Collections.Generic;
 using Common.Lexing;
-using System.Linq;
-using System;
+using AST.Miscs.Matching;
 
 namespace AST.Builders
 {
@@ -29,13 +28,15 @@ namespace AST.Builders
             {
                 do
                 {
-                    if (MatchesThose(out var matched,
-                        LexingElement.AccessibilityModifier,
-                        LexingElement.Type,
-                        LexingElement.Word,
-                        LexingElement.OpenParenthesis))
+                    var fMatcher =
+                        MatcherUtils
+                        .Match(LexingElement.AccessibilityModifier, LexingElement.Type, LexingElement.Word, LexingElement.OpenParenthesis)
+                        .Evaluate(TakeToEnd());
+
+                    if (fMatcher.Success)
                     {
-                        var result = TryMatchFunction(matched);
+                        var ahead = TryGetAhead(fMatcher.Items.Count);
+                        var result = TryMatchFunction(ahead.Items);
                     }
                 } while (MoveNext());
 

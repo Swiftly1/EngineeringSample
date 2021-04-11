@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Common
 {
@@ -46,6 +47,8 @@ namespace Common
         protected bool IsLast() => _Index == _Collection.Count - 1;
 
         protected T ElementAt(int index) => _Collection[index];
+
+        protected List<T> TakeToEnd() => _Collection.Skip(_Index + 1).ToList();
 
         protected (bool Sucess, List<T> Items) TryGetAhead(int count)
         {
