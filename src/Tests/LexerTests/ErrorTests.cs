@@ -14,7 +14,7 @@ namespace Tests.LexerTests
         {
             var result = new TextTransformer("\"asd");
             var exception = Assert.Throws<Exception>(() => result.Walk());
-            Assert.Equal("Unclosed string at " + DiagnosticInfo.UseTemplate(0, 3, 'd'), exception.Message);
+            Assert.Equal("Unclosed string at " + DiagnosticInfo.UseTemplate(1, 3, 'd'), exception.Message);
         }
 
         [Fact]
@@ -24,7 +24,7 @@ namespace Tests.LexerTests
             var code = $"{Environment.NewLine}\"asd\"{Environment.NewLine}{new string(' ', 3)}\"qw";
             var result = new TextTransformer(code);
             var exception = Assert.Throws<Exception>(() => result.Walk());
-            Assert.Equal("Unclosed string at " + DiagnosticInfo.UseTemplate(2, 6, 'w'), exception.Message);
+            Assert.Equal("Unclosed string at " + DiagnosticInfo.UseTemplate(3, 6, 'w'), exception.Message);
         }
     }
 }

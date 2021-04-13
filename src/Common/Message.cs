@@ -1,6 +1,4 @@
-﻿using Common;
-
-namespace AST
+﻿namespace Common
 {
     public sealed class Message
     {
@@ -24,5 +22,10 @@ namespace AST
         public static Message CreateError(string s, DiagnosticInfo diag) => new Message(diag, s, MessageKind.Error);
 
         public static Message CreateOther(string s, DiagnosticInfo diag) => new Message(diag, s, MessageKind.Other);
+
+        public override string ToString()
+        {
+            return $"{Text} at {DiagnosticInfo}";
+        }
     }
 }

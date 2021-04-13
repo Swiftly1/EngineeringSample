@@ -49,12 +49,22 @@ namespace AST.Builders
 
                 if (!result.Success)
                 {
-                    _errors.AddError(result.Message, _Current.Diagnostics);
+                    return new Result<FunctionNode>("Not matched");
+                }
+
+                MoveNext();
+                var bodyResult = GetTillClosed(LexingElement.OpenBracket, LexingElement.ClosedBracket);
+
+                if (!bodyResult.Success)
+                {
+                    _errors.AddError(bodyResult.Message, _Current.Diagnostics);
+                    return new Result<FunctionNode>("");
                 }
 
                 var args = result.Data;
-
-                var node = new FunctionNode(_Current.Diagnostics, (matched[2] as LexWord).Value);
+                var functionName = (matched[2] as LexWord).Value;
+                var body = new BodyBuilder(bodyResult.Data).Build();
+                var node = new FunctionNode(matched[2].Diagnostics, functionName, body);
 
                 return new Result<FunctionNode>(node);
             }

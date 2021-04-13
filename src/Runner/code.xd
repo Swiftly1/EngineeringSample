@@ -1,14 +1,6 @@
 ﻿namespace Test
 {
-	public void Test()
-	{
-		int test = "asd";
-	}
-}
-
-namespace Test2
-{
-	public void Test()
+    public void Test()
 	{
 		int test = "asd";
 	}

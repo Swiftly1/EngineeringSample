@@ -14,7 +14,7 @@ namespace Text2Abstraction
 
         private List<LexElement> _Elements = new List<LexElement>();
 
-        private int _CurrentLine { get; set; } = 0;
+        private int _CurrentLine { get; set; } = 1;
 
         private int _LastIndexOfNewLine { get; set; } = 0;
 
@@ -211,7 +211,7 @@ namespace Text2Abstraction
                 }
                 else
                 {
-                    element = new LexWord(tmp, GetDiagnostics());
+                    element = new LexWord(tmp, GetDiagnosticsAtIndex(tmp.Length));
                 }
 
                 _Elements.Add(element);
@@ -248,6 +248,13 @@ namespace Text2Abstraction
             return new DiagnosticInfo(_CurrentLine, position, _Current);
         }
 
+        public DiagnosticInfo GetDiagnosticsAtIndex(int length)
+        {
+            var index = _Index - length;
+            var position = index - _LastIndexOfNewLine;
+            return new DiagnosticInfo(_CurrentLine, position, ElementAt(index));
+        }
+
         private void Error(string s)
         {
             var diag = GetDiagnostics();
@@ -257,7 +264,7 @@ namespace Text2Abstraction
 
         private void Reset()
         {
-            _CurrentLine = 0;
+            _CurrentLine = 1;
             _LastIndexOfNewLine = 0;
             _Elements = new List<LexElement>();
         }

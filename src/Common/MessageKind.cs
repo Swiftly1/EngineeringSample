@@ -1,4 +1,4 @@
-﻿namespace AST
+﻿namespace Common
 {
     public enum MessageKind
     {
