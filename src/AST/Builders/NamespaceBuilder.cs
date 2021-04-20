@@ -16,12 +16,12 @@ namespace AST.Builders
 
             private string NamespaceName { get; }
 
-            private DiagnosticInfo Diagnostics { get; }
+            private DiagnosticInfo _Diagnostics { get; }
 
             public NamespaceBuilder(GroupedLexicalElements item) : base(item.Elements)
             {
                 NamespaceName = item.NamespaceName;
-                Diagnostics = item.Diagnostics;
+                _Diagnostics = item.Diagnostics;
             }
 
             public Node Build()
@@ -31,7 +31,7 @@ namespace AST.Builders
                     var fMatcher =
                         MatcherUtils
                         .Match(LexingElement.AccessibilityModifier, LexingElement.Type, LexingElement.Word, LexingElement.OpenParenthesis)
-                        .Evaluate(TakeToEnd());
+                        .Evaluate(TakeToEnd(1));
 
                     if (fMatcher.Success)
                     {
@@ -40,7 +40,7 @@ namespace AST.Builders
                     }
                 } while (MoveNext());
 
-                return new NamespaceNode(Diagnostics, NamespaceName);
+                return new NamespaceNode(_Diagnostics, NamespaceName);
             }
 
             private Result<FunctionNode> TryMatchFunction(List<LexElement> matched)
@@ -53,6 +53,7 @@ namespace AST.Builders
                 }
 
                 MoveNext();
+
                 var bodyResult = GetTillClosed(LexingElement.OpenBracket, LexingElement.ClosedBracket);
 
                 if (!bodyResult.Success)
@@ -62,16 +63,17 @@ namespace AST.Builders
                 }
 
                 var args = result.Data;
-                var functionName = (matched[2] as LexWord).Value;
-                var body = new BodyBuilder(bodyResult.Data).Build();
+                string functionName = matched[2] as LexWord;
+                var bodyBuilder = new BodyBuilder(bodyResult.Data, _Diagnostics);
+                var body = bodyBuilder.Build();
                 var node = new FunctionNode(matched[2].Diagnostics, functionName, body);
 
                 return new Result<FunctionNode>(node);
             }
 
-            public new (bool Sucess, List<LexElement> Items) TryGetAhead(int count)
+            public new (bool Sucess, List<LexElement> Items) TryGetAhead(int count, bool includeCurrent)
             {
-                return base.TryGetAhead(count);
+                return base.TryGetAhead(count, includeCurrent);
             }
         }
     }

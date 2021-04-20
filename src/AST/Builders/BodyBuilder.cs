@@ -4,7 +4,9 @@ using Text2Abstraction.LexicalElements;
 using System.Collections.Generic;
 using Common.Lexing;
 using AST.Miscs.Matching;
-using System;
+using AST.Trees.Expressions.Untyped;
+using System.Linq;
+using AST.Trees.Expressions;
 
 namespace AST.Builders
 {
@@ -14,32 +16,69 @@ namespace AST.Builders
         {
             private readonly ErrorHandler _errors = new ErrorHandler();
 
-            public BodyBuilder(List<LexElement> items) : base(items)
+            private readonly DiagnosticInfo _Diagnostics;
+
+            public BodyBuilder(List<LexElement> items, DiagnosticInfo diagnostic) : base(items)
             {
+                _Diagnostics = diagnostic;
             }
 
             public Node Build()
             {
-                return new BodyNode(new DiagnosticInfo(0,0,'c'));
-                throw new NotImplementedException();
-
+                var bodyNode = new BodyNode(_Diagnostics);
                 do
                 {
-                    var fMatcher =
-                        MatcherUtils
-                        .Match(LexingElement.AccessibilityModifier, LexingElement.Type, LexingElement.Word, LexingElement.OpenParenthesis)
-                        .Evaluate(TakeToEnd());
+                    var variableDeclarationMatcher =
+                    MatcherUtils
+                    .Match(LexingElement.Type, LexingElement.Word, LexingElement.Equal)
+                    .Evaluate(TakeToEnd());
 
-                    if (fMatcher.Success)
+                    if (variableDeclarationMatcher.Success)
                     {
-                        var ahead = TryGetAhead(fMatcher.Items.Count);
+                        var ahead = TryGetAhead(variableDeclarationMatcher.Items.Count, true);
+                        var result = TryMatchVariableDeclaration(ahead.Items);
+
+                        if (result.Success)
+                            bodyNode.AddChild(result.Data);
                     }
                 } while (MoveNext());
+
+                return bodyNode;
             }
 
-            public new(bool Sucess, List<LexElement> Items) TryGetAhead(int count)
+            private Result<VariableDeclarationNode> TryMatchVariableDeclaration(List<LexElement> items)
             {
-                return base.TryGetAhead(count);
+                string typeName = items[0] as LexKeyword;
+                var name = items[1] as LexWord;
+                var type = TypeFacts.TypeName2TypeMapper[typeName];
+
+                var skipped = TakeToEnd(1);
+                var result = TryMatchExpression(skipped);
+
+                if (!result.Success)
+                    return result.ToFailedResult<VariableDeclarationNode>();
+
+                var vdn = new VariableDeclarationNode(name, type, result.Data, name.Diagnostics);
+
+                return new Result<VariableDeclarationNode>(vdn);
+            }
+
+            private Result<UntypedExpression> TryMatchExpression(List<LexElement> items)
+            {
+                // skip '='
+                var expressionElements = items.TakeWhile(x => x.Kind != LexingElement.SemiColon).ToList();
+
+                var builder = new ExpressionBuilder(expressionElements);
+                var result = builder.Build();
+
+                // Move pointer at the semicolon after expression
+                TryGetAhead(expressionElements.Count + 1);
+                return result;
+            }
+
+            public new(bool Sucess, List<LexElement> Items) TryGetAhead(int count, bool includeCurrent = false)
+            {
+                return base.TryGetAhead(count, includeCurrent);
             }
         }
     }

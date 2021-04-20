@@ -2,6 +2,6 @@
 {
     public void Test()
 	{
-		int test = "asd";
+		int test = 23 * 23;
 	}
 }
