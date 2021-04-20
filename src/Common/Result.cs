@@ -36,5 +36,20 @@ namespace Common
         public List<Message> Messages { get; } = new List<Message>();
 
         public T? Data { get; }
+
+        public Result<U> ToFailedResult<U>()
+        {
+            if (this.Success)
+            {
+                throw new Exception("This result was successful, so it shouldn't be changed into failed result.");
+            }
+            else
+            {
+                if (this.Message.Any())
+                    return new Result<U>(this.Messages);
+
+                return new Result<U>(this.Message);
+            }
+        }
     }
 }

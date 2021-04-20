@@ -142,14 +142,14 @@ namespace Tests.LexerTests
 
             Assert.True(result[0].Kind == LexingElement.Numerical);
             Assert.True(result[0] is LexNumericalLiteral);
-            Assert.Equal("5", (result[0] as LexNumericalLiteral).Value);
+            Assert.Equal("5", (result[0] as LexNumericalLiteral).StringValue);
 
             Assert.True(result[1].Kind == LexingElement.EqualEqual);
             Assert.True(result[1] is LexCharacter);
 
             Assert.True(result[2].Kind == LexingElement.Numerical);
             Assert.True(result[2] is LexNumericalLiteral);
-            Assert.Equal("6", (result[2] as LexNumericalLiteral).Value);
+            Assert.Equal("6", (result[2] as LexNumericalLiteral).StringValue);
         }
 
         [Fact]
@@ -170,14 +170,14 @@ namespace Tests.LexerTests
 
             Assert.True(result[3].Kind == LexingElement.Numerical);
             Assert.True(result[3] is LexNumericalLiteral);
-            Assert.Equal("1", (result[3] as LexNumericalLiteral).Value);
+            Assert.Equal("1", (result[3] as LexNumericalLiteral).StringValue);
 
             Assert.True(result[4].Kind == LexingElement.Plus);
             Assert.True(result[4] is LexCharacter);
 
             Assert.True(result[5].Kind == LexingElement.Numerical);
             Assert.True(result[5] is LexNumericalLiteral);
-            Assert.Equal("2", (result[5] as LexNumericalLiteral).Value);
+            Assert.Equal("2", (result[5] as LexNumericalLiteral).StringValue);
 
             Assert.True(result[6].Kind == LexingElement.ClosedParenthesis);
             Assert.True(result[6] is LexCharacter);

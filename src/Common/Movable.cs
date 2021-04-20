@@ -48,9 +48,9 @@ namespace Common
 
         protected T ElementAt(int index) => _Collection[index];
 
-        protected List<T> TakeToEnd() => _Collection.Skip(_Index + 1).ToList();
+        protected List<T> TakeToEnd(int offSet = 0) => _Collection.Skip(_Index + offSet).ToList();
 
-        protected (bool Sucess, List<T> Items) TryGetAhead(int count)
+        protected (bool Sucess, List<T> Items) TryGetAhead(int count, bool includeCurrent = false)
         {
             var originalIndex = _Index;
 
@@ -59,7 +59,8 @@ namespace Common
 
             var list = new List<T>();
 
-            MoveNext();
+            if (!includeCurrent)
+                MoveNext();
 
             do
             {

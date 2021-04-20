@@ -17,5 +17,7 @@ namespace Text2Abstraction.LexicalElements
         {
             return $"Keyword: {Value} of Kind: {Enum.GetName(typeof(LexingElement), Kind)}";
         }
+
+        public static implicit operator string(LexKeyword l) => l.Value;
     }
 }

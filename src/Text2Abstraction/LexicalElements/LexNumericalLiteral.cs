@@ -9,22 +9,33 @@ namespace Text2Abstraction.LexicalElements
     {
         public LexNumericalLiteral(string tmp, DiagnosticInfo diagnostic) : base(LexingElement.Numerical, diagnostic)
         {
-            Value = tmp;
+            StringValue = tmp;
         }
 
-        public string Value { get; set; }
+        public string StringValue { get; set; }
 
-        public int IntegerValue => Convert.ToInt32(Value);
+        public int IntegerValue => Convert.ToInt32(StringValue);
 
-        public double DoubleValue => Convert.ToDouble(Value, CultureInfo.InvariantCulture);
+        public double DoubleValue => Convert.ToDouble(StringValue, CultureInfo.InvariantCulture);
 
-        public bool IsDouble => Value.Contains(".");
+        public bool IsDouble => StringValue.Contains(".");
 
-        public bool IsInteger => !Value.Contains(".");
+        public bool IsInteger => !StringValue.Contains(".");
+
+        public object GetNumericalValue()
+        {
+            if (IsDouble)
+                return DoubleValue;
+
+            if (IsInteger)
+                return IntegerValue;
+
+            throw new NotImplementedException($"Unable to determine value of {nameof(LexNumericalLiteral)}");
+        }
 
         public override string ToString()
         {
-            return $"Numerical: {Value}";
+            return $"Numerical: {StringValue}";
         }
     }
 }

@@ -16,5 +16,7 @@ namespace Text2Abstraction.LexicalElements
         {
             return $"Word: {Value}";
         }
+
+        public static implicit operator string(LexWord l) => l.Value;
     }
 }
