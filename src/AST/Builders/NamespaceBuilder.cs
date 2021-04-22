@@ -49,7 +49,7 @@ namespace AST.Builders
 
                 if (!result.Success)
                 {
-                    return new Result<FunctionNode>("Not matched");
+                    return result.ToFailedResult<FunctionNode>();
                 }
 
                 MoveNext();
@@ -58,8 +58,8 @@ namespace AST.Builders
 
                 if (!bodyResult.Success)
                 {
-                    _errors.AddError(bodyResult.Message, _Current.Diagnostics);
-                    return new Result<FunctionNode>("");
+                    _errors.AddMessages(bodyResult.Messages);
+                    return result.ToFailedResult<FunctionNode>();
                 }
 
                 var args = result.Data;

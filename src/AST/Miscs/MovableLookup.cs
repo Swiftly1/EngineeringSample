@@ -18,7 +18,7 @@ namespace Common
             if (_Current.Kind == opening)
                 openCounter++;
             else
-                return new Result<List<LexElement>>($"Expected element: '{opening}' around {_Current.Diagnostics}.");
+                return new Result<List<LexElement>>($"Expected element: '{opening}' around {_Current.Diagnostics}.", _Current.Diagnostics);
 
             var list = new List<LexElement>();
 

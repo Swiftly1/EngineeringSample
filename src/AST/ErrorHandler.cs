@@ -11,7 +11,7 @@ namespace AST
 
         public IEnumerable<Message> DumpErrors() => _Messages.AsEnumerable();
 
-        private void AddMessage(Message msg)
+        public void AddMessage(Message msg)
         {
             if (msg is null || string.IsNullOrWhiteSpace(msg.Text) || msg.DiagnosticInfo is null)
             {
@@ -19,6 +19,19 @@ namespace AST
             }
 
             _Messages.Add(msg);
+        }
+
+        public void AddMessages(List<Message> messages)
+        {
+            foreach (var msg in messages)
+            {
+                if (msg is null || string.IsNullOrWhiteSpace(msg.Text) || msg.DiagnosticInfo is null)
+                {
+                    throw new ArgumentException(nameof(msg));
+                }
+            }
+
+            _Messages.AddRange(messages);
         }
 
         public void AddInformation(string s, DiagnosticInfo diag) => AddMessage(Message.CreateInformation(s, diag));

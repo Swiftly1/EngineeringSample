@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using AST.Trees.Expressions.Untyped;
 using Text2Abstraction.LexicalElements;
-using System;
 using Common.Lexing;
+using AST.Miscs;
 
 namespace AST.Trees.Expressions
 {
@@ -15,8 +15,15 @@ namespace AST.Trees.Expressions
 
         public Result<UntypedExpression> Build()
         {
-            var tree = GetOperand();
-            return new Result<UntypedExpression>(tree);
+            try
+            {
+                var tree = GetOperand();
+                return new Result<UntypedExpression>(tree);
+            }
+            catch (ASTException ex)
+            {
+                return new Result<UntypedExpression>(ex.Message, ex.DiagnosticInfo);
+            }
         }
 
         private UntypedExpression GetOperand()
@@ -52,7 +59,7 @@ namespace AST.Trees.Expressions
             if (left.Kind == LexingElement.Numerical)
                 return new ConstantMathUntypedExpression(left.Diagnostics, (left as LexNumericalLiteral).GetNumericalValue());
 
-            throw new NotImplementedException($"Unable to resolve Expression for kind {left.Kind}. Location: {left.Diagnostics}");
+            throw new ASTException($"Unable to resolve Expression for kind {left.Kind}. Location: {left.Diagnostics}", left.Diagnostics);
         }
     }
 }

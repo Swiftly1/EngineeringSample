@@ -11,14 +11,13 @@ namespace Common
         {
             Success = false;
             Messages = s;
-            Message = string.Join(Environment.NewLine, s.Select(x => x.ToString()));
             Data = default;
         }
 
-        public Result(string s)
+        public Result(string s, DiagnosticInfo d)
         {
             Success = false;
-            Message = s;
+            Messages.Add(Message.CreateError(s, d));
             Data = default;
         }
 
@@ -26,12 +25,11 @@ namespace Common
         {
             Data = data;
             Success = true;
-            Message = "";
         }
 
         public bool Success { get; }
 
-        public string Message { get; }
+        public Message Message => Messages.First();
 
         public List<Message> Messages { get; } = new List<Message>();
 
@@ -45,10 +43,7 @@ namespace Common
             }
             else
             {
-                if (this.Message.Any())
-                    return new Result<U>(this.Messages);
-
-                return new Result<U>(this.Message);
+                return new Result<U>(this.Messages);
             }
         }
     }

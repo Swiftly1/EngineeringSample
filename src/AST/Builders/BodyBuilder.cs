@@ -40,6 +40,8 @@ namespace AST.Builders
 
                         if (result.Success)
                             bodyNode.AddChild(result.Data);
+                        else
+                            _errors.AddMessages(result.Messages);
                     }
                 } while (MoveNext());
 
