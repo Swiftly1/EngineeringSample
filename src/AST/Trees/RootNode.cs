@@ -1,9 +1,8 @@
-﻿using System;
-using Common;
+﻿using Common;
 
 namespace AST.Trees
 {
-    internal class RootNode : Node
+    public class RootNode : Node
     {
         public RootNode(DiagnosticInfo diag) : base(diag)
         {

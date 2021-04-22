@@ -10,6 +10,7 @@ namespace AST.Trees
             VariableName = variableName;
             DeclaredType = declaredType;
             Expression = expression;
+            Children.Add(expression);
         }
 
         public string VariableName { get; set; }

@@ -26,6 +26,7 @@ namespace AST.Builders
 
             public Node Build()
             {
+                var node = new NamespaceNode(_Diagnostics, NamespaceName);
                 do
                 {
                     var fMatcher =
@@ -37,10 +38,15 @@ namespace AST.Builders
                     {
                         var ahead = TryGetAhead(fMatcher.Items.Count);
                         var result = TryMatchFunction(ahead.Items);
+
+                        if (result.Success)
+                            node.Children.Add(result.Data);
+                        else
+                            _errors.AddMessages(result.Messages);
                     }
                 } while (MoveNext());
 
-                return new NamespaceNode(_Diagnostics, NamespaceName);
+                return node;
             }
 
             private Result<FunctionNode> TryMatchFunction(List<LexElement> matched)

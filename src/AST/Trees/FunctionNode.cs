@@ -1,5 +1,4 @@
-﻿using System;
-using Common;
+﻿using Common;
 
 namespace AST.Trees
 {
@@ -9,6 +8,7 @@ namespace AST.Trees
         {
             Name = name;
             Body = body;
+            Children.Add(Body);
         }
 
         public string Name { get; }

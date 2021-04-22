@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using AST.Miscs;
+using AST.Trees;
 using Common;
 using Common.Lexing;
 using Text2Abstraction.LexicalElements;
@@ -16,8 +17,10 @@ namespace AST.Builders
         {
         }
 
-        public ASTBuilder Build()
+        public Result<RootNode> Build()
         {
+            var root = new RootNode(new DiagnosticInfo(0, 0, ' '));
+
             var splitted = SplitByNamespace();
 
             /// It's way easier to debug non-Parallel code
@@ -25,6 +28,7 @@ namespace AST.Builders
                 foreach (var item in splitted)
                 {
                     var unit = new NamespaceBuilder(item).Build();
+                    root.AddChild(unit);
                 }
             #else
                 Parallel.ForEach(splitted, (GroupedLexicalElements item) =>
@@ -33,7 +37,10 @@ namespace AST.Builders
                 });
             #endif
 
-            return this;
+            if (_errors.DumpErrors().Any())
+                return new Result<RootNode>(_errors.DumpErrors().ToList());
+
+            return new Result<RootNode>(root);
         }
 
         private List<GroupedLexicalElements> SplitByNamespace()
@@ -70,7 +77,7 @@ namespace AST.Builders
 
             foreach (var group in list)
             {
-                if (group.Elements.Any() && group.Elements.First() is LexKeyword first)
+                if (group.Elements.Any() && group.Elements.First() is LexWord first)
                 {
                     group.NamespaceName = first.Value;
                 }

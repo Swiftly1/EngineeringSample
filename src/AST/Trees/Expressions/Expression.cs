@@ -2,14 +2,11 @@
 
 namespace AST.Trees.Expressions
 {
-    public abstract class Expression
+    public abstract class Expression : Node
     {
-        public Expression(DiagnosticInfo diag)
+        protected Expression(DiagnosticInfo diag) : base(diag)
         {
-            Diagnostics = diag;
         }
-
-        public DiagnosticInfo Diagnostics { get; }
 
         public abstract override string ToString();
     }

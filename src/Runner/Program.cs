@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using AST.Builders;
+using AST.Miscs;
 using Text2Abstraction;
 
 namespace Runner
@@ -16,8 +17,22 @@ namespace Runner
             {
                 Console.WriteLine(item);
             }
+            Console.WriteLine();
 
             var ast = new ASTBuilder(test).Build();
+            var printer = new ConsoleMessagesPrinter();
+
+            if (ast.Success)
+            {
+                AST_Printer.PrintPretty(ast.Data, printer);
+            }
+            else
+            {
+                foreach (var error in ast.Messages)
+                {
+                    printer.PrintError(error.ToString());
+                }
+            }
         }
     }
 }
