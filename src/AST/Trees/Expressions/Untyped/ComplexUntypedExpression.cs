@@ -10,6 +10,9 @@ namespace AST.Trees.Expressions.Untyped
             Left = left;
             Operator = @operator;
             Right = right;
+
+            Children.Add(Left);
+            Children.Add(Right);
         }
 
         public UntypedExpression Left { get; set; }

@@ -24,6 +24,7 @@ namespace Runner
 
             if (ast.Success)
             {
+                new AST_Graphviz(printer).PrintPretty(ast.Data);
                 AST_Printer.PrintPretty(ast.Data, printer);
             }
             else
