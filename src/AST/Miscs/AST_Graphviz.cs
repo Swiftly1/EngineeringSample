@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using AST.Trees;
@@ -23,11 +24,11 @@ namespace AST.Miscs
         {
             CollectData(node);
 
-            var template = @$"
-digraph Code
-{{
-    {sb}
-}}";
+            var template = $"digraph Code" + Environment.NewLine +
+                            "{" + Environment.NewLine +
+                            $"{sb}" +
+                            "}";
+
             Printer.PrintFancy(template);
         }
 
@@ -35,7 +36,6 @@ digraph Code
         {
             var q = new Queue<Node>();
             q.Enqueue(node);
-            sb.Append(Node2Text(node)).Append(Environment.NewLine);
 
             while (q.Count > 0)
             {
@@ -46,25 +46,21 @@ digraph Code
                     continue;
                 }
 
-                ProcessElement(node, q, current);
+                ProcessElement(current, q);
             }
         }
 
-        private void ProcessElement(Node node, Queue<Node> q, Node current)
+        private void ProcessElement(Node current, Queue<Node> q)
         {
-            sb.Append(" -> ");
-
-            if (current.Children.Any())
-                sb.Append('{');
-
             foreach (var child in current.Children)
             {
-                var name = Node2Text(child) + ";";
-                sb.Append(name);
+                sb
+                .Append("\t")
+                .Append(Node2Text(current))
+                .Append(" -> ")
+                .Append(Node2Text(child))
+                .AppendLine();
             }
-
-            if (node.Children.Any())
-                sb.Append('}').Append(Environment.NewLine);
 
             foreach (var child in current.Children)
             {
@@ -74,7 +70,7 @@ digraph Code
 
         private string Node2Text(Node node)
         {
-            return $"{{\"{counter++}\" [label=\"{node}\"]}}";
+            return $"{{\"{node.Id}\" [label=\"{node}\"]}}";
         }
     }
 }

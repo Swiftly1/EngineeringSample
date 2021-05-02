@@ -5,6 +5,10 @@ namespace AST.Trees
 {
     public abstract class Node
     {
+        private static int _InstanceCounter = 0;
+
+        public int Id { get; } = _InstanceCounter++;
+
         protected Node(DiagnosticInfo diag)
         {
             Diagnostics = diag;
