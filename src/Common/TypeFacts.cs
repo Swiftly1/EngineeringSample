@@ -5,7 +5,7 @@ namespace Common
 {
     public static class TypeFacts
     {
-        public static Dictionary<string, TypeInfo> TypeName2TypeMapper = new Dictionary<string, TypeInfo>
+        public static Dictionary<string, TypeInfo> TypeName2TypeMapper = new()
         {
             { "int", GetInt32() },
             { "int32", GetInt32() },

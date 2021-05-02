@@ -11,7 +11,7 @@ namespace AST.Builders
 {
     public partial class ASTBuilder : Movable<LexElement>
     {
-        private readonly ErrorHandler _errors = new ErrorHandler();
+        private readonly ErrorHandler _errors = new();
 
         public ASTBuilder(List<LexElement> collection) : base(collection)
         {

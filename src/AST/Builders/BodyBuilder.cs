@@ -14,7 +14,7 @@ namespace AST.Builders
     {
         private class BodyBuilder : MovableLookup
         {
-            private readonly ErrorHandler _errors = new ErrorHandler();
+            private readonly ErrorHandler _errors = new();
 
             private readonly DiagnosticInfo _Diagnostics;
 
@@ -32,10 +32,10 @@ namespace AST.Builders
                     MatcherUtils
                     .Match(LexingElement.Type, LexingElement.Word, LexingElement.Equal)
                     .Evaluate(TakeToEnd());
-                    
+
                     var statementMatcher =
                     MatcherUtils
-                    .Match(LexingElement.Type, LexingElement.Word, LexingElement.Equal)
+                    .Match(LexingElement.Word, LexingElement.Equal)
                     .Evaluate(TakeToEnd());
 
                     if (variableDeclarationMatcher.Success)
@@ -47,6 +47,10 @@ namespace AST.Builders
                             bodyNode.AddChild(result.Data);
                         else
                             _errors.AddMessages(result.Messages);
+                    }
+                    else if (statementMatcher.Success)
+                    {
+
                     }
                 } while (MoveNext());
 

@@ -5,7 +5,7 @@ namespace AST.Trees
 {
     public abstract class Node
     {
-        public Node(DiagnosticInfo diag)
+        protected Node(DiagnosticInfo diag)
         {
             Diagnostics = diag;
         }

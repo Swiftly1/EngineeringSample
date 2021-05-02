@@ -5,7 +5,7 @@ namespace Common
 {
     public abstract class Movable<T>
     {
-        public Movable(List<T> Collection)
+        protected Movable(List<T> Collection)
         {
             _Collection = Collection;
         }

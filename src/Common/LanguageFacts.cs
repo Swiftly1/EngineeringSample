@@ -5,7 +5,7 @@ namespace Common
 {
     public static class LanguageFacts
     {
-        public static Dictionary<string, LexingElement> KeywordMapper = new Dictionary<string, LexingElement>
+        public static Dictionary<string, LexingElement> KeywordMapper = new()
         {
             { "namespace", LexingElement.Namespace },
 

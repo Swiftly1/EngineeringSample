@@ -15,13 +15,13 @@
 
         public MessageKind Kind { get; }
 
-        public static Message CreateInformation(string s, DiagnosticInfo diag) => new Message(diag, s, MessageKind.Information);
+        public static Message CreateInformation(string s, DiagnosticInfo diag) => new(diag, s, MessageKind.Information);
 
-        public static Message CreateWarning(string s, DiagnosticInfo diag) => new Message(diag, s, MessageKind.Warning);
+        public static Message CreateWarning(string s, DiagnosticInfo diag) => new(diag, s, MessageKind.Warning);
 
-        public static Message CreateError(string s, DiagnosticInfo diag) => new Message(diag, s, MessageKind.Error);
+        public static Message CreateError(string s, DiagnosticInfo diag) => new(diag, s, MessageKind.Error);
 
-        public static Message CreateOther(string s, DiagnosticInfo diag) => new Message(diag, s, MessageKind.Other);
+        public static Message CreateOther(string s, DiagnosticInfo diag) => new(diag, s, MessageKind.Other);
 
         public override string ToString()
         {

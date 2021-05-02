@@ -4,7 +4,7 @@ namespace AST.Trees
 {
     public abstract class ScopeableNode : Node
     {
-        public ScopeableNode(DiagnosticInfo diag) : base(diag)
+        protected ScopeableNode(DiagnosticInfo diag) : base(diag)
         {
         }
     }

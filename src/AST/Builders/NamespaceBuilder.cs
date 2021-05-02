@@ -12,7 +12,7 @@ namespace AST.Builders
     {
         private class NamespaceBuilder : MovableLookup
         {
-            private readonly ErrorHandler _errors = new ErrorHandler();
+            private readonly ErrorHandler _errors = new();
 
             private string NamespaceName { get; }
 

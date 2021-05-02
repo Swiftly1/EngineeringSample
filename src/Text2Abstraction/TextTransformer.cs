@@ -12,7 +12,7 @@ namespace Text2Abstraction
     {
         private LexingState _State { get; set; }
 
-        private List<LexElement> _Elements = new List<LexElement>();
+        private List<LexElement> _Elements = new();
 
         private int _CurrentLine { get; set; } = 1;
 
@@ -203,8 +203,7 @@ namespace Text2Abstraction
 
             void AddElement()
             {
-                LexElement element = null;
-
+                LexElement element;
                 if (LanguageFacts.KeywordMapper.TryGetValue(tmp, out var lexingElement))
                 {
                     element = new LexKeyword(tmp, lexingElement, GetDiagnostics());
