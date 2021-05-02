@@ -53,5 +53,4 @@ namespace Tests.RegressionDiagnostics
             Map(m => m.StdDev).Name("StdDev");
         }
     }
-
 }

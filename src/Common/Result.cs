@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Common
 {
-    #nullable enable
+#nullable enable
     public class Result<T>
     {
         public Result(List<Message> s)
@@ -29,7 +28,7 @@ namespace Common
 
         public bool Success { get; }
 
-        public Message Message => Messages.First();
+        public Message Message => Messages[0];
 
         public List<Message> Messages { get; } = new List<Message>();
 

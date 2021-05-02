@@ -10,13 +10,13 @@ namespace AST.Miscs
 {
     public class AST_Graphviz
     {
-        private IMessagesPrinter _printer { get; }
-        private readonly StringBuilder sb = new StringBuilder();
+        private IMessagesPrinter Printer { get; }
+        private readonly StringBuilder sb = new();
         private int counter = 0;
 
         public AST_Graphviz(IMessagesPrinter printer)
         {
-            _printer = printer;
+            Printer = printer;
         }
 
         public void PrintPretty(Node node)
@@ -28,14 +28,14 @@ digraph Code
 {{
     {sb}
 }}";
-            _printer.PrintFancy(template);
+            Printer.PrintFancy(template);
         }
 
         private void CollectData(Node node)
         {
             var q = new Queue<Node>();
             q.Enqueue(node);
-            sb.Append(Node2Text(node) + Environment.NewLine);
+            sb.Append(Node2Text(node)).Append(Environment.NewLine);
 
             while (q.Count > 0)
             {
@@ -55,7 +55,7 @@ digraph Code
             sb.Append(" -> ");
 
             if (current.Children.Any())
-                sb.Append("{");
+                sb.Append('{');
 
             foreach (var child in current.Children)
             {
@@ -64,7 +64,7 @@ digraph Code
             }
 
             if (node.Children.Any())
-                sb.Append($"}}{Environment.NewLine}");
+                sb.Append('}').Append(Environment.NewLine);
 
             foreach (var child in current.Children)
             {

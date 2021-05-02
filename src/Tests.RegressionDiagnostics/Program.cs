@@ -48,7 +48,7 @@ namespace Tests.RegressionDiagnostics
 
         private static void CreateBenchmarkDat(string folderPath)
         {
-            var extension = "";
+            string extension;
 
             if (OperatingSystem.IsWindows())
             {

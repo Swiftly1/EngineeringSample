@@ -16,11 +16,11 @@ namespace AST.Miscs
         {
         }
 
-        private ASTException(string message) : base(message)
+        public ASTException(string message) : base(message)
         {
         }
 
-        private ASTException(string message, Exception innerException) : base(message, innerException)
+        public ASTException(string message, Exception innerException) : base(message, innerException)
         {
         }
     }

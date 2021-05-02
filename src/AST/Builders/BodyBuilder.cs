@@ -32,6 +32,11 @@ namespace AST.Builders
                     MatcherUtils
                     .Match(LexingElement.Type, LexingElement.Word, LexingElement.Equal)
                     .Evaluate(TakeToEnd());
+                    
+                    var statementMatcher =
+                    MatcherUtils
+                    .Match(LexingElement.Type, LexingElement.Word, LexingElement.Equal)
+                    .Evaluate(TakeToEnd());
 
                     if (variableDeclarationMatcher.Success)
                     {

@@ -7,7 +7,7 @@ namespace Common
 {
     public abstract class MovableLookup : Movable<LexElement>
     {
-        public MovableLookup(List<LexElement> Collection) : base(Collection)
+        protected MovableLookup(List<LexElement> Collection) : base(Collection)
         {
         }
 
@@ -25,9 +25,13 @@ namespace Common
             while (openCounter > 0 && MoveNext())
             {
                 if (_Current.Kind == opening)
+                {
                     openCounter++;
+                }
                 else if (_Current.Kind == closing)
+                {
                     openCounter--;
+                }
                 else
                 {
                     list.Add(_Current);
