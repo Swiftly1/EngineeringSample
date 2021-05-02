@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using AST.Builders;
 using AST.Miscs;
 using Text2Abstraction;
@@ -10,22 +9,24 @@ namespace Runner
     {
         private static void Main()
         {
+            var printer = new ConsoleMessagesPrinter();
             var code = File.ReadAllText("code.xd");
             var test = new TextTransformer(code, new Settings { NewLineAware = false}).Walk();
 
             foreach (var item in test)
             {
-                Console.WriteLine(item);
+                printer.PrintInformationNewLine(item.ToString());
             }
-            Console.WriteLine();
+
+            printer.PrintInformationNewLine("");
 
             var ast = new ASTBuilder(test).Build();
-            var printer = new ConsoleMessagesPrinter();
 
             if (ast.Success)
             {
+                new AST_Printer(printer).PrintPretty(ast.Data);
+                printer.PrintFancyNewLine("");
                 new AST_Graphviz(printer).PrintPretty(ast.Data);
-                AST_Printer.PrintPretty(ast.Data, printer);
             }
             else
             {

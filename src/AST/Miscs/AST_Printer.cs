@@ -1,35 +1,41 @@
-﻿using System;
-using AST.Trees;
+﻿using AST.Trees;
 using Common;
 
 namespace AST.Miscs
 {
-    public static class AST_Printer
+    public class AST_Printer
     {
-        public static void PrintPretty(Node node, IMessagesPrinter printer)
+        public IMessagesPrinter Printer { get; }
+
+        public AST_Printer(IMessagesPrinter printer)
         {
-            PrintPretty(node, "", false, printer);
+            Printer = printer;
         }
 
-        private static void PrintPretty(Node node, string indent, bool last, IMessagesPrinter printer)
+        public void PrintPretty(Node node)
         {
-            printer.PrintFancy(indent);
+            PrintPretty(node, "", false);
+        }
+
+        private void PrintPretty(Node node, string indent, bool last)
+        {
+            Printer.PrintFancy(indent);
             if (last)
             {
-                printer.PrintFancy(@"\-");
+                Printer.PrintFancy(@"\-");
                 indent += "  ";
             }
             else
             {
-                printer.PrintFancy("|-");
+                Printer.PrintFancy("|-");
                 indent += "| ";
             }
 
-            printer.PrintFancyNewLine($"{node}");
+            Printer.PrintFancyNewLine($"{node}");
 
             var children = node.Children;
             for (int i = 0; i < children.Count; i++)
-                PrintPretty(children[i], indent, i == children.Count - 1, printer);
+                PrintPretty(children[i], indent, i == children.Count - 1);
         }
     }
 }

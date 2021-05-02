@@ -3,5 +3,6 @@
     public void Test()
 	{
 		int test = 23 * 23;
+		test = 5;
 	}
 }

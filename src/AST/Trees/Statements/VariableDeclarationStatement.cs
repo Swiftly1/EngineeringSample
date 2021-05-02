@@ -1,11 +1,11 @@
 ﻿using Common;
 using AST.Trees.Expressions.Untyped;
 
-namespace AST.Trees
+namespace AST.Trees.Statements
 {
-    public class VariableDeclarationNode : Node
+    public class VariableDeclarationStatement : StatementNode
     {
-        public VariableDeclarationNode(string variableName, TypeInfo declaredType, UntypedExpression expression, DiagnosticInfo diag) : base(diag)
+        public VariableDeclarationStatement(string variableName, TypeInfo declaredType, UntypedExpression expression, DiagnosticInfo diag) : base(diag)
         {
             VariableName = variableName;
             DeclaredType = declaredType;

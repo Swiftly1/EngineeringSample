@@ -7,6 +7,7 @@ using AST.Miscs.Matching;
 using AST.Trees.Expressions.Untyped;
 using System.Linq;
 using AST.Trees.Expressions;
+using AST.Trees.Statements;
 
 namespace AST.Builders
 {
@@ -33,7 +34,7 @@ namespace AST.Builders
                     .Match(LexingElement.Type, LexingElement.Word, LexingElement.Equal)
                     .Evaluate(TakeToEnd());
 
-                    var statementMatcher =
+                    var assignStatementMatcher =
                     MatcherUtils
                     .Match(LexingElement.Word, LexingElement.Equal)
                     .Evaluate(TakeToEnd());
@@ -48,16 +49,37 @@ namespace AST.Builders
                         else
                             _errors.AddMessages(result.Messages);
                     }
-                    else if (statementMatcher.Success)
+                    else if (assignStatementMatcher.Success)
                     {
+                        var ahead = TryGetAhead(assignStatementMatcher.Items.Count, true);
+                        var result = TryMatchVariableReAssignment(ahead.Items);
 
+                        if (result.Success)
+                            bodyNode.AddChild(result.Data);
+                        else
+                            _errors.AddMessages(result.Messages);
                     }
                 } while (MoveNext());
 
                 return bodyNode;
             }
 
-            private Result<VariableDeclarationNode> TryMatchVariableDeclaration(List<LexElement> items)
+            private Result<AssignmentStatement> TryMatchVariableReAssignment(List<LexElement> items)
+            {
+                var name = items[0] as LexWord;
+
+                var skipped = TakeToEnd(1);
+                var result = TryMatchExpression(skipped);
+
+                if (!result.Success)
+                    return result.ToFailedResult<AssignmentStatement>();
+
+                var assignStatement = new AssignmentStatement(name.Value, result.Data, name.Diagnostics);
+
+                return new Result<AssignmentStatement>(assignStatement);
+            }
+
+            private Result<VariableDeclarationStatement> TryMatchVariableDeclaration(List<LexElement> items)
             {
                 string typeName = items[0] as LexKeyword;
                 var name = items[1] as LexWord;
@@ -67,11 +89,11 @@ namespace AST.Builders
                 var result = TryMatchExpression(skipped);
 
                 if (!result.Success)
-                    return result.ToFailedResult<VariableDeclarationNode>();
+                    return result.ToFailedResult<VariableDeclarationStatement>();
 
-                var vdn = new VariableDeclarationNode(name, type, result.Data, name.Diagnostics);
+                var vdn = new VariableDeclarationStatement(name, type, result.Data, name.Diagnostics);
 
-                return new Result<VariableDeclarationNode>(vdn);
+                return new Result<VariableDeclarationStatement>(vdn);
             }
 
             private Result<UntypedExpression> TryMatchExpression(List<LexElement> items)

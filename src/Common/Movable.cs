@@ -48,7 +48,7 @@ namespace Common
 
         protected T ElementAt(int index) => _Collection[index];
 
-        protected List<T> TakeToEnd(int offSet = 0) => _Collection.Skip(_Index + offSet).ToList();
+        protected List<T> TakeToEnd(int offset = 0) => _Collection.Skip(_Index + offset).ToList();
 
         protected (bool Sucess, List<T> Items) TryGetAhead(int count, bool includeCurrent = false)
         {

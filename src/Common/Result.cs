@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Common
 {
@@ -28,7 +29,7 @@ namespace Common
 
         public bool Success { get; }
 
-        public Message Message => Messages[0];
+        public Message? Message => Messages.Count > 0 ? Messages[0] : null;
 
         public List<Message> Messages { get; } = new List<Message>();
 
