@@ -17,7 +17,7 @@ namespace AST.Trees
 
         public override string ToString()
         {
-            return $"Function: {Name}";
+            return $"Function: '{Name}'";
         }
     }
 }

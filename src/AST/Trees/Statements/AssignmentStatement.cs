@@ -17,7 +17,7 @@ namespace AST.Trees.Statements
 
         public override string ToString()
         {
-            return $"Assign to {Name} value: {Expression}";
+            return $"Assign to '{Name}' value: '{Expression}'";
         }
     }
 }

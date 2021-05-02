@@ -21,7 +21,7 @@ namespace AST.Trees.Statements
 
         public override string ToString()
         {
-            return $"VariableDeclaration: {VariableName}";
+            return $"VariableDeclaration: '{VariableName}'";
         }
     }
 }

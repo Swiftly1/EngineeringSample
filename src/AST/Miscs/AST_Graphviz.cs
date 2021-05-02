@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text;
 using AST.Trees;
@@ -12,8 +10,10 @@ namespace AST.Miscs
     public class AST_Graphviz
     {
         private IMessagesPrinter Printer { get; }
+
         private readonly StringBuilder sb = new();
-        private int counter = 0;
+
+        private HashSet<int> AlreadyIncluded = new HashSet<int>();
 
         public AST_Graphviz(IMessagesPrinter printer)
         {
@@ -34,37 +34,47 @@ namespace AST.Miscs
 
         private void CollectData(Node node)
         {
-            var q = new Queue<Node>();
-            q.Enqueue(node);
+            var queue = new Queue<Node>();
+            queue.Enqueue(node);
 
-            while (q.Count > 0)
+            while (queue.Count > 0)
             {
-                var current = q.Dequeue();
-
-                if (!current.Children.Any())
-                {
-                    continue;
-                }
-
-                ProcessElement(current, q);
+                ProcessElement(queue.Dequeue(), queue);
             }
         }
 
         private void ProcessElement(Node current, Queue<Node> q)
         {
-            foreach (var child in current.Children)
+            if (current.Children.Count > 0)
             {
-                sb
-                .Append("\t")
-                .Append(Node2Text(current))
-                .Append(" -> ")
-                .Append(Node2Text(child))
-                .AppendLine();
-            }
+                foreach (var child in current.Children)
+                {
+                    AlreadyIncluded.Add(child.Id);
 
-            foreach (var child in current.Children)
+                    sb
+                    .Append("\t")
+                    .Append(Node2Text(current))
+                    .Append(" -> ")
+                    .Append(Node2Text(child))
+                    .AppendLine();
+                }
+
+                foreach (var child in current.Children)
+                {
+                    q.Enqueue(child);
+                }
+            }
+            else
             {
-                q.Enqueue(child);
+                if (!AlreadyIncluded.Contains(current.Id))
+                {
+                    AlreadyIncluded.Add(current.Id);
+
+                    sb
+                    .Append("\t")
+                    .Append(Node2Text(current))
+                    .AppendLine();
+                }
             }
         }
 

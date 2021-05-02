@@ -23,7 +23,7 @@ namespace AST.Trees.Expressions.Untyped
 
         public override string ToString()
         {
-            return $"Complex Untyped: Left:{Left}; Right:{Right}; Operator:{Operator}";
+            return $"Complex Untyped Expression: Operator: '{Operator.Kind}'";
         }
     }
 }

@@ -13,7 +13,7 @@ namespace AST.Trees
 
         public override string ToString()
         {
-            return $"Namespace: {Name}";
+            return $"Namespace: '{Name}'";
         }
     }
 }
