@@ -84,7 +84,10 @@ namespace AST.Miscs.Matching
 
                 return (wg.Check(items.Select(x => x.Kind).ToList()), items);
             }
-            else throw new NotImplementedException($"Requirement of type '{requirement.GetType()}' is not supported");
+            else
+            {
+                throw new NotImplementedException($"Requirement of type '{requirement.GetType()}' is not supported");
+            }
         }
     }
 }

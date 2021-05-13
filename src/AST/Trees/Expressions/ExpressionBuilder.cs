@@ -4,6 +4,7 @@ using AST.Trees.Expressions.Untyped;
 using Text2Abstraction.LexicalElements;
 using Common.Lexing;
 using AST.Miscs;
+using System.Linq;
 
 namespace AST.Trees.Expressions
 {
@@ -34,8 +35,9 @@ namespace AST.Trees.Expressions
                 return left;
 
             var @operator = _Current as LexCharacter;
+            var higher_prior_operators = new[] { LexingElement.Star, LexingElement.Slash };
 
-            while (@operator.Kind == LexingElement.Star)
+            while (higher_prior_operators.Contains(@operator.Kind))
             {
                 MoveNext();
                 var right = GetOperand();

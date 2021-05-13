@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using AST.Trees;
+using AST.Trees.Miscs;
 using Common;
 
 namespace AST.Miscs
@@ -49,7 +50,9 @@ namespace AST.Miscs
             {
                 foreach (var child in current.Children)
                 {
-                    AlreadyIncluded.Add(child.Id);
+                    var childId = (int)child[NodeProperties.ShortId];
+
+                    AlreadyIncluded.Add(childId);
 
                     sb
                     .Append("\t")
@@ -66,9 +69,11 @@ namespace AST.Miscs
             }
             else
             {
-                if (!AlreadyIncluded.Contains(current.Id))
+                var currentId = (int)current[NodeProperties.ShortId];
+
+                if (!AlreadyIncluded.Contains(currentId))
                 {
-                    AlreadyIncluded.Add(current.Id);
+                    AlreadyIncluded.Add(currentId);
 
                     sb
                     .Append("\t")
@@ -80,7 +85,7 @@ namespace AST.Miscs
 
         private string Node2Text(Node node)
         {
-            return $"{{\"{node.Id}\" [label=\"{node}\"]}}";
+            return $"{{\"{node[NodeProperties.ShortId]}\" [label=\"{node}\"]}}";
         }
     }
 }

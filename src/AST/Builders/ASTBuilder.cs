@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AST.Miscs;
 using AST.Trees;
+using AST.Trees.Miscs;
 using Common;
 using Common.Lexing;
 using Text2Abstraction.LexicalElements;
@@ -38,7 +39,13 @@ namespace AST.Builders
             #endif
 
             if (_errors.DumpErrors().Any())
+            {
                 return new Result<RootNode>(_errors.DumpErrors().ToList());
+            }
+            else
+            {
+                var generator = new NodeShortIdGenerator(root).AttachShortIdToNodes();
+            }
 
             return new Result<RootNode>(root);
         }
