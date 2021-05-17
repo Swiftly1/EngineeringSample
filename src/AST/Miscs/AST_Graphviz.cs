@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using AST.Trees;
 using AST.Trees.Miscs;
@@ -14,7 +13,7 @@ namespace AST.Miscs
 
         private readonly StringBuilder sb = new();
 
-        private HashSet<int> AlreadyIncluded = new HashSet<int>();
+        private HashSet<int> AlreadyIncluded = new();
 
         public AST_Graphviz(IMessagesPrinter printer)
         {
@@ -55,7 +54,7 @@ namespace AST.Miscs
                     AlreadyIncluded.Add(childId);
 
                     sb
-                    .Append("\t")
+                    .Append('\t')
                     .Append(Node2Text(current))
                     .Append(" -> ")
                     .Append(Node2Text(child))
@@ -76,7 +75,7 @@ namespace AST.Miscs
                     AlreadyIncluded.Add(currentId);
 
                     sb
-                    .Append("\t")
+                    .Append('\t')
                     .Append(Node2Text(current))
                     .AppendLine();
                 }

@@ -5,6 +5,7 @@ using Text2Abstraction.LexicalElements;
 using System.Collections.Generic;
 using Common.Lexing;
 using AST.Miscs.Matching;
+using System.Linq;
 
 namespace AST.Builders
 {
@@ -24,7 +25,7 @@ namespace AST.Builders
                 _Diagnostics = item.Diagnostics;
             }
 
-            public Node Build()
+            public Result<Node> TryBuild()
             {
                 var node = new NamespaceNode(_Diagnostics, NamespaceName);
                 do
@@ -46,7 +47,12 @@ namespace AST.Builders
                     }
                 } while (MoveNext());
 
-                return node;
+                if (_errors.DumpErrors().Any())
+                {
+                    return new Result<Node>(_errors.DumpErrors().ToList());
+                }
+
+                return new Result<Node>(node);
             }
 
             private Result<FunctionNode> TryMatchFunction(List<LexElement> matched)
@@ -65,7 +71,7 @@ namespace AST.Builders
                 if (!bodyResult.Success)
                 {
                     _errors.AddMessages(bodyResult.Messages);
-                    return result.ToFailedResult<FunctionNode>();
+                    return bodyResult.ToFailedResult<FunctionNode>();
                 }
 
                 var args = result.Data;

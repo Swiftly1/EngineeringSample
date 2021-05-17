@@ -1,4 +1,5 @@
-﻿using Common;
+﻿using System;
+using Common;
 using Common.Lexing;
 
 namespace Text2Abstraction.LexicalElements
@@ -17,7 +18,7 @@ namespace Text2Abstraction.LexicalElements
 
         public override string ToString()
         {
-            return "LexElement";
+            return $"LexElement {Enum.GetName(typeof(LexingElement), Kind)}";
         }
     }
 }

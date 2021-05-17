@@ -6,7 +6,7 @@ namespace AST.Trees.Miscs
     {
         private Node Node { get; }
 
-        private static int Counter { get; set; } = 0;
+        private int Counter { get; set; } = 0;
 
         public NodeShortIdGenerator(Node node)
         {

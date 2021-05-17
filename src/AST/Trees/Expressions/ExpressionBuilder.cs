@@ -18,8 +18,26 @@ namespace AST.Trees.Expressions
         {
             try
             {
-                var tree = GetOperand();
-                return new Result<UntypedExpression>(tree);
+                var left = GetSubExpression();
+
+                var @operator = _Current as LexCharacter;
+                var higher_prior_operators = new[] { LexingElement.Plus, LexingElement.Minus };
+
+                while (higher_prior_operators.Contains(@operator.Kind))
+                {
+                    MoveNext();
+                    var right = GetSubExpression();
+                    left = new ComplexUntypedExpression(left, right, OperatorFacts.Convert(@operator.Kind), left.Diagnostics);
+
+                    if (MoveNext())
+                    {
+                        @operator = _Current as LexCharacter;
+                    }
+
+                    break;
+                }
+
+                return new Result<UntypedExpression>(left);
             }
             catch (ASTException ex)
             {
@@ -27,7 +45,7 @@ namespace AST.Trees.Expressions
             }
         }
 
-        private UntypedExpression GetOperand()
+        private UntypedExpression GetSubExpression()
         {
             var left = ToExpression(_Current);
 
@@ -40,8 +58,8 @@ namespace AST.Trees.Expressions
             while (higher_prior_operators.Contains(@operator.Kind))
             {
                 MoveNext();
-                var right = GetOperand();
-                left = new ComplexUntypedExpression(left, right, @operator, left.Diagnostics);
+                var right = GetSubExpression();
+                left = new ComplexUntypedExpression(left, right, OperatorFacts.Convert(@operator.Kind), left.Diagnostics);
 
                 if (MoveNext())
                 {

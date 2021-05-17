@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Common
 {
@@ -13,7 +12,7 @@ namespace Common
             { "int64", GetInt64() },
         };
 
-        private static TypeInfo GetInt64()
+        public static TypeInfo GetInt64()
         {
             return new TypeInfo
             {
@@ -21,7 +20,7 @@ namespace Common
             };
         }
 
-        private static TypeInfo GetInt32()
+        public static TypeInfo GetInt32()
         {
             return new TypeInfo
             {

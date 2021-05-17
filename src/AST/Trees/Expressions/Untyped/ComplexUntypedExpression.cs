@@ -1,11 +1,11 @@
-﻿using Common;
-using Text2Abstraction.LexicalElements;
+﻿using System;
+using Common;
 
 namespace AST.Trees.Expressions.Untyped
 {
     public class ComplexUntypedExpression : UntypedExpression
     {
-        public ComplexUntypedExpression(UntypedExpression left, UntypedExpression right, LexCharacter @operator, DiagnosticInfo diag) : base(diag)
+        public ComplexUntypedExpression(UntypedExpression left, UntypedExpression right, ExpressionOperator @operator, DiagnosticInfo diag) : base(diag)
         {
             Left = left;
             Operator = @operator;
@@ -17,13 +17,13 @@ namespace AST.Trees.Expressions.Untyped
 
         public UntypedExpression Left { get; set; }
 
-        public LexCharacter Operator { get; set; }
+        public ExpressionOperator Operator { get; set; }
 
         public UntypedExpression Right { get; set; }
 
         public override string ToString()
         {
-            return $"Complex Untyped Expression: Operator: '{Operator.Kind}'";
+            return $"Complex Untyped Expression: Operator: '{Enum.GetName(typeof(ExpressionOperator), Operator)}'";
         }
     }
 }

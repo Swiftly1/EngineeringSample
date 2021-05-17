@@ -24,19 +24,31 @@ namespace AST.Builders
 
             var splitted = SplitByNamespace();
 
-            /// It's way easier to debug non-Parallel code
-            #if DEBUG
-                foreach (var item in splitted)
+#if DEBUG
+            foreach (var item in splitted)
+            {
+                var unit = new NamespaceBuilder(item).TryBuild();
+
+                if (!unit.Success)
                 {
-                    var unit = new NamespaceBuilder(item).Build();
-                    root.AddChild(unit);
+                    return unit.ToFailedResult<RootNode>();
                 }
-            #else
-                Parallel.ForEach(splitted, (GroupedLexicalElements item) =>
+
+                root.AddChild(unit.Data);
+            }
+#else
+            Parallel.ForEach(splitted, (GroupedLexicalElements item) =>
+            {
+                var unit = new NamespaceBuilder(item).TryBuild();
+
+                if (!unit.Success)
                 {
-                    var unit = new NamespaceBuilder(item).Build();
-                });
-            #endif
+                    return unit.ToFailedResult<RootNode>();
+                }
+
+                root.AddChild(unit.Data);
+          });
+#endif
 
             if (_errors.DumpErrors().Any())
             {
@@ -58,7 +70,16 @@ namespace AST.Builders
 
             do
             {
-                if (current_group is null && _Current.Kind != LexingElement.Namespace)
+                if (_Current.Kind is LexingElement.NewLine)
+                {
+                    // Including NewLines makes too much trouble
+                    // Benefits of doing so aren't known at the time
+                    // if (current_group != null)
+                    // {
+                    //     current_group.AddElement(_Current);
+                    // }
+                }
+                else if (current_group is null && _Current.Kind != LexingElement.Namespace)
                 {
                     _errors.AddError($"Every element must be within some namespace.", _Current.Diagnostics);
                 }
