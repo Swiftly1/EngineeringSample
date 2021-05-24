@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using AST.Miscs;
+using AST.Passes;
 using AST.Trees;
-using AST.Trees.Miscs;
 using Common;
 using Common.Lexing;
 using Text2Abstraction.LexicalElements;
@@ -13,6 +12,8 @@ namespace AST.Builders
     public partial class ASTBuilder : Movable<LexElement>
     {
         private readonly ErrorHandler _errors = new();
+
+        public readonly PassManager Passes = PassManager.GetDefaultPassManager();
 
         public ASTBuilder(List<LexElement> collection) : base(collection)
         {
@@ -56,7 +57,7 @@ namespace AST.Builders
             }
             else
             {
-                var generator = new NodeShortIdGenerator(root).AttachShortIdToNodes();
+                Passes.WalkAll(root);
             }
 
             return new Result<RootNode>(root);

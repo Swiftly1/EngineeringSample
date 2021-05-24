@@ -1,22 +1,17 @@
 ﻿using System.Collections.Generic;
+using AST.Trees;
+using AST.Trees.Miscs;
 
-namespace AST.Trees.Miscs
+namespace AST.Passes
 {
-    public class NodeShortIdGenerator
+    public class ShortIdGeneratorPass : IPass
     {
-        private Node Node { get; }
-
         private int Counter { get; set; } = 0;
 
-        public NodeShortIdGenerator(Node node)
-        {
-            Node = node;
-        }
-
-        public Node AttachShortIdToNodes()
+        private void AttachShortIdToNodes(Node root)
         {
             var queue = new Queue<Node>();
-            queue.Enqueue(Node);
+            queue.Enqueue(root);
 
             while (queue.Count > 0)
             {
@@ -29,8 +24,11 @@ namespace AST.Trees.Miscs
                     queue.Enqueue(child);
                 }
             }
+        }
 
-            return Node;
+        public void Walk(Node root)
+        {
+            AttachShortIdToNodes(root);
         }
     }
 }
