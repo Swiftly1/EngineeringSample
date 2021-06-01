@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.30114.105
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests.RegressionDiagnostics", "Infrastructure\Tests.RegressionDiagnostics\Tests.RegressionDiagnostics.csproj", "{A7E8C1BA-C034-410C-BCC1-B80BFCA9F24A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Regression", "Infrastructure\Regression\Regression.csproj", "{07DEAB63-3F6C-4DE6-B2D8-2F7EFD97FC3A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests.Regression", "Infrastructure\Tests.Regression\Tests.Regression.csproj", "{07DEAB63-3F6C-4DE6-B2D8-2F7EFD97FC3A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests", "src\Tests\Tests.csproj", "{804BF741-72AC-452F-96A8-E396EEBB7993}"
 EndProject
