@@ -1,9 +1,9 @@
 ﻿using BenchmarkDotNet.Running;
 using Tests.LexerTests;
 
-namespace Tests.Regression
+namespace Regression
 {
-    public static class Program
+    static class Program
     {
         static void Main()
         {

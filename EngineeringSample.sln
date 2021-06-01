@@ -3,21 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30804.86
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AST", "AST\AST.csproj", "{F48475D5-6E95-4C9B-9DC1-FE19F833550A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AST", "src\AST\AST.csproj", "{F48475D5-6E95-4C9B-9DC1-FE19F833550A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Runner", "Runner\Runner.csproj", "{4F0AAC40-1C96-4CEC-A78E-E3343F36B978}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Runner", "src\Runner\Runner.csproj", "{4F0AAC40-1C96-4CEC-A78E-E3343F36B978}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Emitter", "Emitter\Emitter.csproj", "{66233C43-C084-4A6E-816C-EE8F7CC2151E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Emitter", "src\Emitter\Emitter.csproj", "{66233C43-C084-4A6E-816C-EE8F7CC2151E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Text2Abstraction", "Text2Abstraction\Text2Abstraction.csproj", "{CE5F7044-A900-4B6B-A790-37F704349B6A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Text2Abstraction", "src\Text2Abstraction\Text2Abstraction.csproj", "{CE5F7044-A900-4B6B-A790-37F704349B6A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests", "Tests\Tests.csproj", "{9980DB24-7259-4BE0-9BEC-B13D98E27922}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests", "src\Tests\Tests.csproj", "{9980DB24-7259-4BE0-9BEC-B13D98E27922}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common", "Common\Common.csproj", "{C79EDFC5-CDAB-4CE7-B735-96D6C50F9493}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests.Regression", "Tests.Regression\Tests.Regression.csproj", "{CD5DF7F8-901C-431E-84F2-67D7484CB841}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.RegressionDiagnostics", "Tests.RegressionDiagnostics\Tests.RegressionDiagnostics.csproj", "{E27E0822-47BC-4952-91F8-E6D5DA2A3843}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common", "src\Common\Common.csproj", "{C79EDFC5-CDAB-4CE7-B735-96D6C50F9493}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -101,30 +97,6 @@ Global
 		{C79EDFC5-CDAB-4CE7-B735-96D6C50F9493}.Release|x64.Build.0 = Release|Any CPU
 		{C79EDFC5-CDAB-4CE7-B735-96D6C50F9493}.Release|x86.ActiveCfg = Release|Any CPU
 		{C79EDFC5-CDAB-4CE7-B735-96D6C50F9493}.Release|x86.Build.0 = Release|Any CPU
-		{CD5DF7F8-901C-431E-84F2-67D7484CB841}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CD5DF7F8-901C-431E-84F2-67D7484CB841}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CD5DF7F8-901C-431E-84F2-67D7484CB841}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{CD5DF7F8-901C-431E-84F2-67D7484CB841}.Debug|x64.Build.0 = Debug|Any CPU
-		{CD5DF7F8-901C-431E-84F2-67D7484CB841}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{CD5DF7F8-901C-431E-84F2-67D7484CB841}.Debug|x86.Build.0 = Debug|Any CPU
-		{CD5DF7F8-901C-431E-84F2-67D7484CB841}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CD5DF7F8-901C-431E-84F2-67D7484CB841}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CD5DF7F8-901C-431E-84F2-67D7484CB841}.Release|x64.ActiveCfg = Release|Any CPU
-		{CD5DF7F8-901C-431E-84F2-67D7484CB841}.Release|x64.Build.0 = Release|Any CPU
-		{CD5DF7F8-901C-431E-84F2-67D7484CB841}.Release|x86.ActiveCfg = Release|Any CPU
-		{CD5DF7F8-901C-431E-84F2-67D7484CB841}.Release|x86.Build.0 = Release|Any CPU
-		{E27E0822-47BC-4952-91F8-E6D5DA2A3843}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E27E0822-47BC-4952-91F8-E6D5DA2A3843}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E27E0822-47BC-4952-91F8-E6D5DA2A3843}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{E27E0822-47BC-4952-91F8-E6D5DA2A3843}.Debug|x64.Build.0 = Debug|Any CPU
-		{E27E0822-47BC-4952-91F8-E6D5DA2A3843}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{E27E0822-47BC-4952-91F8-E6D5DA2A3843}.Debug|x86.Build.0 = Debug|Any CPU
-		{E27E0822-47BC-4952-91F8-E6D5DA2A3843}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E27E0822-47BC-4952-91F8-E6D5DA2A3843}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E27E0822-47BC-4952-91F8-E6D5DA2A3843}.Release|x64.ActiveCfg = Release|Any CPU
-		{E27E0822-47BC-4952-91F8-E6D5DA2A3843}.Release|x64.Build.0 = Release|Any CPU
-		{E27E0822-47BC-4952-91F8-E6D5DA2A3843}.Release|x86.ActiveCfg = Release|Any CPU
-		{E27E0822-47BC-4952-91F8-E6D5DA2A3843}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

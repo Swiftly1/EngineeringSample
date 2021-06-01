@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using AST.Miscs;
 using AST.Passes;
 using AST.Trees;
@@ -25,7 +26,7 @@ namespace AST.Builders
 
             var splitted = SplitByNamespace();
 
-#if DEBUG
+
             foreach (var item in splitted)
             {
                 var unit = new NamespaceBuilder(item).TryBuild();
@@ -37,19 +38,6 @@ namespace AST.Builders
 
                 root.AddChild(unit.Data);
             }
-#else
-            Parallel.ForEach(splitted, (GroupedLexicalElements item) =>
-            {
-                var unit = new NamespaceBuilder(item).TryBuild();
-
-                if (!unit.Success)
-                {
-                    return unit.ToFailedResult<RootNode>();
-                }
-
-                root.AddChild(unit.Data);
-          });
-#endif
 
             if (_errors.DumpErrors().Any())
             {
