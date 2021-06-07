@@ -9,7 +9,14 @@ namespace VersionIncrementator
     {
         public static void Main()
         {
-            var path = Path.Combine("..", "..", "..", "..", "..", "src");
+            #if DEBUG
+                Console.WriteLine(Directory.GetCurrentDirectory());
+                var pathCombined = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..");
+                Directory.SetCurrentDirectory(pathCombined);
+                Console.WriteLine(Directory.GetCurrentDirectory());
+            #endif
+
+            var path = Path.Combine("..", "..", "src");
 
             var files = Directory
                 .GetFiles(path, "*", new EnumerationOptions { RecurseSubdirectories = true })
