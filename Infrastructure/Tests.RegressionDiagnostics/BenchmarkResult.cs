@@ -1,4 +1,6 @@
-﻿namespace Tests.RegressionDiagnostics
+﻿using System;
+
+namespace Tests.RegressionDiagnostics
 {
     public class BenchmarkResult
     {
@@ -47,5 +49,9 @@
         public string Mean { get; set; }
         public string Error { get; set; }
         public string StdDev { get; set; }
+
+        public DateTime CollectedAt { get; set; } = DateTime.Now;
+
+        public string CollectedAtVersion { get; set; }
     }
 }

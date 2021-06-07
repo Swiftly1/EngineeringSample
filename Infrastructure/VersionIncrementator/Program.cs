@@ -39,7 +39,7 @@ namespace VersionIncrementator
 
                     sb
                         .Append("    <AssemblyVersion>")
-                        .Append($"{versions[0]}.{versions[1]}.{versions[2]}.{versions[3] + 1}")
+                        .Append(versions[0]).Append('.').Append(versions[1]).Append('.').Append(versions[2]).Append('.').Append(versions[3] + 1)
                         .AppendLine("</AssemblyVersion>");
                 }
                 else if (line.Trim().StartsWith("<FileVersion>"))
@@ -48,7 +48,7 @@ namespace VersionIncrementator
                     var versions = version.Split(".").Select(x => Convert.ToInt32(x)).ToList();
                     sb
                         .Append("    <FileVersion>")
-                        .Append($"{versions[0]}.{versions[1]}.{versions[2]}.{versions[3] + 1}")
+                        .Append(versions[0]).Append('.').Append(versions[1]).Append('.').Append(versions[2]).Append('.').Append(versions[3] + 1)
                         .AppendLine("</FileVersion>");
                 }
                 else

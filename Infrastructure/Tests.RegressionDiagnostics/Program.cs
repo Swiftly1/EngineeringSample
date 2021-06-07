@@ -1,26 +1,81 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Linq;
+using BenchmarkDotNet.Running;
 using CsvHelper;
 using CsvHelper.Configuration;
+using Newtonsoft.Json;
+using Tests.LexerTests;
 
 namespace Tests.RegressionDiagnostics
 {
-    public static class Program
+    public class Program
     {
         public static void Main()
         {
-            const string folderPath = "../../../../Tests.Regression";
-            const string resultsPath = "../../../../Tests.Regression/BenchmarkDotNet.Artifacts/results";
-            CreateBenchmarkDat(folderPath);
-            var data = ReadResults(resultsPath);
+            #if DEBUG
+                Console.WriteLine(Directory.GetCurrentDirectory());
+                var pathCombined = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..");
+                Directory.SetCurrentDirectory(pathCombined);
+                Console.WriteLine(Directory.GetCurrentDirectory());
+            #endif
 
-            foreach (var item in data)
+            const string resultsPath = "./BenchmarkDotNet.Artifacts/results";
+
+            var dirInfo = new DirectoryInfo(resultsPath);
+
+            if (dirInfo.Exists)
             {
-                Console.WriteLine($"{item.Method} - {item.Mean}");
+                Console.WriteLine($"Removing folder: '{dirInfo.FullName}'");
+                dirInfo.Delete(true);
             }
+
+            BenchmarkSwitcher.FromAssembly(typeof(BasicTests).Assembly).RunAll();
+
+            const string perfDataPath = "../PerformanceData/data.json";
+            var oldJson = File.ReadAllText(perfDataPath);
+            var oldData = JsonConvert.DeserializeObject<List<BenchmarkResult>>(oldJson);
+
+            var newData = ReadResults(resultsPath);
+
+            var version = GetVersion();
+
+            Console.WriteLine(version);
+
+            foreach (var entry in newData)
+            {
+                entry.CollectedAtVersion = version;
+            }
+
+            oldData.AddRange(newData);
+
+            var json = JsonConvert.SerializeObject(oldData, Formatting.Indented);
+
+            File.WriteAllText(perfDataPath, json);
+        }
+
+        private static string GetVersion()
+        {
+            var path = Path.Combine("..", "..", "src");
+
+            var file = Directory
+                       .GetFiles(path, "*", new EnumerationOptions { RecurseSubdirectories = true })
+                       .First(x => x.EndsWith(".csproj"));
+
+            var lines = File.ReadAllLines(file);
+
+            foreach (var line in lines)
+            {
+                if (line.Trim().StartsWith("<AssemblyVersion>"))
+                {
+                    var version = line.Replace("<AssemblyVersion>", "").Replace("</AssemblyVersion>", "").Trim();
+                    return version;
+                }
+            }
+
+            throw new Exception($"Version is not defined in '{file}'");
         }
 
         private static List<BenchmarkResult> ReadResults(string resultsPath)
@@ -44,53 +99,6 @@ namespace Tests.RegressionDiagnostics
             }
 
             return list;
-        }
-
-        private static void CreateBenchmarkDat(string folderPath)
-        {
-            string extension;
-
-            if (OperatingSystem.IsWindows())
-            {
-                extension = "cmd";
-            }
-            else if (OperatingSystem.IsLinux())
-            {
-                extension = "sh";
-            }
-            else
-            {
-                throw new PlatformNotSupportedException();
-            }
-
-            var cmdPath = Path.Combine(folderPath, $"run.{extension}");
-            var fileInfo = new FileInfo(cmdPath);
-
-            if (!fileInfo.Exists)
-                throw new Exception($"Script file '{cmdPath}' not found");
-
-            var process = new Process
-            {
-                StartInfo = new ProcessStartInfo
-                {
-                    WindowStyle = ProcessWindowStyle.Hidden,
-                    FileName = fileInfo.FullName,
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    UseShellExecute = false,
-                    WorkingDirectory = Path.GetDirectoryName(cmdPath)
-                }
-            };
-
-            process.Start();
-
-            string standard_output;
-            while ((standard_output = process.StandardOutput.ReadLine()) != null)
-            {
-                Console.WriteLine(standard_output);
-            }
-
-            process.WaitForExit();
         }
     }
 }
