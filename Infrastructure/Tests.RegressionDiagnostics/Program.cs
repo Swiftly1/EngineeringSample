@@ -85,7 +85,7 @@ namespace Tests.RegressionDiagnostics
             var dir = new DirectoryInfo(resultsPath);
             var cfg = new CsvConfiguration(CultureInfo.InvariantCulture)
             {
-                Delimiter = ";"
+                Delimiter = ","
             };
 
             foreach (var csvPath in dir.EnumerateFiles("*.csv"))
