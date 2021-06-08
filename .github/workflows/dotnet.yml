@@ -1,0 +1,15 @@
+name: PerformanceWatch
+
+on:
+  push:
+    branches: [ master ]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: HTTP Request Action
+      uses: fjogeleit/http-request-action@v1.8.0
+      with:
+        url: ${{ secrets.PING_URL }}
+        method: 'POST'
+        timeout: 60000
