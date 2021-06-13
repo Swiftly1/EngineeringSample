@@ -1,8 +1,8 @@
-﻿using System;
-using BenchmarkDotNet.Attributes;
+﻿using Xunit;
 using Common;
+using System;
 using Text2Abstraction;
-using Xunit;
+using BenchmarkDotNet.Attributes;
 
 namespace Tests.LexerTests
 {
@@ -21,6 +21,11 @@ namespace Tests.LexerTests
         [Benchmark]
         public void UnclosedMultiLineString_002()
         {
+            // The code is:
+            //`
+            //"asd"
+            //   "qw`
+
             var code = $"{Environment.NewLine}\"asd\"{Environment.NewLine}{new string(' ', 3)}\"qw";
             var result = new TextTransformer(code);
             var exception = Assert.Throws<Exception>(() => result.Walk());

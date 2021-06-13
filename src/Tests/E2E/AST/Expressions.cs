@@ -1,12 +1,12 @@
-﻿using AST.Builders;
-using AST.Trees.Expressions.Untyped;
+﻿using Xunit;
+using Common;
+using AST.Builders;
+using Text2Abstraction;
 using AST.Trees.Statements;
 using BenchmarkDotNet.Attributes;
-using Common;
-using Text2Abstraction;
-using Xunit;
+using AST.Trees.Expressions.Untyped;
 
-namespace Tests.E2E
+namespace Tests.E2E.AST
 {
     public class Expressions
     {
@@ -17,11 +17,9 @@ namespace Tests.E2E
             var code =
             @"
             namespace TestNamespace
+            public void TestFunction()
             {
-                public void TestFunction()
-	            {
-		            int test = 345645 +23423;
-	            }
+                int test = 345645 +23423;
             }
             ";
 

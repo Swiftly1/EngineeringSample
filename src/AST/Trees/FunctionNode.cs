@@ -2,6 +2,7 @@
 
 namespace AST.Trees
 {
+    // TODO: Change into UntypedFunction
     public class FunctionNode : ScopeableNode
     {
         public FunctionNode(DiagnosticInfo diag, string name, Node body) : base(diag)

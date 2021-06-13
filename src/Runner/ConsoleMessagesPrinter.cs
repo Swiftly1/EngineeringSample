@@ -5,6 +5,8 @@ namespace Runner
 {
     public class ConsoleMessagesPrinter : IMessagesPrinter
     {
+        public ConsoleColor Color { get; set; } = ConsoleColor.Magenta;
+
         private void PrintColorNewLine(string s, ConsoleColor color)
         {
             Console.ForegroundColor = color;
@@ -19,29 +21,14 @@ namespace Runner
             Console.ResetColor();
         }
 
-        public void PrintInformationNewLine(string s)
-        {
-            PrintColorNewLine(s, ConsoleColor.White);
-        }
-
-        public void PrintWarningNewLine(string s)
-        {
-            PrintColorNewLine(s, ConsoleColor.Yellow);
-        }
-
-        public void PrintErrorNewLine(string s)
-        {
-            PrintColorNewLine(s, ConsoleColor.Red);
-        }
-
-        public void PrintFancyNewLine(string s)
-        {
-            PrintColorNewLine(s, ConsoleColor.Magenta);
-        }
-
         public void PrintInformation(string s)
         {
             PrintColor(s, ConsoleColor.White);
+        }
+
+        public void PrintInformationNewLine(string s)
+        {
+            PrintColorNewLine(s, ConsoleColor.White);
         }
 
         public void PrintWarning(string s)
@@ -49,14 +36,28 @@ namespace Runner
             PrintColor(s, ConsoleColor.Yellow);
         }
 
+        public void PrintWarningNewLine(string s)
+        {
+            PrintColorNewLine(s, ConsoleColor.Yellow);
+        }
+
         public void PrintError(string s)
         {
             PrintColor(s, ConsoleColor.Red);
         }
-
-        public void PrintFancy(string s)
+        public void PrintErrorNewLine(string s)
         {
-            PrintColor(s, ConsoleColor.Magenta);
+            PrintColorNewLine(s, ConsoleColor.Red);
+        }
+
+        public void PrintColor(string s)
+        {
+            PrintColor(s, this.Color);
+        }
+
+        public void PrintColorNewLine(string s)
+        {
+            PrintColorNewLine(s, this.Color);
         }
     }
 }

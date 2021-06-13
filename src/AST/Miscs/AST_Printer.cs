@@ -19,19 +19,20 @@ namespace AST.Miscs
 
         private void PrintPretty(Node node, string indent, bool last)
         {
-            Printer.PrintFancy(indent);
+            Printer.PrintColor(indent);
+
             if (last)
             {
-                Printer.PrintFancy(@"\-");
+                Printer.PrintColor(@"\-");
                 indent += "  ";
             }
             else
             {
-                Printer.PrintFancy("|-");
+                Printer.PrintColor("|-");
                 indent += "| ";
             }
 
-            Printer.PrintFancyNewLine($"{node}");
+            Printer.PrintColorNewLine($"{node}");
 
             var children = node.Children;
             for (int i = 0; i < children.Count; i++)

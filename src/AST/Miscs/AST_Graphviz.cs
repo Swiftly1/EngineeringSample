@@ -29,7 +29,7 @@ namespace AST.Miscs
                             $"{sb}" +
                             "}";
 
-            Printer.PrintFancy(template);
+            Printer.PrintColor(template);
         }
 
         private void CollectData(Node node)

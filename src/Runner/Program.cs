@@ -1,6 +1,8 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using AST.Builders;
 using AST.Miscs;
+using Emitter.LLVM;
 using Text2Abstraction;
 
 namespace Runner
@@ -24,9 +26,16 @@ namespace Runner
 
             if (ast.Success)
             {
+                printer.Color = ConsoleColor.Blue;
                 new AST_Printer(printer).PrintPretty(ast.Data);
-                printer.PrintFancyNewLine("");
+
+                printer.PrintColorNewLine("");
+                printer.Color = ConsoleColor.Magenta;
                 new AST_Graphviz(printer).PrintPretty(ast.Data);
+
+                printer.PrintColorNewLine($"{Environment.NewLine}");
+                printer.Color = ConsoleColor.Green;
+                new LLVM_Emitter(printer).Emit(ast.Data);
             }
             else
             {

@@ -10,6 +10,7 @@
   <ItemGroup>
     <ProjectReference Include="..\AST\AST.csproj" />
     <ProjectReference Include="..\Common\Common.csproj" />
+    <ProjectReference Include="..\Emitter\Emitter.csproj" />
     <ProjectReference Include="..\Text2Abstraction\Text2Abstraction.csproj" />
   </ItemGroup>
 
