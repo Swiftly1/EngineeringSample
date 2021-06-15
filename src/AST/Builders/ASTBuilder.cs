@@ -26,7 +26,6 @@ namespace AST.Builders
 
             var splitted = SplitByNamespace();
 
-
             foreach (var item in splitted)
             {
                 var unit = new NamespaceBuilder(item).TryBuild();

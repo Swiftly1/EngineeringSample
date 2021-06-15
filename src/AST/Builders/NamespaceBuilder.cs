@@ -1,11 +1,12 @@
 ﻿using Common;
 using AST.Miscs;
 using AST.Trees;
-using Text2Abstraction.LexicalElements;
-using System.Collections.Generic;
+using System.Linq;
 using Common.Lexing;
 using AST.Miscs.Matching;
-using System.Linq;
+using System.Collections.Generic;
+using AST.Trees.Declarations.Untyped;
+using Text2Abstraction.LexicalElements;
 
 namespace AST.Builders
 {
@@ -45,6 +46,10 @@ namespace AST.Builders
                         else
                             _errors.AddMessages(result.Messages);
                     }
+                    else
+                    {
+                        _errors.AddMessage(Message.CreateError($"Unexpected element {_Current}.", _Current.Diagnostics));
+                    }
                 } while (MoveNext());
 
                 if (_errors.DumpErrors().Any())
@@ -55,13 +60,13 @@ namespace AST.Builders
                 return new Result<Node>(node);
             }
 
-            private Result<FunctionNode> TryMatchFunction(List<LexElement> matched)
+            private Result<UntypedFunctionNode> TryMatchFunction(List<LexElement> matched)
             {
                 var result = GetTillClosed(LexingElement.OpenParenthesis, LexingElement.ClosedParenthesis);
 
                 if (!result.Success)
                 {
-                    return result.ToFailedResult<FunctionNode>();
+                    return result.ToFailedResult<UntypedFunctionNode>();
                 }
 
                 MoveNext();
@@ -71,16 +76,16 @@ namespace AST.Builders
                 if (!bodyResult.Success)
                 {
                     _errors.AddMessages(bodyResult.Messages);
-                    return bodyResult.ToFailedResult<FunctionNode>();
+                    return bodyResult.ToFailedResult<UntypedFunctionNode>();
                 }
 
                 var args = result.Data;
                 string functionName = matched[2] as LexWord;
                 var bodyBuilder = new BodyBuilder(bodyResult.Data, _Diagnostics);
                 var body = bodyBuilder.Build();
-                var node = new FunctionNode(matched[2].Diagnostics, functionName, body);
+                var node = new UntypedFunctionNode(matched[2].Diagnostics, functionName, body);
 
-                return new Result<FunctionNode>(node);
+                return new Result<UntypedFunctionNode>(node);
             }
 
             public new (bool Sucess, List<LexElement> Items) TryGetAhead(int count, bool includeCurrent)

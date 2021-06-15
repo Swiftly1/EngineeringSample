@@ -1,6 +1,7 @@
 ﻿using Common;
 using System;
 using AST.Trees;
+using AST.Trees.Declarations.Typed;
 
 namespace Emitter.LLVM
 {
@@ -30,7 +31,7 @@ namespace Emitter.LLVM
             {
 
             }
-            else if (node is FunctionNode fn)
+            else if (node is TypedFunctionNode fn)
             {
                 _printer.PrintColor($"define dso_local i32 @{fn.Name}");
             }

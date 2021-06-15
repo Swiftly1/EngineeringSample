@@ -41,7 +41,7 @@ namespace Runner
             {
                 foreach (var error in ast.Messages)
                 {
-                    printer.PrintError(error.ToString());
+                    printer.PrintErrorNewLine(error.ToString());
                 }
             }
         }

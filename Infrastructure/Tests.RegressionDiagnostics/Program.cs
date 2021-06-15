@@ -51,7 +51,28 @@ namespace Tests.RegressionDiagnostics
 
             oldData.AddRange(newData);
 
-            var json = JsonConvert.SerializeObject(oldData, Formatting.Indented);
+            var reMapped = oldData
+            .Select(x => new
+            {
+                x.Method,
+                x.EnvironmentVariables,
+                x.Jit,
+                x.Platform,
+                x.Runtime,
+                x.AllowVeryLargeObjects,
+                x.Concurrent,
+                x.CpuGroups,
+                x.Force,
+                x.Server,
+                x.Mean,
+                x.Error,
+                x.StdDev,
+                x.CollectedAt,
+                x.CollectedAtVersion
+            })
+            .ToList();
+
+            var json = JsonConvert.SerializeObject(reMapped, Formatting.Indented);
 
             File.WriteAllText(perfDataPath, json);
         }
