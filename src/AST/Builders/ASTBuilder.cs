@@ -20,7 +20,7 @@ namespace AST.Builders
         {
         }
 
-        public Result<RootNode> Build()
+        public ResultDiag<RootNode> Build()
         {
             var root = new RootNode(new DiagnosticInfo(0, 0, ' '));
 
@@ -40,14 +40,14 @@ namespace AST.Builders
 
             if (_errors.DumpErrors().Any())
             {
-                return new Result<RootNode>(_errors.DumpErrors().ToList());
+                return new ResultDiag<RootNode>(_errors.DumpErrors().ToList());
             }
             else
             {
                 Passes.WalkAll(root);
             }
 
-            return new Result<RootNode>(root);
+            return new ResultDiag<RootNode>(root);
         }
 
         private List<GroupedLexicalElements> SplitByNamespace()

@@ -33,7 +33,8 @@ namespace Emitter.LLVM
             }
             else if (node is TypedFunctionNode fn)
             {
-                _printer.PrintColor($"define dso_local i32 @{fn.Name}");
+                var args = FunctionArgsToLLVM(fn);
+                _printer.PrintColor($"define dso_local i32 @{fn.Name}({args})");
             }
             else
             {
@@ -41,6 +42,11 @@ namespace Emitter.LLVM
             }
 
             EmitSubNodes(node);
+        }
+
+        private string FunctionArgsToLLVM(TypedFunctionNode fn)
+        {
+            throw new NotImplementedException();
         }
 
         private void EmitSubNodes(Node node)

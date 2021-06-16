@@ -8,6 +8,7 @@ using AST.Trees.Expressions.Untyped;
 using System.Linq;
 using AST.Trees.Expressions;
 using AST.Trees.Statements;
+using AST.Miscs;
 
 namespace AST.Builders
 {
@@ -64,7 +65,7 @@ namespace AST.Builders
                 return bodyNode;
             }
 
-            private Result<AssignmentStatement> TryMatchVariableReAssignment(List<LexElement> items)
+            private ResultDiag<AssignmentStatement> TryMatchVariableReAssignment(List<LexElement> items)
             {
                 var name = items[0] as LexWord;
 
@@ -76,10 +77,10 @@ namespace AST.Builders
 
                 var assignStatement = new AssignmentStatement(name.Value, result.Data, name.Diagnostics);
 
-                return new Result<AssignmentStatement>(assignStatement);
+                return new ResultDiag<AssignmentStatement>(assignStatement);
             }
 
-            private Result<VariableDeclarationStatement> TryMatchVariableDeclaration(List<LexElement> items)
+            private ResultDiag<VariableDeclarationStatement> TryMatchVariableDeclaration(List<LexElement> items)
             {
                 string typeName = items[0] as LexKeyword;
                 var name = items[1] as LexWord;
@@ -93,10 +94,10 @@ namespace AST.Builders
 
                 var vdn = new VariableDeclarationStatement(name, type, result.Data, name.Diagnostics);
 
-                return new Result<VariableDeclarationStatement>(vdn);
+                return new ResultDiag<VariableDeclarationStatement>(vdn);
             }
 
-            private Result<UntypedExpression> TryMatchExpression(List<LexElement> items)
+            private ResultDiag<UntypedExpression> TryMatchExpression(List<LexElement> items)
             {
                 // skip '='
                 var expressionElements = items.TakeWhile(x => x.Kind != LexingElement.SemiColon).ToList();

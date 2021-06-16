@@ -10,14 +10,14 @@ namespace Common
         {
         }
 
-        protected Result<List<LexElement>> GetTillClosed(LexingElement opening, LexingElement closing)
+        protected ResultDiag<List<LexElement>> GetTillClosed(LexingElement opening, LexingElement closing)
         {
             var openCounter = 0;
 
             if (_Current.Kind == opening)
                 openCounter++;
             else
-                return new Result<List<LexElement>>($"Expected element: '{opening}' around {_Current.Diagnostics}.", _Current.Diagnostics);
+                return new ResultDiag<List<LexElement>>($"Expected element: '{opening}' around {_Current.Diagnostics}.", _Current.Diagnostics);
 
             var list = new List<LexElement>();
 
@@ -37,7 +37,7 @@ namespace Common
                 }
             }
 
-            return new Result<List<LexElement>>(list);
+            return new ResultDiag<List<LexElement>>(list);
         }
     }
 }

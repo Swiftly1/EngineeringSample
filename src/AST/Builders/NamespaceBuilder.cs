@@ -7,6 +7,7 @@ using AST.Miscs.Matching;
 using System.Collections.Generic;
 using AST.Trees.Declarations.Untyped;
 using Text2Abstraction.LexicalElements;
+using AST.Trees.Miscs;
 
 namespace AST.Builders
 {
@@ -26,7 +27,7 @@ namespace AST.Builders
                 _Diagnostics = item.Diagnostics;
             }
 
-            public Result<Node> TryBuild()
+            public ResultDiag<Node> TryBuild()
             {
                 var node = new NamespaceNode(_Diagnostics, NamespaceName);
                 do
@@ -54,13 +55,13 @@ namespace AST.Builders
 
                 if (_errors.DumpErrors().Any())
                 {
-                    return new Result<Node>(_errors.DumpErrors().ToList());
+                    return new ResultDiag<Node>(_errors.DumpErrors().ToList());
                 }
 
-                return new Result<Node>(node);
+                return new ResultDiag<Node>(node);
             }
 
-            private Result<UntypedFunctionNode> TryMatchFunction(List<LexElement> matched)
+            private ResultDiag<UntypedFunctionNode> TryMatchFunction(List<LexElement> matched)
             {
                 var result = GetTillClosed(LexingElement.OpenParenthesis, LexingElement.ClosedParenthesis);
 
@@ -79,13 +80,51 @@ namespace AST.Builders
                     return bodyResult.ToFailedResult<UntypedFunctionNode>();
                 }
 
-                var args = result.Data;
                 string functionName = matched[2] as LexWord;
+
+                var argsResult = ExtractArgs(result.Data);
+
+                if (!argsResult.Success)
+                {
+                    var txt = $"Arguments of function '{functionName}' should be made of `typeName argName` " +
+                        $"and optional comma if there are more arguments. " +
+                        "e.g - 'int test', 'int a, int b'";
+
+                    var message = Message.CreateError(txt, matched[2].Diagnostics);
+                    _errors.AddMessage(message);
+                    return new ResultDiag<UntypedFunctionNode>(message);
+                }
+
                 var bodyBuilder = new BodyBuilder(bodyResult.Data, _Diagnostics);
                 var body = bodyBuilder.Build();
-                var node = new UntypedFunctionNode(matched[2].Diagnostics, functionName, body);
+                var node = new UntypedFunctionNode(matched[2].Diagnostics, functionName, body, argsResult.Data);
 
-                return new Result<UntypedFunctionNode>(node);
+                return new ResultDiag<UntypedFunctionNode>(node);
+            }
+
+            private Result<List<Argument>> ExtractArgs(List<LexElement> data)
+            {
+                var withoutComma = data.Where((x, i) => (i + 1) % 3 != 0).ToList();
+
+                if (withoutComma.Count % 2 != 0)
+                {
+                    return Result<List<Argument>>.Error("");
+                }
+
+                var args = new List<Argument>();
+
+                for (int i = 0; i < withoutComma.Count; i += 2)
+                {
+                    var arg = new Argument
+                    {
+                        TypeName = withoutComma[i] as LexKeyword,
+                        Name = withoutComma[i + 1] as LexWord
+                    };
+
+                    args.Add(arg);
+                }
+
+                return Result<List<Argument>>.Ok(args);
             }
 
             public new (bool Sucess, List<LexElement> Items) TryGetAhead(int count, bool includeCurrent)

@@ -1,49 +1,35 @@
-﻿using System;
-using System.Collections.Generic;
-
+﻿#nullable enable
 namespace Common
 {
-#nullable enable
     public class Result<T>
     {
-        public Result(List<Message> s)
+        private Result() { }
+
+        public bool Success { get; private set; }
+
+        public string? Message { get; private set; }
+
+        public T? Data { get; private set; }
+
+        public static Result<T> Error(string error)
         {
-            Success = false;
-            Messages = s;
-            Data = default;
-        }
-
-        public Result(string s, DiagnosticInfo d)
-        {
-            Success = false;
-            Messages.Add(Message.CreateError(s, d));
-            Data = default;
-        }
-
-        public Result(T? data)
-        {
-            Data = data;
-            Success = true;
-        }
-
-        public bool Success { get; }
-
-        public Message? Message => Messages.Count > 0 ? Messages[0] : null;
-
-        public List<Message> Messages { get; } = new List<Message>();
-
-        public T? Data { get; }
-
-        public Result<U> ToFailedResult<U>()
-        {
-            if (this.Success)
+            return new Result<T>()
             {
-                throw new Exception("This result was successful, so it shouldn't be changed into failed result.");
-            }
-            else
+                Success = false,
+                Message = error,
+                Data = default(T)
+            };
+        }
+
+        public static Result<T> Ok(T data)
+        {
+            return new Result<T>()
             {
-                return new Result<U>(this.Messages);
-            }
+                Success = true,
+                Message = "",
+                Data = data
+            };
         }
     }
 }
+

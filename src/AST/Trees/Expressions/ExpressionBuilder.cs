@@ -14,7 +14,7 @@ namespace AST.Trees.Expressions
         {
         }
 
-        public Result<UntypedExpression> Build()
+        public ResultDiag<UntypedExpression> Build()
         {
             try
             {
@@ -37,11 +37,11 @@ namespace AST.Trees.Expressions
                     break;
                 }
 
-                return new Result<UntypedExpression>(left);
+                return new ResultDiag<UntypedExpression>(left);
             }
             catch (ASTException ex)
             {
-                return new Result<UntypedExpression>(ex.Message, ex.DiagnosticInfo);
+                return new ResultDiag<UntypedExpression>(ex.Message, ex.DiagnosticInfo);
             }
         }
 
