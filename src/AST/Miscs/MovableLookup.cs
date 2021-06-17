@@ -25,11 +25,21 @@ namespace Common
             {
                 if (_Current.Kind == opening)
                 {
-                    openCounter++;
+                    openCounter++; 
+                    
+                    if (openCounter > 1)
+                    {
+                        list.Add(_Current);
+                    }
                 }
                 else if (_Current.Kind == closing)
                 {
-                    openCounter--;
+                    if (openCounter > 1)
+                    {
+                        list.Add(_Current);
+                    }
+
+                    openCounter--;   
                 }
                 else
                 {

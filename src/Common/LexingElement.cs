@@ -35,5 +35,7 @@
         Type,
         Lambda,
         SemiColon,
+        If,
+        Else,
     }
 }

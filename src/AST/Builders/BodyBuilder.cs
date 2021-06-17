@@ -1,14 +1,14 @@
 ﻿using Common;
+using System;
 using AST.Trees;
-using Text2Abstraction.LexicalElements;
-using System.Collections.Generic;
+using System.Linq;
 using Common.Lexing;
 using AST.Miscs.Matching;
-using AST.Trees.Expressions.Untyped;
-using System.Linq;
-using AST.Trees.Expressions;
 using AST.Trees.Statements;
-using AST.Miscs;
+using AST.Trees.Expressions;
+using System.Collections.Generic;
+using AST.Trees.Expressions.Untyped;
+using Text2Abstraction.LexicalElements;
 
 namespace AST.Builders
 {
@@ -39,6 +39,11 @@ namespace AST.Builders
                     MatcherUtils
                     .Match(LexingElement.Word, LexingElement.Equal)
                     .Evaluate(TakeToEnd());
+                    
+                    var ifStatementMatcher =
+                    MatcherUtils
+                    .Match(LexingElement.If)
+                    .Evaluate(TakeToEnd());
 
                     if (variableDeclarationMatcher.Success)
                     {
@@ -60,9 +65,41 @@ namespace AST.Builders
                         else
                             _errors.AddMessages(result.Messages);
                     }
+                    else if (ifStatementMatcher.Success)
+                    {
+                        var ahead = TryGetAhead(ifStatementMatcher.Items.Count); 
+                        var result = TryMatchIfStatement(ahead.Items);
+
+                        if (result.Success)
+                            bodyNode.AddChild(result.Data);
+                        else
+                            _errors.AddMessages(result.Messages);
+                    }
                 } while (MoveNext());
 
                 return bodyNode;
+            }
+
+            private ResultDiag<IfStatementNode> TryMatchIfStatement(List<LexElement> items)
+            {
+                var result = GetTillClosed(LexingElement.OpenParenthesis, LexingElement.ClosedParenthesis);
+
+                if (!result.Success)
+                {
+                    return result.ToFailedResult<IfStatementNode>();
+                }
+
+                MoveNext();
+
+                var bodyResult = GetTillClosed(LexingElement.OpenBracket, LexingElement.ClosedBracket);
+
+                if (!bodyResult.Success)
+                {
+                    return bodyResult.ToFailedResult<IfStatementNode>();
+                }
+
+                // TODO: Complete IfStatement Matching
+                throw new NotImplementedException();
             }
 
             private ResultDiag<AssignmentStatement> TryMatchVariableReAssignment(List<LexElement> items)

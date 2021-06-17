@@ -3,11 +3,11 @@ using AST.Miscs;
 using AST.Trees;
 using System.Linq;
 using Common.Lexing;
+using AST.Trees.Miscs;
 using AST.Miscs.Matching;
 using System.Collections.Generic;
 using AST.Trees.Declarations.Untyped;
 using Text2Abstraction.LexicalElements;
-using AST.Trees.Miscs;
 
 namespace AST.Builders
 {
@@ -87,7 +87,7 @@ namespace AST.Builders
                 if (!argsResult.Success)
                 {
                     var txt = $"Arguments of function '{functionName}' should be made of `typeName argName` " +
-                        $"and optional comma if there are more arguments. " +
+                        $"and comma if there are more arguments. " +
                         "e.g - 'int test', 'int a, int b'";
 
                     var message = Message.CreateError(txt, matched[2].Diagnostics);
