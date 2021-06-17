@@ -1,7 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using System.Text;
+using System.Xml;
+using System.Xml.Linq;
 
 namespace VersionIncrementator
 {
@@ -30,41 +31,26 @@ namespace VersionIncrementator
             }
         }
 
-        private static void IncrementVersions(string file)
+        private static void IncrementVersions(string path)
         {
-            var txt = File.ReadAllLines(file);
-            var sb = new StringBuilder();
+            var doc = XDocument.Load(path);
 
-            foreach (var line in txt)
+            var foundElements = doc
+                                .Descendants()
+                                .Where(x => x.Name == "FileVersion" || x.Name == "AssemblyVersion")
+                                .ToList();
+
+            foreach (var entry in foundElements)
             {
-                // this is terrible, but I've been struggling with csproj's XML class that'd be future proof
-                // it works and is relatively simple, I guess?
-                if (line.Trim().StartsWith("<AssemblyVersion>"))
-                {
-                    var version = line.Replace("<AssemblyVersion>", "").Replace("</AssemblyVersion>", "").Trim();
-                    var versions = version.Split(".").Select(x => Convert.ToInt32(x)).ToList();
-
-                    sb
-                        .Append("    <AssemblyVersion>")
-                        .Append(versions[0]).Append('.').Append(versions[1]).Append('.').Append(versions[2]).Append('.').Append(versions[3] + 1)
-                        .AppendLine("</AssemblyVersion>");
-                }
-                else if (line.Trim().StartsWith("<FileVersion>"))
-                {
-                    var version = line.Replace("<FileVersion>", "").Replace("</FileVersion>", "").Trim();
-                    var versions = version.Split(".").Select(x => Convert.ToInt32(x)).ToList();
-                    sb
-                        .Append("    <FileVersion>")
-                        .Append(versions[0]).Append('.').Append(versions[1]).Append('.').Append(versions[2]).Append('.').Append(versions[3] + 1)
-                        .AppendLine("</FileVersion>");
-                }
-                else
-                {
-                    sb.AppendLine(line);
-                }
+                var versions = entry.Value.Split(".").Select(x => Convert.ToInt32(x)).ToList();
+                entry.Value = $"{versions[0]}.{versions[1]}.{versions[2]}.{versions[3] + 1}";
             }
 
-            File.WriteAllText(file, sb.ToString());
+            var xws = new XmlWriterSettings { OmitXmlDeclaration = true, Indent = true };
+            using (var xw = XmlWriter.Create(path, xws))
+            {
+                doc.Save(xw);
+            }
         }
     }
 }

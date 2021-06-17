@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
+using System.Xml.Linq;
 using BenchmarkDotNet.Running;
 using CsvHelper;
 using CsvHelper.Configuration;
@@ -85,15 +87,16 @@ namespace Tests.RegressionDiagnostics
                        .GetFiles(path, "*", new EnumerationOptions { RecurseSubdirectories = true })
                        .First(x => x.EndsWith(".csproj"));
 
-            var lines = File.ReadAllLines(file);
+            var doc = XDocument.Load(file);
 
-            foreach (var line in lines)
+            var foundElements = doc
+                                .Descendants()
+                                .Where(x => x.Name == "FileVersion" || x.Name == "AssemblyVersion")
+                                .ToList();
+
+            foreach (var entry in foundElements)
             {
-                if (line.Trim().StartsWith("<AssemblyVersion>"))
-                {
-                    var version = line.Replace("<AssemblyVersion>", "").Replace("</AssemblyVersion>", "").Trim();
-                    return version;
-                }
+                return entry.Value;
             }
 
             throw new Exception($"Version is not defined in '{file}'");
@@ -104,9 +107,15 @@ namespace Tests.RegressionDiagnostics
             var list = new List<BenchmarkResult>();
 
             var dir = new DirectoryInfo(resultsPath);
+
+            // this is terrible 
+            // TODO: learn how to use CultureInfo and fix this mess 
+
+            var delimiter = RuntimeInformation.IsOSPlatform(OSPlatform.Linux) ? "," : ";";
+
             var cfg = new CsvConfiguration(CultureInfo.InvariantCulture)
             {
-                Delimiter = ","
+                Delimiter = delimiter
             };
 
             foreach (var csvPath in dir.EnumerateFiles("*.csv"))
