@@ -32,22 +32,19 @@ namespace AST.Builders
                 {
                     var variableDeclarationMatcher =
                     MatcherUtils
-                    .Match(LexingElement.Type, LexingElement.Word, LexingElement.Equal)
-                    .Evaluate(TakeToEnd());
+                    .Match(LexingElement.Type, LexingElement.Word, LexingElement.Equal);
 
                     var assignStatementMatcher =
                     MatcherUtils
-                    .Match(LexingElement.Word, LexingElement.Equal)
-                    .Evaluate(TakeToEnd());
-                    
+                    .Match(LexingElement.Word, LexingElement.Equal);
+
                     var ifStatementMatcher =
                     MatcherUtils
-                    .Match(LexingElement.If)
-                    .Evaluate(TakeToEnd());
+                    .Match(LexingElement.If);
 
-                    if (variableDeclarationMatcher.Success)
+                    if (variableDeclarationMatcher.Evaluate(TakeToEnd(), out var variableDeclarationMatcherResult))
                     {
-                        var ahead = TryGetAhead(variableDeclarationMatcher.Items.Count, true);
+                        var ahead = TryGetAhead(variableDeclarationMatcherResult.Items.Count, true);
                         var result = TryMatchVariableDeclaration(ahead.Items);
 
                         if (result.Success)
@@ -55,9 +52,9 @@ namespace AST.Builders
                         else
                             _errors.AddMessages(result.Messages);
                     }
-                    else if (assignStatementMatcher.Success)
+                    else if (assignStatementMatcher.Evaluate(TakeToEnd(), out var assignStatementMatcherResult))
                     {
-                        var ahead = TryGetAhead(assignStatementMatcher.Items.Count, true);
+                        var ahead = TryGetAhead(assignStatementMatcherResult.Items.Count, true);
                         var result = TryMatchVariableReAssignment(ahead.Items);
 
                         if (result.Success)
@@ -65,9 +62,9 @@ namespace AST.Builders
                         else
                             _errors.AddMessages(result.Messages);
                     }
-                    else if (ifStatementMatcher.Success)
+                    else if (ifStatementMatcher.Evaluate(TakeToEnd(), out var ifStatementMatcherResult))
                     {
-                        var ahead = TryGetAhead(ifStatementMatcher.Items.Count); 
+                        var ahead = TryGetAhead(ifStatementMatcherResult.Items.Count);
                         var result = TryMatchIfStatement(ahead.Items);
 
                         if (result.Success)

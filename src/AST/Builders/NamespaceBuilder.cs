@@ -34,12 +34,11 @@ namespace AST.Builders
                 {
                     var fMatcher =
                         MatcherUtils
-                        .Match(LexingElement.AccessibilityModifier, LexingElement.Type, LexingElement.Word, LexingElement.OpenParenthesis)
-                        .Evaluate(TakeToEnd(1));
+                        .Match(LexingElement.AccessibilityModifier, LexingElement.Type, LexingElement.Word, LexingElement.OpenParenthesis);
 
-                    if (fMatcher.Success)
+                    if (fMatcher.Evaluate(TakeToEnd(1), out var fMatcherResult))
                     {
-                        var ahead = TryGetAhead(fMatcher.Items.Count);
+                        var ahead = TryGetAhead(fMatcherResult.Items.Count);
                         var result = TryMatchFunction(ahead.Items);
 
                         if (result.Success)

@@ -27,7 +27,7 @@ namespace AST.Miscs.Matching
             return this;
         }
 
-        public EvaluationResult Evaluate(List<LexElement> lexElements)
+        public bool Evaluate(List<LexElement> lexElements, out EvaluationResult result)
         {
             var items = new List<LexElement>();
             var enumerator = lexElements.GetEnumerator();
@@ -39,7 +39,8 @@ namespace AST.Miscs.Matching
             {
                 if (hasEnded)
                 {
-                    return new EvaluationResult(false, enumerator.Current);
+                    result = new EvaluationResult(false, enumerator.Current);
+                    return false;
                 }
 
                 var satisfies = Verify(requirement, enumerator);
@@ -54,11 +55,13 @@ namespace AST.Miscs.Matching
                 }
                 else
                 {
-                    return new EvaluationResult(false, enumerator.Current);
+                    result = new EvaluationResult(false, enumerator.Current);
+                    return false;
                 }
             }
 
-            return new EvaluationResult(true, items);
+            result = new EvaluationResult(true, items);
+            return true;
         }
 
         private (bool Success, List<LexElement> Verified) Verify(MatchingGroup requirement, List<LexElement>.Enumerator enumerator)
