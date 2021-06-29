@@ -20,6 +20,9 @@ namespace AST.Trees.Expressions
             {
                 var left = GetSubExpression();
 
+                if (!CanMoveNext())
+                    return new ResultDiag<UntypedExpression>(left);
+
                 var @operator = _Current as LexCharacter;
                 var higher_prior_operators = new[] { LexingElement.Plus, LexingElement.Minus };
 
@@ -78,6 +81,8 @@ namespace AST.Trees.Expressions
         {
             if (left.Kind == LexingElement.Numerical)
                 return new ConstantMathUntypedExpression(left.Diagnostics, (left as LexNumericalLiteral).GetNumericalValue());
+            else if (left.Kind == LexingElement.Word)
+                return new UntypedVariableUseExpression(left.Diagnostics, (left as LexWord).Value);
 
             throw new ASTException($"Unable to resolve Expression for kind {left.Kind}. Location: {left.Diagnostics}", left.Diagnostics);
         }
