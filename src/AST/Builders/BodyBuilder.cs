@@ -25,7 +25,7 @@ namespace AST.Builders
                 _Diagnostics = diagnostic;
             }
 
-            public Node Build()
+            public ResultDiag<BodyNode> Build()
             {
                 var bodyNode = new BodyNode(_Diagnostics);
                 do
@@ -74,16 +74,21 @@ namespace AST.Builders
                     }
                 } while (MoveNext());
 
-                return bodyNode;
+                if (_errors.DumpErrors().Any())
+                {
+                    return new ResultDiag<BodyNode>(_errors.DumpErrors().ToList());
+                }
+
+                return new ResultDiag<BodyNode>(bodyNode);
             }
 
-            private ResultDiag<IfStatementNode> TryMatchIfStatement(List<LexElement> items)
+            private ResultDiag<UntypedIfStatement> TryMatchIfStatement(List<LexElement> items)
             {
-                var result = GetTillClosed(LexingElement.OpenParenthesis, LexingElement.ClosedParenthesis);
+                var conditionResult = GetTillClosed(LexingElement.OpenParenthesis, LexingElement.ClosedParenthesis);
 
-                if (!result.Success)
+                if (!conditionResult.Success)
                 {
-                    return result.ToFailedResult<IfStatementNode>();
+                    return conditionResult.ToFailedResult<UntypedIfStatement>();
                 }
 
                 MoveNext();
@@ -92,11 +97,59 @@ namespace AST.Builders
 
                 if (!bodyResult.Success)
                 {
-                    return bodyResult.ToFailedResult<IfStatementNode>();
+                    return bodyResult.ToFailedResult<UntypedIfStatement>();
                 }
 
-                // TODO: Complete IfStatement Matching
-                throw new NotImplementedException();
+                var expressionBuilder = new ExpressionBuilder(conditionResult.Data);
+                var expression = expressionBuilder.Build();
+
+                if (!expression.Success)
+                {
+                    return expression.ToFailedResult<UntypedIfStatement>();
+                }
+
+                var trueBranch = new BodyBuilder(bodyResult.Data, items[0].Diagnostics).Build();
+
+                if (!trueBranch.Success)
+                {
+                    return trueBranch.ToFailedResult<UntypedIfStatement>();
+                }
+
+                var node_without_else = new UntypedIfStatement(expression.Data, trueBranch.Data, null, items[0].Diagnostics);
+
+                if (!CanMoveNext())
+                {
+                    return new ResultDiag<UntypedIfStatement>(node_without_else);
+                }
+
+                MoveNext();
+
+                if (_Current.Kind != LexingElement.Else)
+                {
+                    MoveBehind();
+                    return new ResultDiag<UntypedIfStatement>(node_without_else);
+                }
+
+                var elseDiagnostics = _Current.Diagnostics;
+                MoveNext();
+
+                var elseBodyResult = GetTillClosed(LexingElement.OpenBracket, LexingElement.ClosedBracket);
+
+                if (!elseBodyResult.Success)
+                {
+                    return elseBodyResult.ToFailedResult<UntypedIfStatement>();
+                }
+
+                var falseBranch = new BodyBuilder(elseBodyResult.Data, elseDiagnostics).Build();
+
+                if (!falseBranch.Success)
+                {
+                    return trueBranch.ToFailedResult<UntypedIfStatement>();
+                }
+
+                var node_with_two_branches = new UntypedIfStatement(expression.Data, trueBranch.Data, falseBranch.Data, items[0].Diagnostics);
+
+                return new ResultDiag<UntypedIfStatement>(node_with_two_branches);
             }
 
             private ResultDiag<AssignmentStatement> TryMatchVariableReAssignment(List<LexElement> items)

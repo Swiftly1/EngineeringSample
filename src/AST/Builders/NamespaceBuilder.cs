@@ -96,7 +96,11 @@ namespace AST.Builders
 
                 var bodyBuilder = new BodyBuilder(bodyResult.Data, _Diagnostics);
                 var body = bodyBuilder.Build();
-                var node = new UntypedFunctionNode(matched[2].Diagnostics, functionName, body, argsResult.Data);
+
+                if (!body.Success)
+                    return body.ToFailedResult<UntypedFunctionNode>();
+
+                var node = new UntypedFunctionNode(matched[2].Diagnostics, functionName, body.Data, argsResult.Data);
 
                 return new ResultDiag<UntypedFunctionNode>(node);
             }
