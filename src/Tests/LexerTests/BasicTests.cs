@@ -39,10 +39,10 @@ namespace Tests.LexerTests
             Assert.True(result[2] is LexNumericalLiteral);
             Assert.True(result[3] is LexNumericalLiteral);
 
-            Assert.Equal(12, (result[0] as LexNumericalLiteral).IntegerValue);
-            Assert.Equal(35.5, (result[1] as LexNumericalLiteral).DoubleValue);
-            Assert.Equal(7.7, (result[2] as LexNumericalLiteral).DoubleValue);
-            Assert.Equal(6, (result[3] as LexNumericalLiteral).IntegerValue);
+            Assert.Equal("12", (result[0] as LexNumericalLiteral).StringValue);
+            Assert.Equal("35.5", (result[1] as LexNumericalLiteral).StringValue);
+            Assert.Equal("7.7", (result[2] as LexNumericalLiteral).StringValue);
+            Assert.Equal("6", (result[3] as LexNumericalLiteral).StringValue);
         }
 
         [Fact]

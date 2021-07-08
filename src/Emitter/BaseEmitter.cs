@@ -7,7 +7,7 @@ namespace Emitter
     {
         protected readonly IMessagesPrinter _printer;
 
-        public BaseEmitter(IMessagesPrinter printer)
+        protected BaseEmitter(IMessagesPrinter printer)
         {
             _printer = printer;
         }

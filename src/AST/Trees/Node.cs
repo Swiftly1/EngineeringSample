@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Common;
 
 namespace AST.Trees
@@ -11,13 +12,13 @@ namespace AST.Trees
             Diagnostics = diag;
         }
 
-        public Guid Id { get; set; } = Guid.NewGuid();
+        public Guid Id { get; private set; } = Guid.NewGuid();
 
-        public DiagnosticInfo Diagnostics { get; }
+        public DiagnosticInfo Diagnostics { get; private set; }
 
         public Dictionary<string, object> Properties { get; set; } = new Dictionary<string, object>();
 
-        public List<Node> Children { get; } = new List<Node>();
+        public List<Node> Children { get; private set; } = new List<Node>();
 
         public Node AddChild(Node n)
         {
@@ -39,6 +40,19 @@ namespace AST.Trees
         {
             get { return Properties[key]; }
             set { Properties[key] = value; }
+        }
+
+        public Node CopyTo(Node other)
+        {
+            other.Properties.Clear();
+
+            foreach (var prop in Properties)
+                other.Properties.Add(prop.Key, prop.Value);
+
+            other.Id = this.Id;
+            other.Diagnostics = this.Diagnostics;
+
+            return other;
         }
     }
 }

@@ -80,7 +80,10 @@ namespace AST.Trees.Expressions
         private UntypedExpression ToExpression(LexElement left)
         {
             if (left.Kind == LexingElement.Numerical)
-                return new ConstantMathUntypedExpression(left.Diagnostics, (left as LexNumericalLiteral).GetNumericalValue());
+            {
+                var numerical = left as LexNumericalLiteral;
+                return new ConstantMathUntypedExpression(left.Diagnostics, numerical.StringValue);
+            }
             else if (left.Kind == LexingElement.Word)
                 return new UntypedVariableUseExpression(left.Diagnostics, (left as LexWord).Value);
 

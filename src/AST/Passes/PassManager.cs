@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using AST.Trees;
 
 namespace AST.Passes
@@ -8,19 +7,24 @@ namespace AST.Passes
     {
         private PassManager() { }
 
-        public List<IPass> Passes { get; set; } = new List<IPass>();
+        public List<IPass> Passes { get; set; } = new();
+
+        public PassesExchangePoint Exchange { get; set; } = new();
 
         public void WalkAll(RootNode root)
         {
             foreach (var pass in Passes)
             {
-                pass.Walk(root);
+                var result = pass.Walk(root, Exchange);
+                Exchange.PassResults.Add(result.PassName, result);
             }
         }
 
         public static PassManager GetDefaultPassManager()
         {
             var pm = new PassManager();
+            pm.Passes.Add(new TypeDiscoveryPass());
+            pm.Passes.Add(new TypeCheckerPass());
             pm.Passes.Add(new ShortIdGeneratorPass());
             return pm;
         }

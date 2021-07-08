@@ -13,7 +13,7 @@ namespace AST.Trees.Expressions.Untyped
 
         public override string ToString()
         {
-            return $"ConstantMath: {Value}";
+            return $"ConstantUntypedMath: {Value}";
         }
     }
 }

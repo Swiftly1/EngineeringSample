@@ -171,7 +171,6 @@ namespace AST.Builders
             {
                 string typeName = items[0] as LexKeyword;
                 var name = items[1] as LexWord;
-                var type = TypeFacts.TypeName2TypeMapper[typeName];
 
                 var skipped = TakeToEnd(1);
                 var result = TryMatchExpression(skipped);
@@ -179,7 +178,7 @@ namespace AST.Builders
                 if (!result.Success)
                     return result.ToFailedResult<VariableDeclarationStatement>();
 
-                var vdn = new VariableDeclarationStatement(name, type, result.Data, name.Diagnostics);
+                var vdn = new VariableDeclarationStatement(name, typeName, result.Data, name.Diagnostics);
 
                 return new ResultDiag<VariableDeclarationStatement>(vdn);
             }

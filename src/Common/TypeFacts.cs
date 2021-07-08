@@ -10,6 +10,7 @@ namespace Common
             { "int32", GetInt32() },
             { "long", GetInt64() },
             { "int64", GetInt64() },
+            { "double", GetDouble() },
         };
 
         public static TypeInfo GetInt64()
@@ -25,6 +26,14 @@ namespace Common
             return new TypeInfo
             {
                 Name = "int32"
+            };
+        }
+
+        public static TypeInfo GetDouble()
+        {
+            return new TypeInfo
+            {
+                Name = "double"
             };
         }
     }

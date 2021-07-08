@@ -5,6 +5,7 @@ using Text2Abstraction;
 using AST.Trees.Statements;
 using BenchmarkDotNet.Attributes;
 using AST.Trees.Expressions.Untyped;
+using AST.Trees.Expressions.Typed;
 
 namespace Tests.E2E.AST
 {
@@ -31,17 +32,17 @@ namespace Tests.E2E.AST
             var vdn = ast.Data.Children[0].Children[0].Children[0].Children[0] as VariableDeclarationStatement;
             Assert.NotNull(vdn);
             Assert.Equal("test", vdn.VariableName);
-            Assert.Equal(TypeFacts.GetInt32().Name, vdn.DeclaredType.Name);
+            Assert.Equal("int", vdn.DesiredType);
 
-            var expr = vdn.Expression as ComplexUntypedExpression;
+            var expr = vdn.Expression as ComplexTypedExpression;
 
             Assert.NotNull(expr);
             Assert.Equal(ExpressionOperator.Addition, expr.Operator);
-            Assert.True(expr.Left is ConstantMathUntypedExpression);
-            Assert.True(expr.Right is ConstantMathUntypedExpression);
+            Assert.True(expr.Left is ConstantMathTypedExpression);
+            Assert.True(expr.Right is ConstantMathTypedExpression);
 
-            Assert.Equal(345645, (expr.Left as ConstantMathUntypedExpression).Value);
-            Assert.Equal(23423, (expr.Right as ConstantMathUntypedExpression).Value);
+            Assert.Equal(345645, (expr.Left as ConstantMathTypedExpression).Value);
+            Assert.Equal(23423, (expr.Right as ConstantMathTypedExpression).Value);
         }
     }
 }

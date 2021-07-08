@@ -5,19 +5,19 @@ namespace AST.Trees.Statements
 {
     public class VariableDeclarationStatement : StatementNode
     {
-        public VariableDeclarationStatement(string variableName, TypeInfo declaredType, UntypedExpression expression, DiagnosticInfo diag) : base(diag)
+        public VariableDeclarationStatement(string variableName, string desiredType, UntypedExpression expression, DiagnosticInfo diag) : base(diag)
         {
             VariableName = variableName;
-            DeclaredType = declaredType;
+            DesiredType = desiredType;
             Expression = expression;
             Children.Add(expression);
         }
 
         public string VariableName { get; set; }
 
-        public TypeInfo DeclaredType { get; set; }
+        public string DesiredType { get; set; }
 
-        public UntypedExpression Expression { get; set; }
+        public Node Expression { get; set; }
 
         public override string ToString()
         {

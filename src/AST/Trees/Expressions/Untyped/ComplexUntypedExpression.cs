@@ -5,7 +5,11 @@ namespace AST.Trees.Expressions.Untyped
 {
     public class ComplexUntypedExpression : UntypedExpression
     {
-        public ComplexUntypedExpression(UntypedExpression left, UntypedExpression right, ExpressionOperator @operator, DiagnosticInfo diag) : base(diag)
+        public ComplexUntypedExpression(
+            UntypedExpression left,
+            UntypedExpression right,
+            ExpressionOperator @operator,
+            DiagnosticInfo diag) : base(diag)
         {
             Left = left;
             Operator = @operator;

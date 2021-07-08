@@ -46,7 +46,7 @@ namespace Emitter.LLVM
 
         private string FunctionArgsToLLVM(TypedFunctionNode fn)
         {
-            throw new NotImplementedException();
+            return "";
         }
 
         private void EmitSubNodes(Node node)

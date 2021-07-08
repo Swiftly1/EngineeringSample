@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using AST.Passes.Results;
 using AST.Trees;
 using AST.Trees.Miscs;
 
@@ -7,6 +8,10 @@ namespace AST.Passes
     public class ShortIdGeneratorPass : IPass
     {
         private int Counter { get; set; } = 0;
+
+        public PassesExchangePoint Exchange { get; set; }
+
+        public const string PassName = "ShortIdGeneratorPass";
 
         private void AttachShortIdToNodes(Node root)
         {
@@ -26,9 +31,11 @@ namespace AST.Passes
             }
         }
 
-        public void Walk(Node root)
+        public PassResult Walk(Node root, PassesExchangePoint exchange)
         {
+            Exchange = exchange;
             AttachShortIdToNodes(root);
+            return new EmptyPassResult(PassName);
         }
     }
 }

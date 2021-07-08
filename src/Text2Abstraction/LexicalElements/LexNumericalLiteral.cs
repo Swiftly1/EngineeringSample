@@ -1,6 +1,4 @@
-﻿using System;
-using System.Globalization;
-using Common;
+﻿using Common;
 using Common.Lexing;
 
 namespace Text2Abstraction.LexicalElements
@@ -13,25 +11,6 @@ namespace Text2Abstraction.LexicalElements
         }
 
         public string StringValue { get; set; }
-
-        public int IntegerValue => Convert.ToInt32(StringValue);
-
-        public double DoubleValue => Convert.ToDouble(StringValue, CultureInfo.InvariantCulture);
-
-        public bool IsDouble => StringValue.Contains(".");
-
-        public bool IsInteger => !StringValue.Contains(".");
-
-        public object GetNumericalValue()
-        {
-            if (IsDouble)
-                return DoubleValue;
-
-            if (IsInteger)
-                return IntegerValue;
-
-            throw new NotImplementedException($"Unable to determine value of {nameof(LexNumericalLiteral)}");
-        }
 
         public override string ToString()
         {

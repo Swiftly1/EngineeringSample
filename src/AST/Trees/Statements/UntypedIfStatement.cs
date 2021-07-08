@@ -8,21 +8,20 @@ namespace AST.Trees.Statements
         public UntypedIfStatement(UntypedExpression condition, BodyNode branchTrue, BodyNode branchFalse, DiagnosticInfo diag) : base(diag)
         {
             Condition = condition;
-            BranchTrue = branchTrue;
+
+            this.AddChild(branchTrue);
+
             // TODO: It's not the nicest solution
             // because we aren't sure whether there was just empty block or it was no provided at all
-            // but it simplifies code a little bit 
-            BranchFalse = branchFalse ?? new BodyNode(diag);
-
-            this.AddChild(BranchTrue);
-            this.AddChild(BranchFalse);
+            // but it simplifies stuff a little bit 
+            this.AddChild(branchFalse ?? new BodyNode(diag));
         }
 
         public UntypedExpression Condition { get; }
 
-        public BodyNode BranchTrue { get; }
+        public BodyNode BranchTrue => Children[0] as BodyNode;
 
-        public BodyNode BranchFalse { get; }
+        public BodyNode BranchFalse => Children[1] as BodyNode;
 
         public override string ToString()
         {

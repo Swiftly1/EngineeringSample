@@ -57,8 +57,7 @@ namespace AST.Miscs
                     .Append('\t')
                     .Append(Node2Text(current))
                     .Append(" -> ")
-                    .Append(Node2Text(child))
-                    .AppendLine();
+                    .AppendLine(Node2Text(child));
                 }
 
                 foreach (var child in current.Children)
@@ -76,8 +75,7 @@ namespace AST.Miscs
 
                     sb
                     .Append('\t')
-                    .Append(Node2Text(current))
-                    .AppendLine();
+                    .AppendLine(Node2Text(current));
                 }
             }
         }

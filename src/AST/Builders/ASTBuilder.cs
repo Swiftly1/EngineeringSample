@@ -69,7 +69,7 @@ namespace AST.Builders
                 }
                 else if (current_group is null && _Current.Kind != LexingElement.Namespace)
                 {
-                    _errors.AddError($"Every element must be within some namespace.", _Current.Diagnostics);
+                    _errors.AddError("Every element must be within some namespace.", _Current.Diagnostics);
                 }
                 else if (_Current.Kind is LexingElement.Namespace)
                 {
