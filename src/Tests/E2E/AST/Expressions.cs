@@ -13,7 +13,7 @@ namespace Tests.E2E.AST
     {
         [Fact]
         [Benchmark]
-        public void Test001()
+        public void Expressions_Test001()
         {
             var code =
             @"
