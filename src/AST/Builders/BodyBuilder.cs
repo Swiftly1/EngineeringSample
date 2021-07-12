@@ -6,6 +6,7 @@ using AST.Miscs.Matching;
 using AST.Trees.Statements;
 using AST.Trees.Expressions;
 using System.Collections.Generic;
+using AST.Trees.Statements.Untyped;
 using AST.Trees.Expressions.Untyped;
 using Text2Abstraction.LexicalElements;
 
@@ -166,7 +167,7 @@ namespace AST.Builders
                 return new ResultDiag<AssignmentStatement>(assignStatement);
             }
 
-            private ResultDiag<VariableDeclarationStatement> TryMatchVariableDeclaration(List<LexElement> items)
+            private ResultDiag<UntypedVariableDeclarationStatement> TryMatchVariableDeclaration(List<LexElement> items)
             {
                 string typeName = items[0] as LexKeyword;
                 var name = items[1] as LexWord;
@@ -175,11 +176,11 @@ namespace AST.Builders
                 var result = TryMatchExpression(skipped);
 
                 if (!result.Success)
-                    return result.ToFailedResult<VariableDeclarationStatement>();
+                    return result.ToFailedResult<UntypedVariableDeclarationStatement>();
 
-                var vdn = new VariableDeclarationStatement(name, typeName, result.Data, name.Diagnostics);
+                var vdn = new UntypedVariableDeclarationStatement(name, typeName, result.Data, name.Diagnostics);
 
-                return new ResultDiag<VariableDeclarationStatement>(vdn);
+                return new ResultDiag<UntypedVariableDeclarationStatement>(vdn);
             }
 
             private ResultDiag<UntypedExpression> TryMatchExpression(List<LexElement> items)

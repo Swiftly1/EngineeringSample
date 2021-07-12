@@ -3,9 +3,10 @@ using Common;
 using AST.Trees;
 using System.Linq;
 using AST.Passes.Results;
-using AST.Trees.Statements;
 using System.Collections.Generic;
+using AST.Trees.Statements.Typed;
 using AST.Trees.Expressions.Typed;
+using AST.Trees.Statements.Untyped;
 using AST.Trees.Expressions.Untyped;
 
 namespace AST.Passes
@@ -32,28 +33,38 @@ namespace AST.Passes
 
         private void CheckTree(Node root)
         {
-            var queue = new Queue<Node>();
-            queue.Enqueue(root);
+            var queue = new Queue<(Node Child, Node Parent)>();
+
+            // damn
+            // it's pair of children and its parent
+            // because we need parent to change reference from "erased" node to new node
+
+            queue.Enqueue((root, null));
 
             while (queue.Count > 0)
             {
                 var current = queue.Dequeue();
 
-                var skip_children = TryBoundWholeNode(current);
+                var result = TryBoundWholeNode(current.Child);
 
-                if (!skip_children)
+                if (result.OverwrittenNode is not null)
                 {
-                    foreach (var child in current.Children)
+                    ReplaceNode(current.Parent, current.Child, result.OverwrittenNode);
+                }
+
+                if (!result.SkipChildren)
+                {
+                    foreach (var child in current.Child.Children)
                     {
-                        queue.Enqueue(child);
+                        queue.Enqueue((child, current.Child));
                     }
                 }
             }
         }
 
-        private bool TryBoundWholeNode(Node current)
+        private (bool SkipChildren, Node OverwrittenNode) TryBoundWholeNode(Node current)
         {
-            if (current is VariableDeclarationStatement vds)
+            if (current is UntypedVariableDeclarationStatement vds)
             {
                 var type = vds.DesiredType;
 
@@ -62,7 +73,7 @@ namespace AST.Passes
                 if (!result.Found)
                 {
                     Errors.AddError($"Type {type} is not found.", current.Diagnostics);
-                    return true;
+                    return (true, null);
                 }
 
                 var exprType = GenerateBoundedTreeAndGetType(vds.Expression);
@@ -71,17 +82,15 @@ namespace AST.Passes
                 if (result.TypeInfo != exprType.TypeInfo)
                 {
                     Errors.AddError($"Cannot assign type {exprType.TypeInfo.Name} to {result.TypeInfo.Name}.", current.Diagnostics);
-                    return true;
+                    return (true, null);
                 }
 
-                vds.Children.RemoveAll(x => x.Id == vds.Expression.Id);
-                vds.Expression = exprType.NewNode;
-                vds.Children.Add(exprType.NewNode);
+                var newNode = new TypedVariableDeclarationStatement(vds.VariableName, exprType.NewNode, exprType.TypeInfo, vds.Diagnostics);
 
-                return true;
+                return (true, newNode);
             }
 
-            return false;
+            return (false, null);
         }
 
         private (bool Found, TypeInfo TypeInfo, TypedExpression NewNode) GenerateBoundedTreeAndGetType(Node expression)
@@ -146,6 +155,34 @@ namespace AST.Passes
             }
 
             throw new NotImplementedException($"Node type {expression.GetType()} is not handled");
+        }
+
+        private void ReplaceNode(Node parent, Node specific_child, Node overwrittenNode)
+        {
+            if (parent is null)
+                throw new Exception("Cannot replace child Node of null parent.");
+
+            var newChildrenList = new List<Node>();
+
+            var swapped = false;
+
+            foreach (var child in parent.Children)
+            {
+                if (child.Id == specific_child.Id)
+                {
+                    newChildrenList.Add(overwrittenNode);
+                    swapped = true;
+                }
+                else
+                {
+                    newChildrenList.Add(child);
+                }
+            }
+
+            if (!swapped)
+                throw new Exception("Catastrophic Failure. Unable to find Node to replace in parent's collection. Please report.");
+
+            parent.Children = newChildrenList;
         }
 
         private (bool Found, TypeInfo TypeInfo) FindTypeByName(string desiredType)

@@ -2,8 +2,8 @@
 using Common;
 using AST.Builders;
 using Text2Abstraction;
-using AST.Trees.Statements;
 using BenchmarkDotNet.Attributes;
+using AST.Trees.Statements.Typed;
 using AST.Trees.Expressions.Typed;
 using AST.Trees.Expressions.Untyped;
 
@@ -29,10 +29,10 @@ namespace Tests.E2E.AST
 
             Assert.True(ast.Success);
 
-            var vdn = ast.Data.Children[0].Children[0].Children[0].Children[0] as VariableDeclarationStatement;
+            var vdn = ast.Data.Children[0].Children[0].Children[0].Children[0] as TypedVariableDeclarationStatement;
             Assert.NotNull(vdn);
             Assert.Equal("test", vdn.VariableName);
-            Assert.Equal("int", vdn.DesiredType);
+            Assert.Equal("int32", vdn.TypeInfo.Name);
 
             var expr = vdn.Expression as ComplexTypedExpression;
 

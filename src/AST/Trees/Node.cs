@@ -17,7 +17,7 @@ namespace AST.Trees
 
         public Dictionary<string, object> Properties { get; set; } = new Dictionary<string, object>();
 
-        public List<Node> Children { get; private set; } = new List<Node>();
+        public List<Node> Children { get; set; } = new List<Node>();
 
         public Node AddChild(Node n)
         {

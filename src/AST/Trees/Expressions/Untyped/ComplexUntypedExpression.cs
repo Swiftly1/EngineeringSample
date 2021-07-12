@@ -11,19 +11,17 @@ namespace AST.Trees.Expressions.Untyped
             ExpressionOperator @operator,
             DiagnosticInfo diag) : base(diag)
         {
-            Left = left;
             Operator = @operator;
-            Right = right;
 
-            Children.Add(Left);
-            Children.Add(Right);
+            Children.Add(left);
+            Children.Add(right);
         }
 
-        public UntypedExpression Left { get; set; }
+        public UntypedExpression Left => Children[0] as UntypedExpression;
 
         public ExpressionOperator Operator { get; set; }
 
-        public UntypedExpression Right { get; set; }
+        public UntypedExpression Right => Children[1] as UntypedExpression;
 
         public override string ToString()
         {

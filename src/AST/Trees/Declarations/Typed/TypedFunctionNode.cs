@@ -7,14 +7,13 @@ namespace AST.Trees.Declarations.Typed
         public TypedFunctionNode(DiagnosticInfo diag, string name, Node body, TypeInfo type) : base(diag)
         {
             Name = name;
-            Body = body;
             Type = type;
-            Children.Add(Body);
+            Children.Add(body);
         }
 
         public string Name { get; }
 
-        public Node Body { get; set; }
+        public Node Body => Children[0];
 
         public TypeInfo Type { get; set; }
 

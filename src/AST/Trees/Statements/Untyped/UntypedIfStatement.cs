@@ -1,7 +1,7 @@
 ﻿using Common;
 using AST.Trees.Expressions.Untyped;
 
-namespace AST.Trees.Statements
+namespace AST.Trees.Statements.Untyped
 {
     public class UntypedIfStatement : StatementNode
     {

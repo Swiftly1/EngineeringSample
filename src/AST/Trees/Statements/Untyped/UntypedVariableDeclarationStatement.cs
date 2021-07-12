@@ -1,15 +1,14 @@
 ﻿using Common;
 using AST.Trees.Expressions.Untyped;
 
-namespace AST.Trees.Statements
+namespace AST.Trees.Statements.Untyped
 {
-    public class VariableDeclarationStatement : StatementNode
+    public class UntypedVariableDeclarationStatement : StatementNode
     {
-        public VariableDeclarationStatement(string variableName, string desiredType, UntypedExpression expression, DiagnosticInfo diag) : base(diag)
+        public UntypedVariableDeclarationStatement(string variableName, string desiredType, UntypedExpression expression, DiagnosticInfo diag) : base(diag)
         {
             VariableName = variableName;
             DesiredType = desiredType;
-            Expression = expression;
             Children.Add(expression);
         }
 
@@ -17,7 +16,7 @@ namespace AST.Trees.Statements
 
         public string DesiredType { get; set; }
 
-        public Node Expression { get; set; }
+        public UntypedExpression Expression => Children[0] as UntypedExpression;
 
         public override string ToString()
         {

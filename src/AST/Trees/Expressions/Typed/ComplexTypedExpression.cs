@@ -11,18 +11,16 @@ namespace AST.Trees.Expressions.Typed
             TypeInfo typeInfo,
             DiagnosticInfo diag) : base(diag, typeInfo)
         {
-            Left = left;
-            Right = right;
             Operator = @operator;
-            this.Children.Add(Left);
-            this.Children.Add(Right);
+            this.Children.Add(left);
+            this.Children.Add(right);
         }
 
-        public TypedExpression Left { get; set; }
+        public TypedExpression Left => Children[0] as TypedExpression;
 
         public ExpressionOperator Operator { get; set; }
 
-        public TypedExpression Right { get; set; }
+        public TypedExpression Right => Children[1] as TypedExpression;
 
         public override string ToString()
         {
