@@ -1,11 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Common;
 using AST.Miscs;
-using AST.Passes;
 using AST.Trees;
-using Common;
+using AST.Passes;
+using System.Linq;
 using Common.Lexing;
+using System.Collections.Generic;
 using Text2Abstraction.LexicalElements;
 
 namespace AST.Builders

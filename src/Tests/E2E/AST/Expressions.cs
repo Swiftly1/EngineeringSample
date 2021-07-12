@@ -4,8 +4,8 @@ using AST.Builders;
 using Text2Abstraction;
 using AST.Trees.Statements;
 using BenchmarkDotNet.Attributes;
-using AST.Trees.Expressions.Untyped;
 using AST.Trees.Expressions.Typed;
+using AST.Trees.Expressions.Untyped;
 
 namespace Tests.E2E.AST
 {

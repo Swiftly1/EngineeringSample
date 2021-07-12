@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using Common.Lexing;
+﻿using Common.Lexing;
+using System.Collections.Generic;
 using Text2Abstraction.LexicalElements;
 
 namespace Common
@@ -25,8 +25,8 @@ namespace Common
             {
                 if (_Current.Kind == opening)
                 {
-                    openCounter++; 
-                    
+                    openCounter++;
+
                     if (openCounter > 1)
                     {
                         list.Add(_Current);

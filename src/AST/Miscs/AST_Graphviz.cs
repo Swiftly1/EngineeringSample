@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using AST.Trees;
-using AST.Trees.Miscs;
 using Common;
+using AST.Trees;
+using System.Text;
+using AST.Trees.Miscs;
+using System.Collections.Generic;
 
 namespace AST.Miscs
 {

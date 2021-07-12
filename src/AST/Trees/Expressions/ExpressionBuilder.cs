@@ -1,10 +1,10 @@
 ﻿using Common;
+using AST.Miscs;
+using System.Linq;
+using Common.Lexing;
 using System.Collections.Generic;
 using AST.Trees.Expressions.Untyped;
 using Text2Abstraction.LexicalElements;
-using Common.Lexing;
-using AST.Miscs;
-using System.Linq;
 
 namespace AST.Trees.Expressions
 {

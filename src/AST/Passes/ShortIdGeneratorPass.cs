@@ -1,17 +1,19 @@
-﻿using System.Collections.Generic;
-using AST.Passes.Results;
-using AST.Trees;
+﻿using AST.Trees;
 using AST.Trees.Miscs;
+using AST.Passes.Results;
+using System.Collections.Generic;
 
 namespace AST.Passes
 {
     public class ShortIdGeneratorPass : IPass
     {
+        public const string PassName = "ShortIdGeneratorPass";
+
+        public string Name { get; set; } = PassName;
+
         private int Counter { get; set; } = 0;
 
         public PassesExchangePoint Exchange { get; set; }
-
-        public const string PassName = "ShortIdGeneratorPass";
 
         private void AttachShortIdToNodes(Node root)
         {

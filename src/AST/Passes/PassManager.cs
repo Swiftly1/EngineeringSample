@@ -1,5 +1,6 @@
-﻿using System.Collections.Generic;
-using AST.Trees;
+﻿using AST.Trees;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace AST.Passes
 {

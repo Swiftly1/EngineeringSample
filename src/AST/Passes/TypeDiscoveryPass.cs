@@ -9,6 +9,8 @@ namespace AST.Passes
     {
         public const string PassName = "TypeDiscoveryPass";
 
+        public string Name { get; set; } = PassName;
+
         private List<TypeInfo> KnownTypes = new();
 
         public PassesExchangePoint Exchange { get; set; }

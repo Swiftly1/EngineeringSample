@@ -1,5 +1,5 @@
-﻿using AST.Trees;
-using Common;
+﻿using Common;
+using AST.Trees;
 
 namespace AST.Miscs
 {
