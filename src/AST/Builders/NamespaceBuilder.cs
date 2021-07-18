@@ -39,7 +39,7 @@ namespace AST.Builders
                     if (fMatcher.Evaluate(TakeToEnd(1), out var fMatcherResult))
                     {
                         var ahead = TryGetAhead(fMatcherResult.Items.Count);
-                        var result = TryMatchFunction(ahead.Items);
+                        var result = TryMatchFunction(ahead.Items, node.Context);
 
                         if (result.Success)
                             node.Children.Add(result.Data);
@@ -60,7 +60,7 @@ namespace AST.Builders
                 return new ResultDiag<Node>(node);
             }
 
-            private ResultDiag<UntypedFunctionNode> TryMatchFunction(List<LexElement> matched)
+            private ResultDiag<UntypedFunctionNode> TryMatchFunction(List<LexElement> matched, ScopeContext parentScope)
             {
                 var result = GetTillClosed(LexingElement.OpenParenthesis, LexingElement.ClosedParenthesis);
 
@@ -95,7 +95,7 @@ namespace AST.Builders
                 }
 
                 var bodyBuilder = new BodyBuilder(bodyResult.Data, _Diagnostics);
-                var body = bodyBuilder.Build();
+                var body = bodyBuilder.Build(parentScope);
 
                 if (!body.Success)
                     return body.ToFailedResult<UntypedFunctionNode>();

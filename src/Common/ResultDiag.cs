@@ -35,8 +35,6 @@ namespace Common
 
         public bool Success { get; }
 
-        public Message? Message => Messages.Count > 0 ? Messages[0] : null;
-
         public List<Message> Messages { get; } = new List<Message>();
 
         public T? Data { get; }

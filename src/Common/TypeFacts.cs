@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Common
 {
@@ -11,7 +12,16 @@ namespace Common
             { "long", GetInt64() },
             { "int64", GetInt64() },
             { "double", GetDouble() },
+            { "string", GetString() },
         };
+
+        private static TypeInfo GetString()
+        {
+            return new TypeInfo
+            {
+                Name = "string"
+            };
+        }
 
         public static TypeInfo GetInt64()
         {

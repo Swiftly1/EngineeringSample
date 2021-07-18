@@ -14,7 +14,7 @@ namespace AST.Trees.Statements.Untyped
             // TODO: It's not the nicest solution
             // because we aren't sure whether there was just empty block or it was no provided at all
             // but it simplifies stuff a little bit 
-            this.AddChild(branchFalse ?? new BodyNode(diag));
+            this.AddChild(branchFalse ?? new BodyNode(diag, null));
         }
 
         public UntypedExpression Condition { get; }

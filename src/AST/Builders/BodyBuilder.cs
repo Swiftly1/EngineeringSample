@@ -25,9 +25,9 @@ namespace AST.Builders
                 _Diagnostics = diagnostic;
             }
 
-            public ResultDiag<BodyNode> Build()
+            public ResultDiag<BodyNode> Build(ScopeContext context)
             {
-                var bodyNode = new BodyNode(_Diagnostics);
+                var bodyNode = new BodyNode(_Diagnostics, context);
                 do
                 {
                     var variableDeclarationMatcher =
@@ -65,7 +65,7 @@ namespace AST.Builders
                     else if (ifStatementMatcher.Evaluate(TakeToEnd(), out var ifStatementMatcherResult))
                     {
                         var ahead = TryGetAhead(ifStatementMatcherResult.Items.Count);
-                        var result = TryMatchIfStatement(ahead.Items);
+                        var result = TryMatchIfStatement(ahead.Items, bodyNode.Context);
 
                         if (result.Success)
                             bodyNode.AddChild(result.Data);
@@ -82,7 +82,7 @@ namespace AST.Builders
                 return new ResultDiag<BodyNode>(bodyNode);
             }
 
-            private ResultDiag<UntypedIfStatement> TryMatchIfStatement(List<LexElement> items)
+            private ResultDiag<UntypedIfStatement> TryMatchIfStatement(List<LexElement> items, ScopeContext parentScope)
             {
                 var conditionResult = GetTillClosed(LexingElement.OpenParenthesis, LexingElement.ClosedParenthesis);
 
@@ -108,7 +108,7 @@ namespace AST.Builders
                     return expression.ToFailedResult<UntypedIfStatement>();
                 }
 
-                var trueBranch = new BodyBuilder(bodyResult.Data, items[0].Diagnostics).Build();
+                var trueBranch = new BodyBuilder(bodyResult.Data, items[0].Diagnostics).Build(parentScope);
 
                 if (!trueBranch.Success)
                 {
@@ -140,7 +140,7 @@ namespace AST.Builders
                     return elseBodyResult.ToFailedResult<UntypedIfStatement>();
                 }
 
-                var falseBranch = new BodyBuilder(elseBodyResult.Data, elseDiagnostics).Build();
+                var falseBranch = new BodyBuilder(elseBodyResult.Data, elseDiagnostics).Build(parentScope);
 
                 if (!falseBranch.Success)
                 {

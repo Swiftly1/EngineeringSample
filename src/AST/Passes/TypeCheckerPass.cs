@@ -28,7 +28,7 @@ namespace AST.Passes
             Exchange = exchange;
             KnownTypes = (Exchange.PassResults[TypeDiscoveryPass.PassName] as TypeDiscoveryPassResult).KnownTypes;
             CheckTree(root);
-            return new EmptyPassResult(PassName);
+            return new TypeCheckerPassResult(PassName, Errors.DumpErrors().ToList());
         }
 
         private void CheckTree(Node root)

@@ -6,7 +6,7 @@ namespace AST.Trees.Declarations.Untyped
 {
     public class UntypedFunctionNode : ScopeableNode
     {
-        public UntypedFunctionNode(DiagnosticInfo diag, string name, string desiredType, BodyNode body, List<Argument> args) : base(diag)
+        public UntypedFunctionNode(DiagnosticInfo diag, string name, string desiredType, BodyNode body, List<Argument> args) : base(diag, new ScopeContext())
         {
             Name = name;
             DesiredType = desiredType;

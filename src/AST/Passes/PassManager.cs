@@ -1,6 +1,7 @@
 ﻿using System;
-using System.Linq;
+using Common;
 using AST.Trees;
+using System.Linq;
 using System.Collections.Generic;
 
 namespace AST.Passes
@@ -13,7 +14,7 @@ namespace AST.Passes
 
         public PassesExchangePoint Exchange { get; set; } = new();
 
-        public void WalkAll(RootNode root)
+        public ResultDiag<bool> WalkAll(RootNode root)
         {
             // Ensure Unique Pass Names
 
@@ -34,7 +35,15 @@ namespace AST.Passes
             {
                 var result = pass.Walk(root, Exchange);
                 Exchange.PassResults.Add(result.PassName, result);
+
+                if (result.FullStop)
+                {
+                    break;
+                }
             }
+
+            var errors = Exchange.PassResults.SelectMany(x => x.Value.Errors.DumpErrors()).ToList();
+            return errors.Any() ? new ResultDiag<bool>(errors) : new ResultDiag<bool>(true);
         }
 
         public static PassManager GetDefaultPassManager()

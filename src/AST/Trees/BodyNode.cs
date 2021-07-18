@@ -4,7 +4,7 @@ namespace AST.Trees
 {
     public class BodyNode : ScopeableNode
     {
-        public BodyNode(DiagnosticInfo diag) : base(diag)
+        public BodyNode(DiagnosticInfo diag, ScopeContext sc) : base(diag, sc)
         {
         }
 

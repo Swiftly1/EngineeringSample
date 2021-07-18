@@ -72,8 +72,7 @@ namespace AST.Miscs.Matching
             }
             else if (requirement is MatchingWholeGroup wg)
             {
-                // TODO:
-                // it's ugly
+                // TODO: it's ugly
                 var count = wg.Items.Count;
                 var items = new List<LexElement>();
 

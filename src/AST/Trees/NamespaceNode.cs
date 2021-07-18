@@ -2,9 +2,9 @@
 
 namespace AST.Trees
 {
-    public class NamespaceNode : Node
+    public class NamespaceNode : ScopeableNode
     {
-        public NamespaceNode(DiagnosticInfo diag, string name) : base(diag)
+        public NamespaceNode(DiagnosticInfo diag, string name) : base(diag, new ScopeContext())
         {
             Name = name;
         }

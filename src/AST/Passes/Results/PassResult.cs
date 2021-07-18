@@ -8,5 +8,9 @@
         }
 
         public string PassName { get; }
+
+        public bool FullStop { get; set; }
+
+        public ErrorHandler Errors { get; set; } = new();
     }
 }

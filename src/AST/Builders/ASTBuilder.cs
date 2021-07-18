@@ -43,7 +43,13 @@ namespace AST.Builders
             }
             else
             {
-                Passes.WalkAll(root);
+                var passResult = Passes.WalkAll(root);
+
+                if (!passResult.Success)
+                {
+                    _errors.AddMessages(passResult.Messages);
+                    return new ResultDiag<RootNode>(_errors.DumpErrors().ToList());
+                }
             }
 
             return new ResultDiag<RootNode>(root);

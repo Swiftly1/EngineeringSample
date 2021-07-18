@@ -3,4 +3,5 @@
 public void Test()
 {
 	int test = 345645 + 23423;
+	int test2 = 345645 + test;
 }
