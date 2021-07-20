@@ -6,9 +6,9 @@ namespace AST.Trees
     {
         protected ScopeableNode(DiagnosticInfo diag, ScopeContext context) : base(diag)
         {
-            Context.Parent = context;
+            ScopeContext.Parent = context;
         }
 
-        public ScopeContext Context { get; set; } = new();
+        public ScopeContext ScopeContext { get; set; } = new();
     }
 }

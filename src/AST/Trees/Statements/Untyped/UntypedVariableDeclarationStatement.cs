@@ -20,7 +20,7 @@ namespace AST.Trees.Statements.Untyped
 
         public override string ToString()
         {
-            return $"VariableDeclaration: '{VariableName}'";
+            return $"UntypedVariableDeclaration: '{VariableName}'";
         }
     }
 }

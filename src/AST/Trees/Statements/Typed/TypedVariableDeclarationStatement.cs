@@ -21,7 +21,7 @@ namespace AST.Trees.Statements.Typed
 
         public override string ToString()
         {
-            return $"VariableDeclaration: '{VariableName}'";
+            return $"TypedVariableDeclaration: '{VariableName}'";
         }
     }
 }

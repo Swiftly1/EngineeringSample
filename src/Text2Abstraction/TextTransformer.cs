@@ -1,10 +1,10 @@
 ﻿using Common;
 using System;
 using System.Linq;
+using Common.Lexing;
+using System.Globalization;
 using System.Collections.Generic;
 using Text2Abstraction.LexicalElements;
-using System.Globalization;
-using Common.Lexing;
 
 namespace Text2Abstraction
 {
@@ -206,7 +206,7 @@ namespace Text2Abstraction
                 LexElement element;
                 if (LanguageFacts.KeywordMapper.TryGetValue(tmp, out var lexingElement))
                 {
-                    element = new LexKeyword(tmp, lexingElement, GetDiagnostics());
+                    element = new LexKeyword(tmp, lexingElement, GetDiagnosticsAtIndex(tmp.Length));
                 }
                 else
                 {
@@ -251,6 +251,11 @@ namespace Text2Abstraction
         {
             var index = _Index - length;
             var position = index - _LastIndexOfNewLine;
+
+            // Columns (and Lines) start at 1
+            if (index == 0)
+                position++;
+
             return new DiagnosticInfo(_CurrentLine, position, ElementAt(index));
         }
 

@@ -40,7 +40,7 @@ namespace AST.Builders
                     if (functionMatcher.Evaluate(TakeToEnd(), out var fMatcherResult))
                     {
                         var ahead = TryGetAhead(fMatcherResult.Items.Count, true);
-                        var result = TryMatchFunction(ahead.Items, node.Context);
+                        var result = TryMatchFunction(ahead.Items, node.ScopeContext);
 
                         if (result.Success)
                             node.Children.Add(result.Data);
@@ -101,9 +101,19 @@ namespace AST.Builders
                 if (!body.Success)
                     return body.ToFailedResult<UntypedFunctionNode>();
 
-                string desiredType = matched[1] as LexKeyword;
+                var accessModifier = matched[0] as LexKeyword;
+                var desiredType = matched[1] as LexKeyword;
 
-                var node = new UntypedFunctionNode(matched[2].Diagnostics, desiredType, functionName, body.Data, argsResult.Data);
+                var node = new UntypedFunctionNode
+                (
+                    matched[2].Diagnostics,
+                    functionName,
+                    desiredType.Value,
+                    body.Data,
+                    argsResult.Data,
+                    desiredType.Diagnostics,
+                    accessModifier.Diagnostics
+                );
 
                 return new ResultDiag<UntypedFunctionNode>(node);
             }

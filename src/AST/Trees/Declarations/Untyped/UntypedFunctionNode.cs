@@ -6,13 +6,25 @@ namespace AST.Trees.Declarations.Untyped
 {
     public class UntypedFunctionNode : ScopeableNode
     {
-        public UntypedFunctionNode(DiagnosticInfo diag, string name, string desiredType, BodyNode body, List<Argument> args) : base(diag, new ScopeContext())
+        public UntypedFunctionNode
+        (
+            DiagnosticInfo diag,
+            string name,
+            string desiredType,
+            BodyNode body,
+            List<Argument> args,
+            DiagnosticInfo typeDiag,
+            DiagnosticInfo accessModDiag
+        ) : base(diag, new ScopeContext())
         {
+            // TODO: ScopeContext
             Name = name;
             DesiredType = desiredType;
             Body = body;
             Arguments = args;
             Children.Add(Body);
+            TypeDiagnostics = typeDiag;
+            AccessibilityModifierDiagnostics = accessModDiag;
         }
 
         public string Name { get; }
@@ -22,6 +34,10 @@ namespace AST.Trees.Declarations.Untyped
         public BodyNode Body { get; set; }
 
         public List<Argument> Arguments { get; set; } = new List<Argument>();
+
+        public DiagnosticInfo TypeDiagnostics { get; set; }
+
+        public DiagnosticInfo AccessibilityModifierDiagnostics { get; set; }
 
         public override string ToString()
         {

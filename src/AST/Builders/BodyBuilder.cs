@@ -68,7 +68,7 @@ namespace AST.Builders
                         else if (ifStatementMatcher.Evaluate(TakeToEnd(), out var ifStatementMatcherResult))
                         {
                             var ahead = TryGetAhead(ifStatementMatcherResult.Items.Count);
-                            var result = TryMatchIfStatement(ahead.Items, bodyNode.Context);
+                            var result = TryMatchIfStatement(ahead.Items, bodyNode.ScopeContext);
 
                             if (result.Success)
                                 bodyNode.AddChild(result.Data);

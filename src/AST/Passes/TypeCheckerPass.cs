@@ -6,8 +6,10 @@ using AST.Passes.Results;
 using System.Collections.Generic;
 using AST.Trees.Statements.Typed;
 using AST.Trees.Expressions.Typed;
+using AST.Trees.Declarations.Typed;
 using AST.Trees.Statements.Untyped;
 using AST.Trees.Expressions.Untyped;
+using AST.Trees.Declarations.Untyped;
 
 namespace AST.Passes
 {
@@ -89,8 +91,49 @@ namespace AST.Passes
 
                 return (true, newNode);
             }
+            else if (current is UntypedFunctionNode ufn)
+            {
+                var type = ufn.DesiredType;
+
+                var result = FindTypeByName(type);
+
+                if (!result.Found)
+                {
+                    Errors.AddError($"Type {type} is not found.", ufn.TypeDiagnostics);
+                    return (true, null);
+                }
+
+                var ensureResult = EnsureCorrectReturnTypeAtAllBranches(ufn, result.TypeInfo);
+
+                if (!ensureResult.Success)
+                {
+                    Errors.AddError($"Not all pathes in function at {ufn.Diagnostics} are " +
+                        $"covered with return statement of type {result.TypeInfo.Name}.", current.Diagnostics);
+
+                    return (false, null);
+                }
+
+                var newNode = new TypedFunctionNode
+                (
+                    ufn.Diagnostics,
+                    ufn.Name,
+                    ufn.Body,
+                    result.TypeInfo,
+                    ufn.ScopeContext,
+                    ufn.TypeDiagnostics,
+                    ufn.AccessibilityModifierDiagnostics
+                );
+
+                return (false, newNode);
+            }
 
             return (false, null);
+        }
+
+        private (bool Success, Node IncorrectNode) EnsureCorrectReturnTypeAtAllBranches(UntypedFunctionNode ufn, TypeInfo typeInfo)
+        {
+            // TODO: Ensure that all branches end with correct return statement type
+            return (true, null);
         }
 
         private (bool Found, TypeInfo TypeInfo, TypedExpression NewNode) GenerateBoundedTreeAndGetType(Node expression)
