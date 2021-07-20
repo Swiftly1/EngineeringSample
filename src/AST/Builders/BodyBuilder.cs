@@ -28,51 +28,55 @@ namespace AST.Builders
             public ResultDiag<BodyNode> Build(ScopeContext context)
             {
                 var bodyNode = new BodyNode(_Diagnostics, context);
-                do
+
+                if (_Collection.Any())
                 {
-                    var variableDeclarationMatcher =
-                    MatcherUtils
-                    .Match(LexingElement.Type, LexingElement.Word, LexingElement.Equal);
-
-                    var assignStatementMatcher =
-                    MatcherUtils
-                    .Match(LexingElement.Word, LexingElement.Equal);
-
-                    var ifStatementMatcher =
-                    MatcherUtils
-                    .Match(LexingElement.If);
-
-                    if (variableDeclarationMatcher.Evaluate(TakeToEnd(), out var variableDeclarationMatcherResult))
+                    do
                     {
-                        var ahead = TryGetAhead(variableDeclarationMatcherResult.Items.Count, true);
-                        var result = TryMatchVariableDeclaration(ahead.Items);
+                        var variableDeclarationMatcher =
+                        MatcherUtils
+                        .Match(LexingElement.Type, LexingElement.Word, LexingElement.Equal);
 
-                        if (result.Success)
-                            bodyNode.AddChild(result.Data);
-                        else
-                            _errors.AddMessages(result.Messages);
-                    }
-                    else if (assignStatementMatcher.Evaluate(TakeToEnd(), out var assignStatementMatcherResult))
-                    {
-                        var ahead = TryGetAhead(assignStatementMatcherResult.Items.Count, true);
-                        var result = TryMatchVariableReAssignment(ahead.Items);
+                        var assignStatementMatcher =
+                        MatcherUtils
+                        .Match(LexingElement.Word, LexingElement.Equal);
 
-                        if (result.Success)
-                            bodyNode.AddChild(result.Data);
-                        else
-                            _errors.AddMessages(result.Messages);
-                    }
-                    else if (ifStatementMatcher.Evaluate(TakeToEnd(), out var ifStatementMatcherResult))
-                    {
-                        var ahead = TryGetAhead(ifStatementMatcherResult.Items.Count);
-                        var result = TryMatchIfStatement(ahead.Items, bodyNode.Context);
+                        var ifStatementMatcher =
+                        MatcherUtils
+                        .Match(LexingElement.If);
 
-                        if (result.Success)
-                            bodyNode.AddChild(result.Data);
-                        else
-                            _errors.AddMessages(result.Messages);
-                    }
-                } while (MoveNext());
+                        if (variableDeclarationMatcher.Evaluate(TakeToEnd(), out var variableDeclarationMatcherResult))
+                        {
+                            var ahead = TryGetAhead(variableDeclarationMatcherResult.Items.Count, true);
+                            var result = TryMatchVariableDeclaration(ahead.Items);
+
+                            if (result.Success)
+                                bodyNode.AddChild(result.Data);
+                            else
+                                _errors.AddMessages(result.Messages);
+                        }
+                        else if (assignStatementMatcher.Evaluate(TakeToEnd(), out var assignStatementMatcherResult))
+                        {
+                            var ahead = TryGetAhead(assignStatementMatcherResult.Items.Count, true);
+                            var result = TryMatchVariableReAssignment(ahead.Items);
+
+                            if (result.Success)
+                                bodyNode.AddChild(result.Data);
+                            else
+                                _errors.AddMessages(result.Messages);
+                        }
+                        else if (ifStatementMatcher.Evaluate(TakeToEnd(), out var ifStatementMatcherResult))
+                        {
+                            var ahead = TryGetAhead(ifStatementMatcherResult.Items.Count);
+                            var result = TryMatchIfStatement(ahead.Items, bodyNode.Context);
+
+                            if (result.Success)
+                                bodyNode.AddChild(result.Data);
+                            else
+                                _errors.AddMessages(result.Messages);
+                        }
+                    } while (MoveNext());
+                }
 
                 if (_errors.DumpErrors().Any())
                 {

@@ -96,15 +96,19 @@ namespace AST.Builders
                 }
             } while (MoveNext());
 
-            foreach (var group in list)
+            for (int i = 0; i < list.Count; i++)
             {
-                if (group.Elements.Any() && group.Elements.First() is LexWord first)
+                var current = list[i];
+
+                if (current.Elements.Any() && current.Elements.First() is LexWord first)
                 {
-                    group.NamespaceName = first.Value;
+                    current.NamespaceName = first.Value;
+                    // Remove namespace name from namespace elements list
+                    current.Elements.RemoveAt(0);
                 }
                 else
                 {
-                    _errors.AddError("Namespace must be named. Example: 'namespace Person'", group.Diagnostics);
+                    _errors.AddError("Namespace must be named. Example: 'namespace Person'", current.Diagnostics);
                 }
             }
 

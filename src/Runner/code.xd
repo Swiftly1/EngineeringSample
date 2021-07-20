@@ -1,7 +1,12 @@
 ﻿namespace Test
 
+public int Test()
+{
+
+}
+
 public void Test()
 {
 	int test = 345645 + 23423;
-	int test2 = 345645 + test;
+	int test2 = 345645 + 3;
 }

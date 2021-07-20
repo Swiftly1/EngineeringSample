@@ -30,15 +30,16 @@ namespace AST.Builders
             public ResultDiag<Node> TryBuild()
             {
                 var node = new NamespaceNode(_Diagnostics, NamespaceName);
+
                 do
                 {
-                    var fMatcher =
+                    var functionMatcher =
                         MatcherUtils
                         .Match(LexingElement.AccessibilityModifier, LexingElement.Type, LexingElement.Word, LexingElement.OpenParenthesis);
 
-                    if (fMatcher.Evaluate(TakeToEnd(1), out var fMatcherResult))
+                    if (functionMatcher.Evaluate(TakeToEnd(), out var fMatcherResult))
                     {
-                        var ahead = TryGetAhead(fMatcherResult.Items.Count);
+                        var ahead = TryGetAhead(fMatcherResult.Items.Count, true);
                         var result = TryMatchFunction(ahead.Items, node.Context);
 
                         if (result.Success)

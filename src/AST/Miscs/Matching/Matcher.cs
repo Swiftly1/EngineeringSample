@@ -29,6 +29,13 @@ namespace AST.Miscs.Matching
 
         public bool Evaluate(List<LexElement> lexElements, out EvaluationResult result)
         {
+            if (lexElements is null || lexElements.Count == 0)
+            {
+                // atm there's no checking this result when Evaluate returns false/fail.
+                result = new EvaluationResult(false, new List<LexElement>());
+                return false;
+            }
+
             var items = new List<LexElement>();
             var enumerator = lexElements.GetEnumerator();
             enumerator.MoveNext();
