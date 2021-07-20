@@ -17,7 +17,9 @@ namespace AST.Trees.Declarations.Untyped
             DiagnosticInfo accessModDiag
         ) : base(diag, new ScopeContext())
         {
-            // TODO: ScopeContext
+            // TODO: ScopeContext should be received from parent Namespace
+            // and that ScopeContext should contain info about other functions / classes 
+            // within that namespace
             Name = name;
             DesiredType = desiredType;
             Body = body;
