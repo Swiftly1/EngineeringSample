@@ -34,7 +34,7 @@ namespace AST.Trees.Declarations.Typed
 
         public override string ToString()
         {
-            return $"Function: '{Name}'";
+            return $"TypedFunction: '{Name}' - {Type.Name}";
         }
     }
 }

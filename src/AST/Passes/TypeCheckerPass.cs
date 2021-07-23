@@ -173,7 +173,7 @@ namespace AST.Passes
                 var leftResult = GenerateBoundedTreeAndGetType(cue.Left);
                 var rightResult = GenerateBoundedTreeAndGetType(cue.Right);
 
-                if (!leftResult.Found  || !rightResult.Found)
+                if (!leftResult.Found || !rightResult.Found)
                 {
                     return (false, null, null);
                 }
@@ -195,6 +195,14 @@ namespace AST.Passes
                 cue.CopyTo(newExpression);
 
                 return (true, found.ResultType, newExpression);
+            }
+            else if (expression is ConstantUntypedStringExpression cuse)
+            {
+                var newExpression = new ConstantTypedStringExpression(cuse.Diagnostics, cuse.Value, TypeFacts.GetString());
+
+                cuse.CopyTo(newExpression);
+
+                return (true, newExpression.TypeInfo, newExpression);
             }
 
             throw new NotImplementedException($"Node type {expression.GetType()} is not handled");

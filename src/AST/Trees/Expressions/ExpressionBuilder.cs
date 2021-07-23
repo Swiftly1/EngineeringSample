@@ -86,6 +86,8 @@ namespace AST.Trees.Expressions
             }
             else if (left.Kind == LexingElement.Word)
                 return new UntypedVariableUseExpression(left.Diagnostics, (left as LexWord).Value);
+            else if (left.Kind == LexingElement.String)
+                return new ConstantUntypedStringExpression(left.Diagnostics, (left as LexStringLiteral).Value);
 
             throw new ASTException($"Unable to resolve Expression for kind {left.Kind}. Location: {left.Diagnostics}", left.Diagnostics);
         }

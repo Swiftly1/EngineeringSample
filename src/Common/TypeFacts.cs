@@ -15,7 +15,7 @@ namespace Common
             { "void", GetVoid() },
         };
 
-        private static TypeInfo GetString()
+        public static TypeInfo GetString()
         {
             return new TypeInfo
             {
