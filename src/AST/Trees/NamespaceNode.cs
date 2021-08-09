@@ -4,7 +4,7 @@ namespace AST.Trees
 {
     public class NamespaceNode : ScopeableNode
     {
-        public NamespaceNode(DiagnosticInfo diag, string name) : base(diag, new ScopeContext())
+        public NamespaceNode(DiagnosticInfo diag, string name) : base(diag, name)
         {
             Name = name;
         }

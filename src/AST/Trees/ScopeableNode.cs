@@ -4,11 +4,16 @@ namespace AST.Trees
 {
     public abstract class ScopeableNode : Node
     {
-        protected ScopeableNode(DiagnosticInfo diag, ScopeContext context) : base(diag)
+        protected ScopeableNode(DiagnosticInfo diag, ScopeContext parent_context) : base(diag)
         {
-            ScopeContext.Parent = context;
+            ScopeContext = parent_context;
         }
 
-        public ScopeContext ScopeContext { get; set; } = new();
+        protected ScopeableNode(DiagnosticInfo diag, string nameSpace) : base(diag)
+        {
+            ScopeContext.Namespace = nameSpace;
+        }
+
+        public ScopeContext ScopeContext { get; } = new();
     }
 }

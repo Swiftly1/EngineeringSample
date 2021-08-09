@@ -103,6 +103,7 @@ namespace AST.Builders
 
                 var accessModifier = matched[0] as LexKeyword;
                 var desiredType = matched[1] as LexKeyword;
+                var context = new ScopeContext(parentScope);
 
                 var node = new UntypedFunctionNode
                 (
@@ -112,7 +113,8 @@ namespace AST.Builders
                     body.Data,
                     argsResult.Data,
                     desiredType.Diagnostics,
-                    accessModifier.Diagnostics
+                    accessModifier.Diagnostics,
+                    context
                 );
 
                 return new ResultDiag<UntypedFunctionNode>(node);

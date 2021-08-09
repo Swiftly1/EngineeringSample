@@ -14,12 +14,10 @@ namespace AST.Trees.Declarations.Untyped
             BodyNode body,
             List<Argument> args,
             DiagnosticInfo typeDiag,
-            DiagnosticInfo accessModDiag
-        ) : base(diag, new ScopeContext())
+            DiagnosticInfo accessModDiag,
+            ScopeContext context
+        ) : base(diag, context)
         {
-            // TODO: ScopeContext should be received from parent Namespace
-            // and that ScopeContext should contain info about other functions / classes 
-            // within that namespace
             Name = name;
             DesiredType = desiredType;
             Body = body;
