@@ -1,4 +1,6 @@
 ﻿#nullable enable
+using System.Collections.Generic;
+
 namespace Common
 {
     public class Result<T>
@@ -17,6 +19,16 @@ namespace Common
             {
                 Success = false,
                 Message = error,
+                Data = default(T)
+            };
+        }
+
+        public static Result<T> Error(List<Message> error)
+        {
+            return new Result<T>()
+            {
+                Success = false,
+                Message = string.Join(',', error),
                 Data = default(T)
             };
         }

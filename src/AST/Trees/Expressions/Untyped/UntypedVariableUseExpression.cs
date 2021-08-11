@@ -13,7 +13,7 @@ namespace AST.Trees.Expressions.Untyped
 
         public override string ToString()
         {
-            return $"Untyped Variable: {VariableName}";
+            return $"Untyped Variable Use: {VariableName}";
         }
     }
 }

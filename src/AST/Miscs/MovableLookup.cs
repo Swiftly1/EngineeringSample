@@ -39,7 +39,7 @@ namespace Common
                         list.Add(_Current);
                     }
 
-                    openCounter--;   
+                    openCounter--;
                 }
                 else
                 {

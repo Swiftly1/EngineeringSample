@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
+using System.Collections.Generic;
 
 namespace Common
 {
@@ -50,7 +50,7 @@ namespace Common
 
         protected List<T> TakeToEnd(int offset = 0) => _Collection.Skip(_Index + offset).ToList();
 
-        protected (bool Sucess, List<T> Items) TryGetAhead(int count, bool includeCurrent = false)
+        protected (bool Sucess, List<T> Items) TryGetAhead(int count, bool includeCurrent = false, bool movePointer = true)
         {
             var originalIndex = _Index;
 
@@ -70,7 +70,7 @@ namespace Common
 
             var success = list.Count == count;
 
-            if (!success)
+            if (!success || !movePointer)
                 _Index = originalIndex;
 
             return (success, list);

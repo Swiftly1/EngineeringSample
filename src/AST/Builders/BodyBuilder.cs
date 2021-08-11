@@ -47,7 +47,7 @@ namespace AST.Builders
 
                         if (variableDeclarationMatcher.Evaluate(TakeToEnd(), out var variableDeclarationMatcherResult))
                         {
-                            var ahead = TryGetAhead(variableDeclarationMatcherResult.Items.Count, true);
+                            var ahead = TryGetAhead(variableDeclarationMatcherResult.Items.Count, includeCurrent: true);
                             var result = TryMatchVariableDeclaration(ahead.Items);
 
                             if (result.Success)
@@ -57,7 +57,7 @@ namespace AST.Builders
                         }
                         else if (assignStatementMatcher.Evaluate(TakeToEnd(), out var assignStatementMatcherResult))
                         {
-                            var ahead = TryGetAhead(assignStatementMatcherResult.Items.Count, true);
+                            var ahead = TryGetAhead(assignStatementMatcherResult.Items.Count, includeCurrent: true);
                             var result = TryMatchVariableReAssignment(ahead.Items);
 
                             if (result.Success)
@@ -67,7 +67,7 @@ namespace AST.Builders
                         }
                         else if (ifStatementMatcher.Evaluate(TakeToEnd(), out var ifStatementMatcherResult))
                         {
-                            var ahead = TryGetAhead(ifStatementMatcherResult.Items.Count);
+                            var ahead = TryGetAhead(ifStatementMatcherResult.Items.Count, includeCurrent: false);
                             var result = TryMatchIfStatement(ahead.Items, bodyNode.ScopeContext);
 
                             if (result.Success)
@@ -196,13 +196,8 @@ namespace AST.Builders
                 var result = builder.Build();
 
                 // Move pointer at the semicolon after expression
-                TryGetAhead(expressionElements.Count + 1);
+                TryGetAhead(expressionElements.Count + 1, includeCurrent: false);
                 return result;
-            }
-
-            public new(bool Sucess, List<LexElement> Items) TryGetAhead(int count, bool includeCurrent = false)
-            {
-                return base.TryGetAhead(count, includeCurrent);
             }
         }
     }

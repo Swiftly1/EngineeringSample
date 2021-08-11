@@ -82,7 +82,7 @@ namespace AST.Builders
 
                 string functionName = matched[2] as LexWord;
 
-                var argsResult = ExtractArgs(result.Data);
+                var argsResult = FunctionHelpers.ExtractFunctionParametersInfo(result.Data);
 
                 if (!argsResult.Success)
                 {
@@ -118,36 +118,6 @@ namespace AST.Builders
                 );
 
                 return new ResultDiag<UntypedFunctionNode>(node);
-            }
-
-            private Result<List<Argument>> ExtractArgs(List<LexElement> data)
-            {
-                var withoutComma = data.Where((x, i) => (i + 1) % 3 != 0).ToList();
-
-                if (withoutComma.Count % 2 != 0)
-                {
-                    return Result<List<Argument>>.Error("");
-                }
-
-                var args = new List<Argument>();
-
-                for (int i = 0; i < withoutComma.Count; i += 2)
-                {
-                    var arg = new Argument
-                    {
-                        TypeName = withoutComma[i] as LexKeyword,
-                        Name = withoutComma[i + 1] as LexWord
-                    };
-
-                    args.Add(arg);
-                }
-
-                return Result<List<Argument>>.Ok(args);
-            }
-
-            public new (bool Sucess, List<LexElement> Items) TryGetAhead(int count, bool includeCurrent)
-            {
-                return base.TryGetAhead(count, includeCurrent);
             }
         }
     }

@@ -2,13 +2,14 @@
 using AST.Miscs;
 using System.Linq;
 using Common.Lexing;
+using AST.Trees.Miscs;
 using System.Collections.Generic;
 using AST.Trees.Expressions.Untyped;
 using Text2Abstraction.LexicalElements;
 
 namespace AST.Trees.Expressions
 {
-    public class ExpressionBuilder : Movable<LexElement>
+    public class ExpressionBuilder : MovableLookup
     {
         public ExpressionBuilder(List<LexElement> expressionElements) : base(expressionElements)
         {
@@ -85,7 +86,27 @@ namespace AST.Trees.Expressions
                 return new ConstantMathUntypedExpression(left.Diagnostics, numerical.StringValue);
             }
             else if (left.Kind == LexingElement.Word)
-                return new UntypedVariableUseExpression(left.Diagnostics, (left as LexWord).Value);
+            {
+                var ahead = TryGetAhead(1, movePointer: false);
+
+                if (ahead.Sucess && ahead.Items[0].Kind == LexingElement.OpenParenthesis)
+                {
+                    // function call e.g 2 + test(expression, expression...)
+                    MoveNext();
+                    var result = GetTillClosed(LexingElement.OpenParenthesis, LexingElement.ClosedParenthesis);
+                    var args = FunctionHelpers.ExtractFunctionCallParameters(result.Data);
+
+                    if (!args.Success)
+                        throw new ASTException(args.Message, left.Diagnostics);
+
+                    return new UntypedFunctionCallExpression(left.Diagnostics, (left as LexWord).Value, args.Data);
+                }
+                else
+                {
+                    // using variable e.g 2 + a
+                    return new UntypedVariableUseExpression(left.Diagnostics, (left as LexWord).Value);
+                }
+            }
             else if (left.Kind == LexingElement.String)
                 return new ConstantUntypedStringExpression(left.Diagnostics, (left as LexStringLiteral).Value);
 

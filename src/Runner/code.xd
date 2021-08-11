@@ -2,11 +2,11 @@
 
 public int Test()
 {
-
+	return 5;
 }
 
-public void Test()
+public void Test2()
 {
-	int test = 345645 + 23423;
+	int test = 345645 + Test(5,Test(5,6), 3);
 	int test2 = 345645 + 3;
 }
