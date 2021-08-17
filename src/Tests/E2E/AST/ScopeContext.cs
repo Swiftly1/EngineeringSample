@@ -1,13 +1,9 @@
 ﻿using Xunit;
-using Common;
+using AST.Trees;
 using AST.Builders;
 using Text2Abstraction;
 using BenchmarkDotNet.Attributes;
-using AST.Trees.Statements.Typed;
-using AST.Trees.Expressions.Typed;
-using AST.Trees.Expressions.Untyped;
 using AST.Trees.Declarations.Typed;
-using AST.Trees;
 
 namespace Tests.E2E.AST
 {

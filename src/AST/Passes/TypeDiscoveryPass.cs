@@ -1,7 +1,9 @@
 ﻿using Common;
 using AST.Trees;
+using AST.Passes.Miscs;
 using AST.Passes.Results;
 using System.Collections.Generic;
+using AST.Trees.Declarations.Untyped;
 
 namespace AST.Passes
 {
@@ -13,18 +15,44 @@ namespace AST.Passes
 
         private List<TypeInfo> KnownTypes = new();
 
+        public List<FunctionInfo> KnownFunctions { get; set; } = new();
+
         public PassesExchangePoint Exchange { get; set; }
 
         public PassResult Walk(Node root, PassesExchangePoint exchange)
         {
             Exchange = exchange;
             DiscoverTypes(root);
-            return new TypeDiscoveryPassResult(PassName, KnownTypes);
+            return new TypeDiscoveryPassResult(PassName, KnownTypes, KnownFunctions);
         }
 
         private void DiscoverTypes(Node root)
         {
+            var queue = new Queue<Node>();
+            queue.Enqueue(root);
 
+            while (queue.Count > 0)
+            {
+                var current = queue.Dequeue();
+
+                if (current is UntypedFunctionNode ufn)
+                {
+                    var functionInfo = new FunctionInfo
+                    (
+                        ufn.Name,
+                        ufn.DesiredType,
+                        ufn.Arguments,
+                        ufn.ScopeContext
+                    );
+
+                    KnownFunctions.Add(functionInfo);
+                }
+
+                foreach (var child in current.Children)
+                {
+                    queue.Enqueue(child);
+                }
+            }
         }
     }
 }

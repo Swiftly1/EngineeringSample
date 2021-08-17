@@ -33,6 +33,9 @@ namespace AST.Passes
             return new TypeCheckerPassResult(PassName, Errors.DumpErrors().ToList());
         }
 
+        // TODO: Would be nice if error handling was done better here
+        // e.g by using Result classes
+
         private void CheckTree(Node root)
         {
             var queue = new Queue<(Node Child, Node Parent)>();
@@ -79,6 +82,11 @@ namespace AST.Passes
                 }
 
                 var exprType = GenerateBoundedTreeAndGetType(vds.Expression);
+
+                if (!exprType.Found)
+                {
+                    return (true, null);
+                }
 
                 // TODO: Support inheritance
                 if (result.TypeInfo != exprType.TypeInfo)
@@ -201,6 +209,64 @@ namespace AST.Passes
                 var newExpression = new ConstantTypedStringExpression(cuse.Diagnostics, cuse.Value, TypeFacts.GetString());
 
                 cuse.CopyTo(newExpression);
+
+                return (true, newExpression.TypeInfo, newExpression);
+            }
+            else if (expression is UntypedFunctionCallExpression ufce)
+            {
+                var discoveryResult = Exchange.PassResults[TypeDiscoveryPass.PassName] as TypeDiscoveryPassResult;
+
+                // TODO: It's temporary naive solution, we need to take into account different namespaces, classes and stuff.
+                var foundFunction = discoveryResult.KnownFunctions.FirstOrDefault(x => x.Name == ufce.FunctionName);
+
+                if (foundFunction is null)
+                {
+                    Errors.AddError($"Function with name '{ufce.FunctionName}' is not defined anywhere.", ufce.Diagnostics);
+                    return (false, null, null);
+                }
+
+                if (foundFunction.Arguments.Count != ufce.CallArguments.Count)
+                {
+                    Errors.AddError($"Function call of '{ufce.FunctionName}' function has incorrect number of arguments.", ufce.Diagnostics);
+                    return (false, null, null);
+                }
+
+                for (int i = 0; i < ufce.CallArguments.Count; i++)
+                {
+                    var current = ufce.CallArguments[i];
+                    var typeResult = GenerateBoundedTreeAndGetType(current);
+
+                    if (!typeResult.Found)
+                    {
+                        Errors.AddError($"Type for argument of Expression at {i} index cannot be resolved.", current.Diagnostics);
+                        return (false, null, null);
+                    }
+
+                    var argType = FindTypeByName(foundFunction.Arguments[i].TypeName);
+                    if (!argType.Found || (argType.TypeInfo != typeResult.TypeInfo))
+                    {
+                        Errors.AddError($"Expected expression of type '{argType.TypeInfo.Name}' instead of '{typeResult.TypeInfo.Name}'.", current.Diagnostics);
+                        return (false, null, null);
+                    }
+                }
+
+                var resultType = FindTypeByName(foundFunction.DesiredType);
+
+                if (!resultType.Found)
+                {
+                    Errors.AddError($"Type {foundFunction.DesiredType} is not found.", ufce.Diagnostics);
+                    return (false, null, null);
+                }
+
+                var newExpression = new TypedFunctionCallExpression
+                (
+                    ufce.Diagnostics,
+                    ufce.FunctionName,
+                    resultType.TypeInfo,
+                    ufce.CallArguments
+                );
+
+                ufce.CopyTo(newExpression);
 
                 return (true, newExpression.TypeInfo, newExpression);
             }

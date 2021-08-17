@@ -38,7 +38,7 @@ namespace AST.Trees
             while (current is not null)
             {
                 all.AddRange(current.DeclaredVariables);
-                current = Parent.Parent;
+                current = Parent!.Parent;
             }
 
             return all;

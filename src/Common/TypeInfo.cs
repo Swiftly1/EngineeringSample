@@ -36,11 +36,8 @@ namespace Common
 
         public static bool operator ==(TypeInfo left, TypeInfo right)
         {
-            if (left is null)
+            if (left is null || right is null)
             {
-                if (right is null)
-                    return true;
-
                 return false;
             }
 

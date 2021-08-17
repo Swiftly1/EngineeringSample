@@ -1,4 +1,5 @@
-﻿using Common;
+﻿using System;
+using Common;
 using AST.Miscs;
 using AST.Trees;
 using AST.Passes;
@@ -20,6 +21,22 @@ namespace AST.Builders
         }
 
         public ResultDiag<RootNode> Build()
+        {
+            try
+            {
+                return InternalBuild();
+            }
+            catch (ASTException ex)
+            {
+                return new ResultDiag<RootNode>(Message.CreateError(ex.ToString(), ex.DiagnosticInfo));
+            }
+            catch (Exception ex)
+            {
+                return new ResultDiag<RootNode>(Message.CreateError(ex.ToString(), new DiagnosticInfo(0, 0, ' ')));
+            }
+        }
+
+        private ResultDiag<RootNode> InternalBuild()
         {
             var root = new RootNode(new DiagnosticInfo(0, 0, ' '));
 

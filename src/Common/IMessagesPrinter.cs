@@ -2,7 +2,7 @@
 {
     public interface IMessagesPrinter
     {
-        // just leaky NewLine & Color abstraction? :)
+        // just leaky NewLine & Color abstraction?
 
         public void PrintInformation(string s);
         public void PrintInformationNewLine(string s);

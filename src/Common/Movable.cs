@@ -10,7 +10,7 @@ namespace Common
             _Collection = Collection;
         }
 
-        protected List<T> _Collection { get; set; } = new List<T>();
+        protected List<T> _Collection { get; set; } = new();
 
         protected int _Index { get; set; } = 0;
 

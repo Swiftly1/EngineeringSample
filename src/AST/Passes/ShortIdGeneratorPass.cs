@@ -15,6 +15,13 @@ namespace AST.Passes
 
         public PassesExchangePoint Exchange { get; set; }
 
+        public PassResult Walk(Node root, PassesExchangePoint exchange)
+        {
+            Exchange = exchange;
+            AttachShortIdToNodes(root);
+            return new EmptyPassResult(PassName);
+        }
+
         private void AttachShortIdToNodes(Node root)
         {
             var queue = new Queue<Node>();
@@ -31,13 +38,6 @@ namespace AST.Passes
                     queue.Enqueue(child);
                 }
             }
-        }
-
-        public PassResult Walk(Node root, PassesExchangePoint exchange)
-        {
-            Exchange = exchange;
-            AttachShortIdToNodes(root);
-            return new EmptyPassResult(PassName);
         }
     }
 }

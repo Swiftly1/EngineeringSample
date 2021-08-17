@@ -1,12 +1,12 @@
 ﻿namespace Test
 
-public int Test()
+public int Test(int a, int b)
 {
 	return 5;
 }
 
 public void Test2()
 {
-	int test = 345645 + Test(5,Test(5,6), 3);
+	int test = 345645 + Test(5, "asd");
 	int test2 = 345645 + 3;
 }
