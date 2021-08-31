@@ -22,11 +22,9 @@ namespace AST.Trees.Miscs
 
             for (int i = 0; i < withoutComma.Count; i += 2)
             {
-                var arg = new Argument
-                {
-                    TypeName = withoutComma[i] as LexKeyword,
-                    Name = withoutComma[i + 1] as LexWord
-                };
+                string typeName = withoutComma[i] as LexKeyword;
+                var argName = withoutComma[i + 1] as LexWord;
+                var arg = new Argument(typeName, argName.Value, argName.Diagnostics);
 
                 args.Add(arg);
             }

@@ -10,6 +10,7 @@ using AST.Trees.Declarations.Typed;
 using AST.Trees.Statements.Untyped;
 using AST.Trees.Expressions.Untyped;
 using AST.Trees.Declarations.Untyped;
+using AST.Trees.Miscs;
 
 namespace AST.Passes
 {
@@ -101,22 +102,42 @@ namespace AST.Passes
             }
             else if (current is UntypedFunctionNode ufn)
             {
-                var type = ufn.DesiredType;
+                var typeResult = FindTypeByName(ufn.DesiredType);
 
-                var result = FindTypeByName(type);
-
-                if (!result.Found)
+                if (!typeResult.Found)
                 {
-                    Errors.AddError($"Type {type} is not found.", ufn.TypeDiagnostics);
+                    Errors.AddError($"Type {ufn.DesiredType} is not found.", ufn.TypeDiagnostics);
                     return (true, null);
                 }
 
-                var ensureResult = EnsureCorrectReturnTypeAtAllBranches(ufn, result.TypeInfo);
+                var argValidationFailed = false;
+                var typedArgs = new List<TypedArgument>();
+
+                foreach (var argType in ufn.Arguments)
+                {
+                    var argResult = FindTypeByName(argType.TypeName);
+
+                    if (!argResult.Found)
+                    {
+                        Errors.AddError($"Type {argType.TypeName} is not found.", argType.Diagnostic);
+                        // in order to get more error messages.
+                        argValidationFailed = true;
+                    }
+                    else
+                    {
+                        typedArgs.Add(new TypedArgument(argResult.TypeInfo, argType.Name, argType.Diagnostic));
+                    }
+                }
+
+                if (argValidationFailed)
+                    return (true, null);
+
+                var ensureResult = EnsureCorrectReturnTypeAtAllBranches(ufn, typeResult.TypeInfo);
 
                 if (!ensureResult.Success)
                 {
                     Errors.AddError($"Not all pathes in function at {ufn.Diagnostics} are " +
-                        $"covered with return statement of type {result.TypeInfo.Name}.", current.Diagnostics);
+                        $"covered with return statement of type {typeResult.TypeInfo.Name}.", current.Diagnostics);
 
                     return (false, null);
                 }
@@ -126,7 +147,8 @@ namespace AST.Passes
                     ufn.Diagnostics,
                     ufn.Name,
                     ufn.Body,
-                    result.TypeInfo,
+                    typedArgs,
+                    typeResult.TypeInfo,
                     ufn.ScopeContext,
                     ufn.TypeDiagnostics,
                     ufn.AccessibilityModifierDiagnostics

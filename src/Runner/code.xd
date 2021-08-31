@@ -7,6 +7,6 @@ public int Test(int a, int b)
 
 public void Test2()
 {
-	int test = 345645 + Test(5, "asd");
+	int test = 345645 + Test(5, 6);
 	int test2 = 345645 + 3;
 }

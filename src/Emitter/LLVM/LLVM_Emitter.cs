@@ -1,6 +1,7 @@
 ﻿using Common;
 using System;
 using AST.Trees;
+using System.Text;
 using AST.Trees.Declarations.Typed;
 
 namespace Emitter.LLVM
@@ -34,7 +35,8 @@ namespace Emitter.LLVM
             else if (node is TypedFunctionNode fn)
             {
                 var args = FunctionArgsToLLVM(fn);
-                _printer.PrintColor($"define dso_local i32 @{fn.Name}({args})");
+                _printer.PrintColorNewLine($"define dso_local {fn.Type.ToLLVMType()} @{fn.Name}({args})");
+                _printer.PrintColorNewLine("");
             }
             else
             {
@@ -46,7 +48,18 @@ namespace Emitter.LLVM
 
         private string FunctionArgsToLLVM(TypedFunctionNode fn)
         {
-            return "";
+            var sb = new StringBuilder();
+
+            for (int i = 0; i < fn.Arguments.Count; i++)
+            {
+                var current = fn.Arguments[i];
+                sb.Append($"{current.Type.ToLLVMType()} %{i}");
+
+                if (i != fn.Arguments.Count - 1)
+                    sb.Append(", ");
+            }
+
+            return sb.ToString();
         }
 
         private void EmitSubNodes(Node node)

@@ -2,16 +2,16 @@
 
 namespace AST.Trees.Miscs
 {
-    public class Argument
+    public class TypedArgument
     {
-        public Argument(string typeName, string name, DiagnosticInfo diagnostic)
+        public TypedArgument(TypeInfo type, string name, DiagnosticInfo diagnostic)
         {
-            TypeName = typeName;
+            Type = type;
             Name = name;
             Diagnostic = diagnostic;
         }
 
-        public string TypeName { get; set; }
+        public TypeInfo Type { get; set; }
 
         public string Name { get; set; }
 

@@ -1,4 +1,7 @@
 ﻿using Common;
+using System.Linq;
+using AST.Trees.Miscs;
+using System.Collections.Generic;
 
 namespace AST.Trees.Declarations.Typed
 {
@@ -9,6 +12,7 @@ namespace AST.Trees.Declarations.Typed
             DiagnosticInfo diag,
             string name,
             Node body,
+            List<TypedArgument> args,
             TypeInfo type,
             ScopeContext scopeContext,
             DiagnosticInfo typeDiag,
@@ -17,6 +21,7 @@ namespace AST.Trees.Declarations.Typed
         {
             Name = name;
             Type = type;
+            Arguments = args;
             Children.Add(body);
             TypeDiagnostics = typeDiag;
             AccessibilityModifierDiagnostics = accessModDiag;
@@ -28,13 +33,19 @@ namespace AST.Trees.Declarations.Typed
 
         public TypeInfo Type { get; set; }
 
+        public List<TypedArgument> Arguments { get; set; } = new List<TypedArgument>();
+
         public DiagnosticInfo TypeDiagnostics { get; set; }
 
         public DiagnosticInfo AccessibilityModifierDiagnostics { get; set; }
 
         public override string ToString()
         {
-            return $"TypedFunction: '{Name}' - {Type.Name}";
+            var args = string.Join(", ", Arguments.Select(x => $"({x.Type.Name})"));
+
+            args = args.Length > 0 ? $"Args: {args}." : "No args.";
+
+            return $"TypedFunction: '{Name}'({Type.Name}). {args}";
         }
     }
 }
