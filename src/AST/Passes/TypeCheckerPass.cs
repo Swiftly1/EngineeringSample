@@ -2,6 +2,7 @@
 using Common;
 using AST.Trees;
 using System.Linq;
+using AST.Trees.Miscs;
 using AST.Passes.Results;
 using System.Collections.Generic;
 using AST.Trees.Statements.Typed;
@@ -10,7 +11,6 @@ using AST.Trees.Declarations.Typed;
 using AST.Trees.Statements.Untyped;
 using AST.Trees.Expressions.Untyped;
 using AST.Trees.Declarations.Untyped;
-using AST.Trees.Miscs;
 
 namespace AST.Passes
 {
@@ -97,6 +97,19 @@ namespace AST.Passes
                 }
 
                 var newNode = new TypedVariableDeclarationStatement(vds.VariableName, exprType.NewNode, exprType.TypeInfo, vds.Diagnostics);
+
+                return (true, newNode);
+            }
+            if (current is UntypedReturnStatement urs)
+            {
+                var bounded = GenerateBoundedTreeAndGetType(urs.ReturnExpression);
+
+                if (!bounded.Found)
+                {
+                    return (true, null);
+                }
+
+                var newNode = new TypedReturnStatement(bounded.NewNode, urs.Diagnostics);
 
                 return (true, newNode);
             }
@@ -189,7 +202,7 @@ namespace AST.Passes
 
                 if (type != null)
                 {
-                    var newExpr = new ConstantMathTypedExpression(expression.Diagnostics, value, type);
+                    var newExpr = new ConstantTypedExpression(expression.Diagnostics, value, type);
                     expression.CopyTo(newExpr);
                     expression = newExpr;
 
@@ -228,7 +241,7 @@ namespace AST.Passes
             }
             else if (expression is ConstantUntypedStringExpression cuse)
             {
-                var newExpression = new ConstantTypedStringExpression(cuse.Diagnostics, cuse.Value, TypeFacts.GetString());
+                var newExpression = new ConstantTypedExpression(cuse.Diagnostics, cuse.Value, TypeFacts.GetString());
 
                 cuse.CopyTo(newExpression);
 
@@ -253,6 +266,7 @@ namespace AST.Passes
                     return (false, null, null);
                 }
 
+                var typedCallArgs = new List<TypedExpression>();
                 for (int i = 0; i < ufce.CallArguments.Count; i++)
                 {
                     var current = ufce.CallArguments[i];
@@ -270,6 +284,8 @@ namespace AST.Passes
                         Errors.AddError($"Expected expression of type '{argType.TypeInfo.Name}' instead of '{typeResult.TypeInfo.Name}'.", current.Diagnostics);
                         return (false, null, null);
                     }
+
+                    typedCallArgs.Add(typeResult.NewNode);
                 }
 
                 var resultType = FindTypeByName(foundFunction.DesiredType);
@@ -285,7 +301,7 @@ namespace AST.Passes
                     ufce.Diagnostics,
                     ufce.FunctionName,
                     resultType.TypeInfo,
-                    ufce.CallArguments
+                    typedCallArgs
                 );
 
                 ufce.CopyTo(newExpression);

@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using Common.Lexing;
+﻿using Common.Lexing;
+using System.Collections.Generic;
 
 namespace Common
 {
@@ -21,6 +21,8 @@ namespace Common
 
             { "if", LexingElement.If },
             { "else", LexingElement.Else },
+
+            { "return", LexingElement.Return },
         };
     }
 }

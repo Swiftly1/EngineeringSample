@@ -45,6 +45,10 @@ namespace AST.Builders
                         MatcherUtils
                         .Match(LexingElement.If);
 
+                        var returnStatementMatcher =
+                        MatcherUtils
+                        .Match(LexingElement.Return);
+
                         if (variableDeclarationMatcher.Evaluate(TakeToEnd(), out var variableDeclarationMatcherResult))
                         {
                             var ahead = TryGetAhead(variableDeclarationMatcherResult.Items.Count, includeCurrent: true);
@@ -69,6 +73,16 @@ namespace AST.Builders
                         {
                             var ahead = TryGetAhead(ifStatementMatcherResult.Items.Count, includeCurrent: false);
                             var result = TryMatchIfStatement(ahead.Items, bodyNode.ScopeContext);
+
+                            if (result.Success)
+                                bodyNode.AddChild(result.Data);
+                            else
+                                _errors.AddMessages(result.Messages);
+                        }
+                        else if (returnStatementMatcher.Evaluate(TakeToEnd(), out var returnStatementMatcherResult))
+                        {
+                            var ahead = TryGetAhead(returnStatementMatcherResult.Items.Count, includeCurrent: true);
+                            var result = TryMatchReturnStatement(ahead.Items);
 
                             if (result.Success)
                                 bodyNode.AddChild(result.Data);
@@ -185,6 +199,18 @@ namespace AST.Builders
                 var vdn = new UntypedVariableDeclarationStatement(name, typeName, result.Data, name.Diagnostics);
 
                 return new ResultDiag<UntypedVariableDeclarationStatement>(vdn);
+            }
+
+            private ResultDiag<UntypedReturnStatement> TryMatchReturnStatement(List<LexElement> items)
+            {
+                var skipped = TakeToEnd(1);
+                var result = TryMatchExpression(skipped);
+
+                if (!result.Success)
+                    return result.ToFailedResult<UntypedReturnStatement>();
+
+                var vdn = new UntypedReturnStatement(result.Data, items[0].Diagnostics);
+                return new ResultDiag<UntypedReturnStatement>(vdn);
             }
 
             private ResultDiag<UntypedExpression> TryMatchExpression(List<LexElement> items)
