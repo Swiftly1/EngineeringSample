@@ -5,8 +5,8 @@ public int Test(int a, int b)
 	return 5;
 }
 
-public void Test2()
+public int Test2()
 {
-	int test = 345645 + Test(5, 6);
-	int test2 = 345645 + 3;
+	int test = 17 + Test(5, 6);
+	return 23;
 }

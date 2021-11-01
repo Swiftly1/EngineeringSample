@@ -22,6 +22,11 @@ namespace AST.Trees.Expressions.Typed
 
         public TypedExpression Right => Children[1] as TypedExpression;
 
+        public override bool IsConstant()
+        {
+            return Left.IsConstant() && Right.IsConstant();
+        }
+
         public override string ToString()
         {
             return $"ComplexTyped: {TypeInfo.Name}; Operator: {Operator}";

@@ -11,6 +11,8 @@ namespace AST.Trees.Expressions.Typed
 
         public TypeInfo TypeInfo { get; set; }
 
+        public abstract bool IsConstant();
+
         public abstract override string ToString();
     }
 }

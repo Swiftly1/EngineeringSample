@@ -38,11 +38,11 @@ namespace Tests.E2E.AST
 
             Assert.NotNull(expr);
             Assert.Equal(ExpressionOperator.Addition, expr.Operator);
-            Assert.True(expr.Left is ConstantMathTypedExpression);
-            Assert.True(expr.Right is ConstantMathTypedExpression);
+            Assert.True(expr.Left is ConstantTypedExpression);
+            Assert.True(expr.Right is ConstantTypedExpression);
 
-            Assert.Equal(345645, (expr.Left as ConstantMathTypedExpression).Value);
-            Assert.Equal(23423, (expr.Right as ConstantMathTypedExpression).Value);
+            Assert.Equal(345645, (expr.Left as ConstantTypedExpression).Value);
+            Assert.Equal(23423, (expr.Right as ConstantTypedExpression).Value);
         }
     }
 }

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.IO;
 using AST.Miscs;
-using AST.Builders;
 using Emitter.LLVM;
+using AST.Builders;
 using Text2Abstraction;
 
 namespace Runner
@@ -17,10 +17,10 @@ namespace Runner
 
             foreach (var item in test)
             {
-                printer.PrintInformationNewLine(item.ToString());
+                //printer.PrintInformationNewLine(item.ToString());
             }
 
-            printer.PrintInformationNewLine("");
+            // printer.PrintInformationNewLine("");
 
             var ast = new ASTBuilder(test).Build();
 
@@ -35,7 +35,13 @@ namespace Runner
 
                 printer.PrintColorNewLine($"{Environment.NewLine}");
                 printer.Color = ConsoleColor.Green;
-                new LLVM_Emitter(printer).Emit(ast.Data);
+                var emit_result = new LLVM_Emitter(printer).Emit(ast.Data);
+
+                if (!emit_result.Success)
+                {
+                    printer.Color = ConsoleColor.Red;
+                    printer.PrintColorNewLine(emit_result.Message);
+                }
             }
             else
             {

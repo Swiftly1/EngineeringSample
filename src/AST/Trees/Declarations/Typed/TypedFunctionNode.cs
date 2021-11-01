@@ -41,7 +41,7 @@ namespace AST.Trees.Declarations.Typed
 
         public override string ToString()
         {
-            var args = string.Join(", ", Arguments.Select(x => $"({x.Type.Name})"));
+            var args = string.Join(", ", Arguments.Select(x => $"({x.TypeInfo.Name})"));
 
             args = args.Length > 0 ? $"Args: {args}." : "No args.";
 

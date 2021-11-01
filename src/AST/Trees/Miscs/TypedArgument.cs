@@ -6,12 +6,12 @@ namespace AST.Trees.Miscs
     {
         public TypedArgument(TypeInfo type, string name, DiagnosticInfo diagnostic)
         {
-            Type = type;
+            TypeInfo = type;
             Name = name;
             Diagnostic = diagnostic;
         }
 
-        public TypeInfo Type { get; set; }
+        public TypeInfo TypeInfo { get; set; }
 
         public string Name { get; set; }
 

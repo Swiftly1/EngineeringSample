@@ -5,6 +5,12 @@
         Division,
         Multiplication,
         Addition,
-        Substraction
+        Substraction,
+        Greater,
+        GreaterOrEqual,
+        Fewer,
+        FewerOrEqual,
+        Equal,
+        NotEqual
     }
 }
