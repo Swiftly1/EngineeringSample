@@ -202,7 +202,7 @@ namespace AST.Passes
 
                 if (type != null)
                 {
-                    var newExpr = new ConstantTypedExpression(expression.Diagnostics, value, type);
+                    var newExpr = new ConstantTypedExpression(expression.Diagnostics, value, type, cme.Context);
                     expression.CopyTo(newExpr);
                     expression = newExpr;
 
@@ -232,7 +232,8 @@ namespace AST.Passes
                     rightResult.NewNode,
                     cue.Operator,
                     found.ResultType,
-                    cue.Diagnostics
+                    cue.Diagnostics,
+                    cue.Context
                 );
 
                 cue.CopyTo(newExpression);
@@ -241,7 +242,7 @@ namespace AST.Passes
             }
             else if (expression is ConstantUntypedStringExpression cuse)
             {
-                var newExpression = new ConstantTypedExpression(cuse.Diagnostics, cuse.Value, TypeFacts.GetString());
+                var newExpression = new ConstantTypedExpression(cuse.Diagnostics, cuse.Value, TypeFacts.GetString(), cuse.Context);
 
                 cuse.CopyTo(newExpression);
 
@@ -301,12 +302,17 @@ namespace AST.Passes
                     ufce.Diagnostics,
                     ufce.FunctionName,
                     resultType.TypeInfo,
-                    typedCallArgs
+                    typedCallArgs,
+                    ufce.Context
                 );
 
                 ufce.CopyTo(newExpression);
 
                 return (true, newExpression.TypeInfo, newExpression);
+            }
+            else if (expression is UntypedVariableUseExpression uvue)
+            {
+                //expression.
             }
 
             throw new NotImplementedException($"Node type {expression.GetType()} is not handled");

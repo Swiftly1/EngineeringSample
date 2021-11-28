@@ -9,7 +9,8 @@ namespace AST.Trees.Expressions.Untyped
             UntypedExpression left,
             UntypedExpression right,
             ExpressionOperator @operator,
-            DiagnosticInfo diag) : base(diag)
+            DiagnosticInfo diag,
+            ScopeContext context) : base(diag, context)
         {
             Operator = @operator;
 

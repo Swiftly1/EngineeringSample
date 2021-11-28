@@ -11,9 +11,12 @@ namespace AST.Trees.Expressions
 {
     public class ExpressionBuilder : MovableLookup
     {
-        public ExpressionBuilder(List<LexElement> expressionElements) : base(expressionElements)
+        public ExpressionBuilder(List<LexElement> expressionElements, ScopeContext context) : base(expressionElements)
         {
+            ScopeContext = context;
         }
+
+        public ScopeContext ScopeContext { get; }
 
         public ResultDiag<UntypedExpression> Build()
         {
@@ -31,7 +34,7 @@ namespace AST.Trees.Expressions
                 {
                     MoveNext();
                     var right = GetSubExpression();
-                    left = new ComplexUntypedExpression(left, right, OperatorFacts.Convert(@operator.Kind), left.Diagnostics);
+                    left = new ComplexUntypedExpression(left, right, OperatorFacts.Convert(@operator.Kind), left.Diagnostics, ScopeContext);
 
                     if (MoveNext())
                     {
@@ -63,7 +66,7 @@ namespace AST.Trees.Expressions
             {
                 MoveNext();
                 var right = GetSubExpression();
-                left = new ComplexUntypedExpression(left, right, OperatorFacts.Convert(@operator.Kind), left.Diagnostics);
+                left = new ComplexUntypedExpression(left, right, OperatorFacts.Convert(@operator.Kind), left.Diagnostics, ScopeContext);
 
                 if (MoveNext())
                 {
@@ -83,7 +86,7 @@ namespace AST.Trees.Expressions
             if (left.Kind == LexingElement.Numerical)
             {
                 var numerical = left as LexNumericalLiteral;
-                return new ConstantMathUntypedExpression(left.Diagnostics, numerical.StringValue);
+                return new ConstantMathUntypedExpression(left.Diagnostics, numerical.StringValue, ScopeContext);
             }
             else if (left.Kind == LexingElement.Word)
             {
@@ -94,21 +97,21 @@ namespace AST.Trees.Expressions
                     // function call e.g 2 + test(expression, expression...)
                     MoveNext();
                     var result = GetTillClosed(LexingElement.OpenParenthesis, LexingElement.ClosedParenthesis);
-                    var args = FunctionHelpers.ExtractFunctionCallParameters(result.Data);
+                    var args = FunctionHelpers.ExtractFunctionCallParameters(result.Data, ScopeContext);
 
                     if (!args.Success)
                         throw new ASTException(args.Message, left.Diagnostics);
 
-                    return new UntypedFunctionCallExpression(left.Diagnostics, (left as LexWord).Value, args.Data);
+                    return new UntypedFunctionCallExpression(left.Diagnostics, (left as LexWord).Value, args.Data, ScopeContext);
                 }
                 else
                 {
                     // using variable e.g 2 + a
-                    return new UntypedVariableUseExpression(left.Diagnostics, (left as LexWord).Value);
+                    return new UntypedVariableUseExpression(left.Diagnostics, (left as LexWord).Value, ScopeContext);
                 }
             }
             else if (left.Kind == LexingElement.String)
-                return new ConstantUntypedStringExpression(left.Diagnostics, (left as LexStringLiteral).Value);
+                return new ConstantUntypedStringExpression(left.Diagnostics, (left as LexStringLiteral).Value, ScopeContext);
 
             throw new ASTException($"Unable to resolve Expression for kind {left.Kind}. Location: {left.Diagnostics}", left.Diagnostics);
         }

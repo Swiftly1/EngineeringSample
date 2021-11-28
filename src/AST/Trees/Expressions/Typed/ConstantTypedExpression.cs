@@ -4,7 +4,7 @@ namespace AST.Trees.Expressions.Typed
 {
     public class ConstantTypedExpression : TypedExpression
     {
-        public ConstantTypedExpression(DiagnosticInfo diag, object value, TypeInfo typeInfo) : base(diag, typeInfo)
+        public ConstantTypedExpression(DiagnosticInfo diag, object value, TypeInfo typeInfo, ScopeContext context) : base(diag, typeInfo, context)
         {
             Value = value;
         }

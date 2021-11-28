@@ -5,7 +5,8 @@ namespace AST.Trees.Expressions.Typed
 {
     public class TypedFunctionCallExpression : TypedExpression
     {
-        public TypedFunctionCallExpression(DiagnosticInfo diag, string functionName, TypeInfo typeInfo, List<TypedExpression> callArgs) : base(diag, typeInfo)
+        public TypedFunctionCallExpression(DiagnosticInfo diag, string functionName, TypeInfo typeInfo, List<TypedExpression> callArgs, ScopeContext context)
+            : base(diag, typeInfo, context)
         {
             FunctionName = functionName;
             CallArguments = callArgs;

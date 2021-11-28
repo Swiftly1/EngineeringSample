@@ -32,7 +32,7 @@ namespace AST.Trees.Miscs
             return Result<List<Argument>>.Ok(args);
         }
 
-        internal static Result<List<Expression>> ExtractFunctionCallParameters(List<LexElement> data)
+        internal static Result<List<Expression>> ExtractFunctionCallParameters(List<LexElement> data, ScopeContext scopeContext)
         {
             var output = new List<Expression>();
 
@@ -55,7 +55,7 @@ namespace AST.Trees.Miscs
                         // simple expression
                         if (i + 1 < data.Count && data[i + 1].Kind == LexingElement.Comma)
                         {
-                            builder = new ExpressionBuilder(new List<LexElement> { current });
+                            builder = new ExpressionBuilder(new List<LexElement> { current }, scopeContext);
                         }
                         else
                         {
@@ -63,7 +63,7 @@ namespace AST.Trees.Miscs
 
                             var elements = GetElementsThatMayContainCommas(ref i, data);
 
-                            builder = new ExpressionBuilder(elements);
+                            builder = new ExpressionBuilder(elements, scopeContext);
                         }
 
                         var result = builder.Build();
