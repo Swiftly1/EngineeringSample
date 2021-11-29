@@ -14,7 +14,7 @@ namespace AST.Trees.Statements.Typed
 
         public override string ToString()
         {
-            return $"TypedReturnStatement: '{ReturnExpression}'";
+            return $"TypedReturnStatement";
         }
     }
 }
