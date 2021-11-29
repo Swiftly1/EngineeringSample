@@ -11,12 +11,12 @@ namespace AST.Trees.Expressions
 {
     public class ExpressionBuilder : MovableLookup
     {
-        public ExpressionBuilder(List<LexElement> expressionElements, ScopeContext context) : base(expressionElements)
+        public ExpressionBuilder(List<LexElement> expressionElements, UntypedScopeContext context) : base(expressionElements)
         {
             ScopeContext = context;
         }
 
-        public ScopeContext ScopeContext { get; }
+        public UntypedScopeContext ScopeContext { get; }
 
         public ResultDiag<UntypedExpression> Build()
         {

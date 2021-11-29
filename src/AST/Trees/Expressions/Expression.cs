@@ -4,12 +4,12 @@ namespace AST.Trees.Expressions
 {
     public abstract class Expression : Node
     {
-        protected Expression(DiagnosticInfo diag, ScopeContext context) : base(diag)
+        protected Expression(DiagnosticInfo diag, UntypedScopeContext context) : base(diag)
         {
-            Context = context;
+            ScopeContext = context;
         }
 
-        public ScopeContext Context { get; }
+        public UntypedScopeContext ScopeContext { get; }
 
         public abstract override string ToString();
     }

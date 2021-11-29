@@ -5,7 +5,7 @@ namespace AST.Trees.Expressions.Untyped
 {
     public class UntypedFunctionCallExpression : UntypedExpression
     {
-        public UntypedFunctionCallExpression(DiagnosticInfo diag, string functionName, List<Expression> callArgs, ScopeContext context) : base(diag, context)
+        public UntypedFunctionCallExpression(DiagnosticInfo diag, string functionName, List<Expression> callArgs, UntypedScopeContext context) : base(diag, context)
         {
             FunctionName = functionName;
             CallArguments = callArgs;

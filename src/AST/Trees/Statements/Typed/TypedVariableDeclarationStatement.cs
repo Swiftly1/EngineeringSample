@@ -5,7 +5,7 @@ namespace AST.Trees.Statements.Typed
 {
     public class TypedVariableDeclarationStatement : StatementNode
     {
-        public TypedVariableDeclarationStatement(string variableName, TypedExpression expression, TypeInfo typeinfo, ScopeContext context, DiagnosticInfo diag) : base(diag)
+        public TypedVariableDeclarationStatement(string variableName, TypedExpression expression, TypeInfo typeinfo, UntypedScopeContext context, DiagnosticInfo diag) : base(diag)
         {
             VariableName = variableName;
             Expression = expression;
@@ -20,7 +20,7 @@ namespace AST.Trees.Statements.Typed
 
         public TypedExpression Expression { get; set; }
 
-        public ScopeContext ScopeContext { get; set; }
+        public UntypedScopeContext ScopeContext { get; set; }
 
         public override string ToString()
         {

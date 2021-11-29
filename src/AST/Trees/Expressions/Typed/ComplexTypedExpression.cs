@@ -10,7 +10,7 @@ namespace AST.Trees.Expressions.Typed
             ExpressionOperator @operator,
             TypeInfo typeInfo,
             DiagnosticInfo diag,
-            ScopeContext context) : base(diag, typeInfo, context)
+            UntypedScopeContext context) : base(diag, typeInfo, context)
         {
             Operator = @operator;
             this.Children.Add(left);

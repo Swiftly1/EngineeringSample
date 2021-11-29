@@ -4,7 +4,7 @@ namespace AST.Trees.Expressions.Untyped
 {
     public class ConstantUntypedStringExpression : UntypedExpression
     {
-        public ConstantUntypedStringExpression(DiagnosticInfo diag, string value, ScopeContext context) : base(diag, context)
+        public ConstantUntypedStringExpression(DiagnosticInfo diag, string value, UntypedScopeContext context) : base(diag, context)
         {
             Value = value;
         }

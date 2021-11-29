@@ -5,7 +5,7 @@ namespace AST.Trees.Statements.Untyped
 {
     public class UntypedVariableDeclarationStatement : StatementNode
     {
-        public UntypedVariableDeclarationStatement(string variableName, string desiredType, UntypedExpression expression, ScopeContext context, DiagnosticInfo diag) : base(diag)
+        public UntypedVariableDeclarationStatement(string variableName, string desiredType, UntypedExpression expression, UntypedScopeContext context, DiagnosticInfo diag) : base(diag)
         {
             VariableName = variableName;
             DesiredType = desiredType;
@@ -19,7 +19,7 @@ namespace AST.Trees.Statements.Untyped
 
         public UntypedExpression Expression => Children[0] as UntypedExpression;
 
-        public ScopeContext ScopeContext { get; set; }
+        public UntypedScopeContext ScopeContext { get; set; }
 
         public override string ToString()
         {

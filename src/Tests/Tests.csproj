@@ -19,7 +19,4 @@
     <ProjectReference Include="..\AST\AST.csproj" />
     <ProjectReference Include="..\Text2Abstraction\Text2Abstraction.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="E2E\LLVM_IR\" />
-  </ItemGroup>
 </Project>

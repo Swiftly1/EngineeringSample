@@ -32,7 +32,7 @@ namespace AST.Trees.Miscs
             return Result<List<Argument>>.Ok(args);
         }
 
-        internal static Result<List<Expression>> ExtractFunctionCallParameters(List<LexElement> data, ScopeContext scopeContext)
+        internal static Result<List<Expression>> ExtractFunctionCallParameters(List<LexElement> data, UntypedScopeContext scopeContext)
         {
             var output = new List<Expression>();
 

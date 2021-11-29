@@ -15,7 +15,7 @@ namespace AST.Trees.Declarations.Untyped
             List<Argument> args,
             DiagnosticInfo typeDiag,
             DiagnosticInfo accessModDiag,
-            ScopeContext context
+            UntypedScopeContext context
         ) : base(diag, context)
         {
             Name = name;

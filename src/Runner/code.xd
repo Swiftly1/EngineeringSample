@@ -8,5 +8,5 @@ public int Test(int a, int b)
 public int Test2()
 {
 	int test = 17 + Test(5, 6);
-	return test;
+	return test + 1;
 }

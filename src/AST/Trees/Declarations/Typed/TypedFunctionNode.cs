@@ -14,7 +14,7 @@ namespace AST.Trees.Declarations.Typed
             Node body,
             List<TypedArgument> args,
             TypeInfo type,
-            ScopeContext scopeContext,
+            UntypedScopeContext scopeContext,
             DiagnosticInfo typeDiag,
             DiagnosticInfo accessModDiag
         ) : base(diag, scopeContext)

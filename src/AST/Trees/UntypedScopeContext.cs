@@ -4,20 +4,20 @@ using System.Collections.Generic;
 #nullable enable
 namespace AST.Trees
 {
-    public class ScopeContext
+    public class UntypedScopeContext
     {
-        public ScopeContext(string name_space)
+        public UntypedScopeContext(string name_space)
         {
             Name = name_space;
         }
 
-        public ScopeContext(ScopeContext parent_context, string name)
+        public UntypedScopeContext(UntypedScopeContext parent_context, string name)
         {
             Parent = parent_context;
             Name = name;
         }
 
-        public ScopeContext()
+        public UntypedScopeContext()
         {
 
         }
@@ -25,13 +25,13 @@ namespace AST.Trees
         // TODO: Maybe ScopeContext should be base class for more specific kinds of contexts?
         public string? Name { get; set; }
 
-        public ScopeContext? Parent { get; set; }
+        public UntypedScopeContext? Parent { get; set; }
 
-        public List<VariableDeclarationInfo> DeclaredVariables { get; set; } = new();
+        public List<BasicVariableDescription> DeclaredVariables { get; set; } = new();
 
-        public List<VariableDeclarationInfo> DeclaredVariablesList()
+        public List<BasicVariableDescription> DeclaredVariablesList()
         {
-            var all = new List<VariableDeclarationInfo>();
+            var all = new List<BasicVariableDescription>();
 
             all.AddRange(DeclaredVariables);
 
