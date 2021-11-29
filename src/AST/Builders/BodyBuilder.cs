@@ -196,7 +196,7 @@ namespace AST.Builders
                 if (!result.Success)
                     return result.ToFailedResult<UntypedVariableDeclarationStatement>();
 
-                var vdn = new UntypedVariableDeclarationStatement(name, typeName, result.Data, name.Diagnostics);
+                var vdn = new UntypedVariableDeclarationStatement(name, typeName, result.Data, scopeContext, name.Diagnostics);
 
                 return new ResultDiag<UntypedVariableDeclarationStatement>(vdn);
             }

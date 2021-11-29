@@ -6,12 +6,12 @@ namespace AST.Trees
     {
         protected ScopeableNode(DiagnosticInfo diag, ScopeContext parent_context) : base(diag)
         {
-            ScopeContext.Parent = parent_context;
+            ScopeContext = parent_context;
         }
 
         protected ScopeableNode(DiagnosticInfo diag, string nameSpace) : base(diag)
         {
-            ScopeContext.Namespace = nameSpace;
+            ScopeContext.Name = nameSpace;
         }
 
         public ScopeContext ScopeContext { get; } = new();

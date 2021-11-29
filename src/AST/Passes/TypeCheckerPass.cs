@@ -96,7 +96,7 @@ namespace AST.Passes
                     return (true, null);
                 }
 
-                var newNode = new TypedVariableDeclarationStatement(vds.VariableName, exprType.NewNode, exprType.TypeInfo, vds.Diagnostics);
+                var newNode = new TypedVariableDeclarationStatement(vds.VariableName, exprType.NewNode, exprType.TypeInfo, vds.ScopeContext, vds.Diagnostics);
 
                 return (true, newNode);
             }

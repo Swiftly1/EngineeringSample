@@ -6,23 +6,24 @@ namespace AST.Trees
 {
     public class ScopeContext
     {
-        // TODO: Maybe ScopeContext should be base class for more specific kinds of contexts?
-        public string? Namespace { get; set; }
-
         public ScopeContext(string name_space)
         {
-            Namespace = name_space;
+            Name = name_space;
         }
 
-        public ScopeContext(ScopeContext parent_context)
+        public ScopeContext(ScopeContext parent_context, string name)
         {
             Parent = parent_context;
+            Name = name;
         }
 
         public ScopeContext()
         {
 
         }
+
+        // TODO: Maybe ScopeContext should be base class for more specific kinds of contexts?
+        public string? Name { get; set; }
 
         public ScopeContext? Parent { get; set; }
 
@@ -35,6 +36,7 @@ namespace AST.Trees
             all.AddRange(DeclaredVariables);
 
             var current = Parent;
+
             while (current is not null)
             {
                 all.AddRange(current.DeclaredVariables);
