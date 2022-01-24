@@ -12,13 +12,15 @@ namespace Emitter.LLVM
 {
     public class LLVM_Emitter : BaseEmitter
     {
-        private readonly LLVM_ScopeManager _scopeManager = new LLVM_ScopeManager();
+        private readonly LLVM_ScopeManager _scopeManager = new();
 
-        public LLVM_Emitter(IMessagesPrinter printer) : base(printer)
+        private readonly StringBuilder _sb = new();
+
+        public LLVM_Emitter(IMessagesPrinter? printer) : base(printer)
         {
         }
 
-        public override Result Emit(Node node)
+        public override Result<string> Emit(Node node)
         {
             try
             {
@@ -26,10 +28,10 @@ namespace Emitter.LLVM
             }
             catch (Exception ex)
             {
-                return new Result(ex.ToString());
+                return Result<string>.Error(ex.ToString());
             }
 
-            return new Result();
+            return Result<string>.Ok(_sb.ToString());
         }
 
         private void InternalEmit(Node node, int tabDepth = 0)
@@ -46,8 +48,8 @@ namespace Emitter.LLVM
                 scope.RegisterFunctionArg(fn.Arguments.Count);
                 var args = LLVM_Helpers.FunctionArgsToLLVM(fn);
 
-                _printer.PrintColorNewLine($"define dso_local {fn.Type.ToLLVMType()} @{fn.Name}({args})", tabDepth);
-                _printer.PrintColorNewLine("{", tabDepth);
+                PrintNewLineWrapper($"define dso_local {fn.Type.ToLLVMType()} @{fn.Name}({args})", tabDepth);
+                PrintNewLineWrapper("{", tabDepth);
 
                 if (fn.Arguments.Any())
                 {
@@ -55,8 +57,8 @@ namespace Emitter.LLVM
                 }
 
                 EmitSubNodes(node, tabDepth + 1);
-                _printer.PrintColorNewLine("}", tabDepth);
-                _printer.PrintColorNewLine("", tabDepth);
+                PrintNewLineWrapper("}", tabDepth);
+                PrintNewLineWrapper("", tabDepth);
             }
             else if (node is TypedVariableDeclarationStatement tvar)
             {
@@ -72,13 +74,13 @@ namespace Emitter.LLVM
                 //{
                 //    var id = scope.VariableName_NumberDictionary[vue.VariableName];
                 //    var type = _helper.TypesToLLVMTypes(vue.TypeKind);
-                //    _printer.PrintColorNewLine($"ret {type} %{id}", tabDepth);
+                //    PrintNewLineWrapper($"ret {type} %{id}", tabDepth);
                 //}
                 //else
                 {
                     var lastId = TransformExpression(rsn.ReturnExpression);
                     var type = rsn.ReturnExpression.TypeInfo.ToLLVMType();
-                    _printer.PrintColorNewLine($"ret {type} %{lastId}", tabDepth);
+                    PrintNewLineWrapper($"ret {type} %{lastId}", tabDepth);
                 }
             }
             else if (node is BodyNode)
@@ -146,11 +148,11 @@ namespace Emitter.LLVM
 
                 // allocate
                 var type = $"{expr.TypeInfo.ToLLVMType()}";
-                _printer.PrintColorNewLine($"%{nextAlloca} = alloca {type}, align 4", tabDepth);
+                PrintNewLineWrapper($"%{nextAlloca} = alloca {type}, align 4", tabDepth);
 
-                _printer.PrintColorNewLine($"%{nextCall} = call {type} @{expr.FunctionName}({callArgs})", tabDepth);
-                _printer.PrintColorNewLine($"store {type} %{nextCall}, {type}* %{nextAlloca}, align 4", tabDepth);
-                _printer.PrintColorNewLine($"%{nextLoad} = load {type}, {type}* %{nextAlloca}, align 4", tabDepth);
+                PrintNewLineWrapper($"%{nextCall} = call {type} @{expr.FunctionName}({callArgs})", tabDepth);
+                PrintNewLineWrapper($"store {type} %{nextCall}, {type}* %{nextAlloca}, align 4", tabDepth);
+                PrintNewLineWrapper($"%{nextLoad} = load {type}, {type}* %{nextAlloca}, align 4", tabDepth);
 
                 return nextLoad;
             }
@@ -169,9 +171,9 @@ namespace Emitter.LLVM
                 var nextAlloca = scope.GetNextVariableNumber();
                 //var nextLoad = scope.GetNextVariableNumber();
 
-                _printer.PrintColorNewLine($"%{nextAlloca} = alloca {type}, align 4", tabDepth);
-                _printer.PrintColorNewLine($"store {type} %{argIndex++}, {type}* %{nextAlloca}, align 4", tabDepth);
-                //_printer.PrintColorNewLine($"%{nextLoad} = load {type}, {type}* %{nextAlloca}, align 4", tabDepth);
+                PrintNewLineWrapper($"%{nextAlloca} = alloca {type}, align 4", tabDepth);
+                PrintNewLineWrapper($"store {type} %{argIndex++}, {type}* %{nextAlloca}, align 4", tabDepth);
+                //PrintNewLineWrapper($"%{nextLoad} = load {type}, {type}* %{nextAlloca}, align 4", tabDepth);
 
                 DeclareVariableWithKnownIndex(arg.Name, scope, nextAlloca);
             }
@@ -212,10 +214,10 @@ namespace Emitter.LLVM
                 var nextLoad = DeclareTemporaryVariable();
 
                 var type = expr.TypeInfo.ToLLVMType();
-                _printer.PrintColorNewLine($"%{nextAlloca} = alloca {type}, align 4", tabDepth);
-                _printer.PrintColorNewLine($"store {type} {expr.Value}, {type}* %{nextAlloca}, align 4", tabDepth);
-                _printer.PrintColorNewLine($"%{nextLoad} = load {type}, {type}* %{nextAlloca}, align 4", tabDepth);
-                _printer.PrintColorNewLine("");
+                PrintNewLineWrapper($"%{nextAlloca} = alloca {type}, align 4", tabDepth);
+                PrintNewLineWrapper($"store {type} {expr.Value}, {type}* %{nextAlloca}, align 4", tabDepth);
+                PrintNewLineWrapper($"%{nextLoad} = load {type}, {type}* %{nextAlloca}, align 4", tabDepth);
+                PrintNewLineWrapper("");
 
                 // Previous, soft allocation as done as "x + 0" instead of alloca, store, load.
                 //_sink.EmitNewLineWithTabs($"%{next} = add {_helper.TypesToLLVMTypes(expr.TypeKind)} {expr.Value}, 0", tabDepth);
@@ -230,8 +232,8 @@ namespace Emitter.LLVM
                 // TODO: store i8 >>1<<?
 
                 var next = DeclareTemporaryVariable();
-                _printer.PrintColorNewLine($"%{next} = alloca {expr.TypeInfo.ToLLVMType()}, align 1", tabDepth);
-                _printer.PrintColorNewLine($"store i8 1, i8* %{next}, align 1", tabDepth);
+                PrintNewLineWrapper($"%{next} = alloca {expr.TypeInfo.ToLLVMType()}, align 1", tabDepth);
+                PrintNewLineWrapper($"store i8 1, i8* %{next}, align 1", tabDepth);
 
                 return next;
             }
@@ -246,7 +248,7 @@ namespace Emitter.LLVM
             {
                 var type = expr.TypeInfo.ToLLVMType();
                 var op = expr.Operator.OperatorConverter();
-                _printer.PrintColorNewLine($"%{next} = {op} {type} %{leftId}, %{rightId}", tabDepth);
+                PrintNewLineWrapper($"%{next} = {op} {type} %{leftId}, %{rightId}", tabDepth);
             }
             else if (expr.TypeInfo == TypeFacts.GetBoolean())
             {
@@ -255,7 +257,7 @@ namespace Emitter.LLVM
 
                 var type = expr.Left.TypeInfo.ToLLVMType();
                 var op = expr.Operator.OperatorConverter();
-                _printer.PrintColorNewLine($"%{next} = {op} {type} %{leftId}, %{rightId}", tabDepth);
+                PrintNewLineWrapper($"%{next} = {op} {type} %{leftId}, %{rightId}", tabDepth);
             }
             else
             {
@@ -283,6 +285,14 @@ namespace Emitter.LLVM
             {
                 InternalEmit(sub_node, tabDepth);
             }
+        }
+
+        public void PrintNewLineWrapper(string s, int tabDepth = 0)
+        {
+            var tab = new string('\t', tabDepth);
+            _sb.AppendLine(tab + s);
+
+            _printer?.PrintColorNewLine(s, tabDepth);
         }
     }
 }

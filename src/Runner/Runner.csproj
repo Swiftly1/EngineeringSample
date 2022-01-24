@@ -5,6 +5,7 @@
     <AssemblyVersion>0.0.0.29</AssemblyVersion>
     <FileVersion>0.0.0.29</FileVersion>
     <StartupObject>Runner.Program</StartupObject>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="2.8.0" />

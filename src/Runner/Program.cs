@@ -74,16 +74,17 @@ namespace Runner
                     printer.PrintColorNewLine($"{Environment.NewLine}");
                 }
 
-                if (args.IR)
-                {
-                    printer.Color = ConsoleColor.Green;
-                    var emit_result = new LLVM_Emitter(printer).Emit(ast.Data);
+                printer.Color = ConsoleColor.Green;
+                var emit_result = new LLVM_Emitter(args.IR ? printer : null).Emit(ast.Data!);
 
-                    if (!emit_result.Success)
-                    {
-                        printer.Color = ConsoleColor.Red;
-                        printer.PrintColorNewLine(emit_result.Message);
-                    }
+                if (emit_result.Success)
+                {
+                    // Console.WriteLine(emit_result.Data);
+                }
+                else
+                {
+                    printer.Color = ConsoleColor.Red;
+                    printer.PrintColorNewLine(emit_result.Message!);
                 }
             }
             else
@@ -94,10 +95,12 @@ namespace Runner
                 }
             }
         }
+
         private static void HandleParseError(IEnumerable<Error> errs)
         {
             Console.WriteLine("Please provide/fix arguments");
 
+            // TODO: Those errors do not show anything reasonable yet
             foreach (var err in errs)
             {
                 Console.WriteLine($"\t{err.Tag}");

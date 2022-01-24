@@ -4,7 +4,6 @@
     {
         public BasicVariableDescription()
         {
-
         }
 
         public BasicVariableDescription(string variableName, string typeName)
