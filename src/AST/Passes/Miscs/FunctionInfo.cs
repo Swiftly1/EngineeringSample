@@ -6,7 +6,7 @@ namespace AST.Passes.Miscs
 {
     public class FunctionInfo
     {
-        public FunctionInfo(string name, string desiredType, List<Argument> arguments, ScopeContext scopeContext)
+        public FunctionInfo(string name, string desiredType, List<Argument> arguments, UntypedScopeContext scopeContext)
         {
             Name = name;
             DesiredType = desiredType;
@@ -20,6 +20,6 @@ namespace AST.Passes.Miscs
 
         public List<Argument> Arguments { get; } = new List<Argument>();
 
-        public ScopeContext ScopeContext { get; }
+        public UntypedScopeContext ScopeContext { get; }
     }
 }

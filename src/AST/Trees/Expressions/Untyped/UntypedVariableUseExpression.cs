@@ -4,7 +4,7 @@ namespace AST.Trees.Expressions.Untyped
 {
     public class UntypedVariableUseExpression : UntypedExpression
     {
-        public UntypedVariableUseExpression(DiagnosticInfo diag, string variableName) : base(diag)
+        public UntypedVariableUseExpression(DiagnosticInfo diag, string variableName, UntypedScopeContext context) : base(diag, context)
         {
             VariableName = variableName;
         }

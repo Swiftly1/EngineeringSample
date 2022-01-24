@@ -4,7 +4,7 @@ namespace AST.Trees.Expressions.Typed
 {
     public abstract class TypedExpression : Expression
     {
-        protected TypedExpression(DiagnosticInfo diag, TypeInfo typeInfo) : base(diag)
+        protected TypedExpression(DiagnosticInfo diag, TypeInfo typeInfo, UntypedScopeContext context) : base(diag, context)
         {
             TypeInfo = typeInfo;
         }

@@ -61,7 +61,7 @@ namespace AST.Builders
                 return new ResultDiag<Node>(node);
             }
 
-            private ResultDiag<UntypedFunctionNode> TryMatchFunction(List<LexElement> matched, ScopeContext parentScope)
+            private ResultDiag<UntypedFunctionNode> TryMatchFunction(List<LexElement> matched, UntypedScopeContext parentScope)
             {
                 var result = GetTillClosed(LexingElement.OpenParenthesis, LexingElement.ClosedParenthesis);
 
@@ -95,15 +95,16 @@ namespace AST.Builders
                     return new ResultDiag<UntypedFunctionNode>(message);
                 }
 
+                var context = new UntypedScopeContext(parentScope, $"function_{functionName}");
+
                 var bodyBuilder = new BodyBuilder(bodyResult.Data, _Diagnostics);
-                var body = bodyBuilder.Build(parentScope);
+                var body = bodyBuilder.Build(context);
 
                 if (!body.Success)
                     return body.ToFailedResult<UntypedFunctionNode>();
 
                 var accessModifier = matched[0] as LexKeyword;
                 var desiredType = matched[1] as LexKeyword;
-                var context = new ScopeContext(parentScope);
 
                 var node = new UntypedFunctionNode
                 (

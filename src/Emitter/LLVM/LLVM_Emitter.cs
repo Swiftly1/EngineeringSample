@@ -117,6 +117,19 @@ namespace Emitter.LLVM
                 var nextLoad = AllocateFunctionCallVariable(tabDepth, tfc);
                 return nextLoad;
             }
+            else if (expression is TypedVariableUseExpression tvue)
+            {
+                var variables = _scopeManager.GetLastScope().VariablesWithinScope;
+
+                if (variables.ContainsKey(tvue.VariableName))
+                {
+                    return variables[tvue.VariableName];
+                }
+                else
+                {
+                    throw new Exception("For some reason current scope doesnt have this variable");
+                }
+            }
 
             throw new NotImplementedException($"TransformExpression doesn't have implementation for: {expression.GetType()}.");
         }

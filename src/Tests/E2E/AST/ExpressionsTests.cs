@@ -9,7 +9,7 @@ using AST.Trees.Expressions.Untyped;
 
 namespace Tests.E2E.AST
 {
-    public class Expressions
+    public class ExpressionsTests
     {
         [Fact]
         [Benchmark]

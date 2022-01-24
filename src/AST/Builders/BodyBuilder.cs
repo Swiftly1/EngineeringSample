@@ -2,6 +2,7 @@
 using AST.Trees;
 using System.Linq;
 using Common.Lexing;
+using AST.Trees.Miscs;
 using AST.Miscs.Matching;
 using AST.Trees.Statements;
 using AST.Trees.Expressions;
@@ -25,7 +26,7 @@ namespace AST.Builders
                 _Diagnostics = diagnostic;
             }
 
-            public ResultDiag<BodyNode> Build(ScopeContext context)
+            public ResultDiag<BodyNode> Build(UntypedScopeContext context)
             {
                 var bodyNode = new BodyNode(_Diagnostics, context);
 
@@ -52,7 +53,7 @@ namespace AST.Builders
                         if (variableDeclarationMatcher.Evaluate(TakeToEnd(), out var variableDeclarationMatcherResult))
                         {
                             var ahead = TryGetAhead(variableDeclarationMatcherResult.Items.Count, includeCurrent: true);
-                            var result = TryMatchVariableDeclaration(ahead.Items);
+                            var result = TryMatchVariableDeclaration(ahead.Items, bodyNode.ScopeContext);
 
                             if (result.Success)
                                 bodyNode.AddChild(result.Data);
@@ -62,7 +63,7 @@ namespace AST.Builders
                         else if (assignStatementMatcher.Evaluate(TakeToEnd(), out var assignStatementMatcherResult))
                         {
                             var ahead = TryGetAhead(assignStatementMatcherResult.Items.Count, includeCurrent: true);
-                            var result = TryMatchVariableReAssignment(ahead.Items);
+                            var result = TryMatchVariableReAssignment(ahead.Items, bodyNode.ScopeContext);
 
                             if (result.Success)
                                 bodyNode.AddChild(result.Data);
@@ -82,7 +83,7 @@ namespace AST.Builders
                         else if (returnStatementMatcher.Evaluate(TakeToEnd(), out var returnStatementMatcherResult))
                         {
                             var ahead = TryGetAhead(returnStatementMatcherResult.Items.Count, includeCurrent: true);
-                            var result = TryMatchReturnStatement(ahead.Items);
+                            var result = TryMatchReturnStatement(ahead.Items, bodyNode.ScopeContext);
 
                             if (result.Success)
                                 bodyNode.AddChild(result.Data);
@@ -100,7 +101,7 @@ namespace AST.Builders
                 return new ResultDiag<BodyNode>(bodyNode);
             }
 
-            private ResultDiag<UntypedIfStatement> TryMatchIfStatement(List<LexElement> items, ScopeContext parentScope)
+            private ResultDiag<UntypedIfStatement> TryMatchIfStatement(List<LexElement> items, UntypedScopeContext parentScope)
             {
                 var conditionResult = GetTillClosed(LexingElement.OpenParenthesis, LexingElement.ClosedParenthesis);
 
@@ -118,7 +119,7 @@ namespace AST.Builders
                     return bodyResult.ToFailedResult<UntypedIfStatement>();
                 }
 
-                var expressionBuilder = new ExpressionBuilder(conditionResult.Data);
+                var expressionBuilder = new ExpressionBuilder(conditionResult.Data, parentScope);
                 var expression = expressionBuilder.Build();
 
                 if (!expression.Success)
@@ -170,12 +171,12 @@ namespace AST.Builders
                 return new ResultDiag<UntypedIfStatement>(node_with_two_branches);
             }
 
-            private ResultDiag<AssignmentStatement> TryMatchVariableReAssignment(List<LexElement> items)
+            private ResultDiag<AssignmentStatement> TryMatchVariableReAssignment(List<LexElement> items, UntypedScopeContext scopeContext)
             {
                 var name = items[0] as LexWord;
 
                 var skipped = TakeToEnd(1);
-                var result = TryMatchExpression(skipped);
+                var result = TryMatchExpression(skipped, scopeContext);
 
                 if (!result.Success)
                     return result.ToFailedResult<AssignmentStatement>();
@@ -185,26 +186,30 @@ namespace AST.Builders
                 return new ResultDiag<AssignmentStatement>(assignStatement);
             }
 
-            private ResultDiag<UntypedVariableDeclarationStatement> TryMatchVariableDeclaration(List<LexElement> items)
+            private ResultDiag<UntypedVariableDeclarationStatement> TryMatchVariableDeclaration(List<LexElement> items, UntypedScopeContext scopeContext)
             {
                 string typeName = items[0] as LexKeyword;
                 var name = items[1] as LexWord;
 
                 var skipped = TakeToEnd(1);
-                var result = TryMatchExpression(skipped);
+                var result = TryMatchExpression(skipped, scopeContext);
 
                 if (!result.Success)
                     return result.ToFailedResult<UntypedVariableDeclarationStatement>();
 
-                var vdn = new UntypedVariableDeclarationStatement(name, typeName, result.Data, name.Diagnostics);
+                var vdn = new UntypedVariableDeclarationStatement(name, typeName, result.Data, scopeContext, name.Diagnostics);
+
+                var basic_type_info = new BasicVariableDescription { VariableName = vdn.VariableName, TypeName = vdn.DesiredType };
+
+                scopeContext.DeclaredVariables.Add(basic_type_info);
 
                 return new ResultDiag<UntypedVariableDeclarationStatement>(vdn);
             }
 
-            private ResultDiag<UntypedReturnStatement> TryMatchReturnStatement(List<LexElement> items)
+            private ResultDiag<UntypedReturnStatement> TryMatchReturnStatement(List<LexElement> items, UntypedScopeContext scopeContext)
             {
                 var skipped = TakeToEnd(1);
-                var result = TryMatchExpression(skipped);
+                var result = TryMatchExpression(skipped, scopeContext);
 
                 if (!result.Success)
                     return result.ToFailedResult<UntypedReturnStatement>();
@@ -213,12 +218,12 @@ namespace AST.Builders
                 return new ResultDiag<UntypedReturnStatement>(vdn);
             }
 
-            private ResultDiag<UntypedExpression> TryMatchExpression(List<LexElement> items)
+            private ResultDiag<UntypedExpression> TryMatchExpression(List<LexElement> items, UntypedScopeContext scope)
             {
                 // skip '='
                 var expressionElements = items.TakeWhile(x => x.Kind != LexingElement.SemiColon).ToList();
 
-                var builder = new ExpressionBuilder(expressionElements);
+                var builder = new ExpressionBuilder(expressionElements, scope);
                 var result = builder.Build();
 
                 // Move pointer at the semicolon after expression

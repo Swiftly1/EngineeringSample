@@ -96,7 +96,7 @@ namespace AST.Passes
                     return (true, null);
                 }
 
-                var newNode = new TypedVariableDeclarationStatement(vds.VariableName, exprType.NewNode, exprType.TypeInfo, vds.Diagnostics);
+                var newNode = new TypedVariableDeclarationStatement(vds.VariableName, exprType.NewNode, exprType.TypeInfo, vds.ScopeContext, vds.Diagnostics);
 
                 return (true, newNode);
             }
@@ -202,7 +202,7 @@ namespace AST.Passes
 
                 if (type != null)
                 {
-                    var newExpr = new ConstantTypedExpression(expression.Diagnostics, value, type);
+                    var newExpr = new ConstantTypedExpression(expression.Diagnostics, value, type, cme.ScopeContext);
                     expression.CopyTo(newExpr);
                     expression = newExpr;
 
@@ -232,7 +232,8 @@ namespace AST.Passes
                     rightResult.NewNode,
                     cue.Operator,
                     found.ResultType,
-                    cue.Diagnostics
+                    cue.Diagnostics,
+                    cue.ScopeContext
                 );
 
                 cue.CopyTo(newExpression);
@@ -241,7 +242,7 @@ namespace AST.Passes
             }
             else if (expression is ConstantUntypedStringExpression cuse)
             {
-                var newExpression = new ConstantTypedExpression(cuse.Diagnostics, cuse.Value, TypeFacts.GetString());
+                var newExpression = new ConstantTypedExpression(cuse.Diagnostics, cuse.Value, TypeFacts.GetString(), cuse.ScopeContext);
 
                 cuse.CopyTo(newExpression);
 
@@ -301,15 +302,53 @@ namespace AST.Passes
                     ufce.Diagnostics,
                     ufce.FunctionName,
                     resultType.TypeInfo,
-                    typedCallArgs
+                    typedCallArgs,
+                    ufce.ScopeContext
                 );
 
                 ufce.CopyTo(newExpression);
 
                 return (true, newExpression.TypeInfo, newExpression);
             }
+            else if (expression is UntypedVariableUseExpression uvue)
+            {
+                var found = TryFindVariableInScope(uvue.ScopeContext, uvue.VariableName);
+
+                if (!found.Success)
+                {
+                    Errors.AddError(found.Message, uvue.Diagnostics);
+                    return (false, null, null);
+                }
+
+                var newExpr = new TypedVariableUseExpression(uvue.VariableName, found.Data, uvue.ScopeContext, uvue.Diagnostics);
+
+                uvue.CopyTo(newExpr);
+
+                return (true, newExpr.TypeInfo, newExpr);
+            }
 
             throw new NotImplementedException($"Node type {expression.GetType()} is not handled");
+        }
+
+        private Result<TypeInfo> TryFindVariableInScope(UntypedScopeContext scopeContext, string variableName)
+        {
+            var found = scopeContext.DeclaredVariables.FirstOrDefault(x => x.VariableName == variableName);
+
+            if (found is not null)
+            {
+                var typeResult = FindTypeByName(found.TypeName);
+
+                if (typeResult.Found)
+                {
+                    return Result<TypeInfo>.Ok(typeResult.TypeInfo);
+                }
+                else
+                {
+                    return Result<TypeInfo>.Error($"Type '{found.TypeName}' for variable with name '{variableName}' is not found.");
+                }
+            }
+
+            return Result<TypeInfo>.Error($"Variable with name '{variableName}' does not exist in this scope.");
         }
 
         private void ReplaceNode(Node parent, Node specific_child, Node overwrittenNode)

@@ -6,7 +6,7 @@ using BenchmarkDotNet.Attributes;
 
 namespace Tests.E2E.AST.TypeChecker
 {
-    public class TypeChecker
+    public class TypeCheckerTests
     {
         [Fact]
         [Benchmark]
