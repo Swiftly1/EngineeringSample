@@ -117,7 +117,7 @@ namespace AST.Builders
             {
                 var current = list[i];
 
-                if (current.Elements.Any() && current.Elements.First() is LexWord first)
+                if (current.Elements.Any() && current.Elements[0] is LexWord first)
                 {
                     current.NamespaceName = first.Value;
                     // Remove namespace name from namespace elements list

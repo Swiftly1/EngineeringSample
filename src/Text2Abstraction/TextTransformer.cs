@@ -48,7 +48,6 @@ namespace Text2Abstraction
                     _State = LexingState.Unknown;
 
                 Handle(_State);
-
             } while (MoveNext());
 
             return _Elements;

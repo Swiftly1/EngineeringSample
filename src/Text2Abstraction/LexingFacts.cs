@@ -36,7 +36,7 @@ namespace Text2Abstraction
 
         public static List<string> LexElementsKeys => String2LexElementMap.Select(x => x.Key).ToList();
 
-        public static Dictionary<string, LexingElement> String2LexElementMap = new Dictionary<string, LexingElement>
+        public static readonly Dictionary<string, LexingElement> String2LexElementMap = new()
         {
             { "(", LexingElement.OpenParenthesis },
             { ")", LexingElement.ClosedParenthesis },
@@ -50,7 +50,7 @@ namespace Text2Abstraction
 
         public static List<string> OperatorsKeys => String2OperatorMap.Select(x => x.Key).ToList();
 
-        public static Dictionary<string, LexingElement> String2OperatorMap = new Dictionary<string, LexingElement>
+        public static readonly Dictionary<string, LexingElement> String2OperatorMap = new()
         {
             { "=", LexingElement.Equal },
             { "==", LexingElement.EqualEqual },

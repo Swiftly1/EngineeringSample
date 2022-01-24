@@ -31,7 +31,7 @@ namespace Runner
 
                 if (args.LLVMDirectory is null)
                 {
-                    Console.WriteLine($"Either provide path to llvm via -llvm arg or" +
+                    Console.WriteLine("Either provide path to llvm via -llvm arg or" +
                         $" set environment variable {EnvironmentVariables.LLVM_Directory}");
                     return;
                 }

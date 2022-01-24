@@ -10,7 +10,7 @@ namespace AST.Trees
 
         public override string ToString()
         {
-            return $"Body";
+            return "Body";
         }
     }
 }

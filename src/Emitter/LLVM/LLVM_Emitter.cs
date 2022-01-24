@@ -36,7 +36,7 @@ namespace Emitter.LLVM
 
         private void InternalEmit(Node node, int tabDepth = 0)
         {
-            if (node is RootNode rn)
+            if (node is RootNode)
             {
                 _scopeManager.AddScope();
                 EmitSubNodes(node, tabDepth);
@@ -194,12 +194,13 @@ namespace Emitter.LLVM
 
                 sb
                     .Append(expressions[i].TypeInfo.ToLLVMType())
-                    .Append(" ")
-                    .Append($"%{argId}");
+                    .Append(' ')
+                    .Append('%')
+                    .Append(argId);
 
                 if (i < expressions.Count - 1)
                 {
-                    sb.Append(",");
+                    sb.Append(',');
                 }
             }
 
@@ -240,7 +241,6 @@ namespace Emitter.LLVM
 
             throw new Exception("unsupported type");
         }
-
 
         private void AllocateExpressionVariable(int tabDepth, ComplexTypedExpression expr, int leftId, int rightId, int next)
         {
@@ -290,7 +290,7 @@ namespace Emitter.LLVM
         public void PrintNewLineWrapper(string s, int tabDepth = 0)
         {
             var tab = new string('\t', tabDepth);
-            _sb.AppendLine(tab + s);
+            _sb.Append(tab).AppendLine(s);
 
             _printer?.PrintColorNewLine(s, tabDepth);
         }
