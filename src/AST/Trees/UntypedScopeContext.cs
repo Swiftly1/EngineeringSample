@@ -1,4 +1,5 @@
 ﻿using AST.Trees.Miscs;
+using System;
 using System.Collections.Generic;
 
 #nullable enable
@@ -27,23 +28,40 @@ namespace AST.Trees
 
         public UntypedScopeContext? Parent { get; set; }
 
-        public List<BasicVariableDescription> DeclaredVariables { get; set; } = new();
+        private List<BasicVariableDescription> DeclaredVariables { get; set; } = new();
 
-        public List<BasicVariableDescription> DeclaredVariablesList()
+        public void DeclareVariable(BasicVariableDescription desc)
         {
-            var all = new List<BasicVariableDescription>();
+            if (desc is null)
+                throw new ArgumentException(nameof(desc));
 
-            all.AddRange(DeclaredVariables);
+            DeclaredVariables.Add(desc);
+        }
 
-            var current = Parent;
+        public void DeclareVariables(List<BasicVariableDescription> descList)
+        {
+            foreach (var item in descList)
+                DeclareVariable(item);
+        }
 
-            while (current is not null)
+        public List<BasicVariableDescription> DeclaredVariablesList
+        {
+            get
             {
-                all.AddRange(current.DeclaredVariables);
-                current = Parent!.Parent;
-            }
+                var all = new List<BasicVariableDescription>();
 
-            return all;
+                all.AddRange(DeclaredVariables);
+
+                var current = Parent;
+
+                while (current is not null)
+                {
+                    all.AddRange(current.DeclaredVariables);
+                    current = Parent!.Parent;
+                }
+
+                return all;
+            }
         }
     }
 }

@@ -97,6 +97,11 @@ namespace AST.Builders
 
                 var context = new UntypedScopeContext(parentScope, $"function_{functionName}");
 
+                foreach (var arg in argsResult.Data)
+                {
+                    context.DeclareVariable(new BasicVariableDescription(arg.Name, arg.TypeName));
+                }
+
                 var bodyBuilder = new BodyBuilder(bodyResult.Data, _Diagnostics);
                 var body = bodyBuilder.Build(context);
 

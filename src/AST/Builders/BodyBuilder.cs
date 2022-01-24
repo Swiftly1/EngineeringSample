@@ -201,7 +201,7 @@ namespace AST.Builders
 
                 var basic_type_info = new BasicVariableDescription { VariableName = vdn.VariableName, TypeName = vdn.DesiredType };
 
-                scopeContext.DeclaredVariables.Add(basic_type_info);
+                scopeContext.DeclareVariable(basic_type_info);
 
                 return new ResultDiag<UntypedVariableDeclarationStatement>(vdn);
             }

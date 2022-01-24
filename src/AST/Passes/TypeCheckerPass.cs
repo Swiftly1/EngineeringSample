@@ -332,7 +332,7 @@ namespace AST.Passes
 
         private Result<TypeInfo> TryFindVariableInScope(UntypedScopeContext scopeContext, string variableName)
         {
-            var found = scopeContext.DeclaredVariables.FirstOrDefault(x => x.VariableName == variableName);
+            var found = scopeContext.DeclaredVariablesList.FirstOrDefault(x => x.VariableName == variableName);
 
             if (found is not null)
             {

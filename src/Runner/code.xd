@@ -1,18 +1,6 @@
 ﻿namespace Test
 
-public int Test0()
-{
-	int a = 5;
-	return 5 + a;
-}
-
 public int Test(int a, int b)
 {
-	return 5;
-}
-
-public int Test2()
-{
-	int test = 17 + Test(5, 6);
-	return test + 1;
+	return a+b;
 }
