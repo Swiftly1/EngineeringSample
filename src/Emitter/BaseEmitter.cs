@@ -12,6 +12,6 @@ namespace Emitter
             _printer = printer;
         }
 
-        public abstract Result Emit(Node node);
+        public abstract Result<string> Emit(Node node);
     }
 }
