@@ -13,7 +13,7 @@ namespace AST.Passes
 
         public string Name { get; set; } = PassName;
 
-        private List<TypeInfo> KnownTypes = new();
+        private readonly List<TypeInfo> KnownTypes = new();
 
         public List<FunctionInfo> KnownFunctions { get; set; } = new();
 

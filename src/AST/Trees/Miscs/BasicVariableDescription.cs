@@ -4,7 +4,6 @@
     {
         public BasicVariableDescription()
         {
-
         }
 
         public BasicVariableDescription(string variableName, string typeName)
@@ -16,5 +15,10 @@
         public string VariableName { get; set; }
 
         public string TypeName { get; set; }
+
+        public override string ToString()
+        {
+            return $"'{VariableName}' - '{TypeName}'";
+        }
     }
 }

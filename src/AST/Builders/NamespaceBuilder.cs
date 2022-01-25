@@ -87,7 +87,7 @@ namespace AST.Builders
                 if (!argsResult.Success)
                 {
                     var txt = $"Arguments of function '{functionName}' should be made of `typeName argName` " +
-                        $"and comma if there are more arguments. " +
+                        "and comma if there are more arguments. " +
                         "e.g - 'int test', 'int a, int b'";
 
                     var message = Message.CreateError(txt, matched[2].Diagnostics);

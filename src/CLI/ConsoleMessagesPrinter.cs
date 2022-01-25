@@ -1,7 +1,7 @@
 ﻿using System;
 using Common;
 
-namespace Runner
+namespace CLI
 {
     public class ConsoleMessagesPrinter : IMessagesPrinter
     {

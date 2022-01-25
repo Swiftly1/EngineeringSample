@@ -20,7 +20,6 @@ namespace AST.Trees
 
         public UntypedScopeContext()
         {
-
         }
 
         // TODO: Maybe ScopeContext should be base class for more specific kinds of contexts?
@@ -28,12 +27,12 @@ namespace AST.Trees
 
         public UntypedScopeContext? Parent { get; set; }
 
-        private List<BasicVariableDescription> DeclaredVariables { get; set; } = new();
+        private List<BasicVariableDescription> DeclaredVariables { get; } = new();
 
         public void DeclareVariable(BasicVariableDescription desc)
         {
             if (desc is null)
-                throw new ArgumentException(nameof(desc));
+                throw new ArgumentException(null, nameof(desc));
 
             DeclaredVariables.Add(desc);
         }

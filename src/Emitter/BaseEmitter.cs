@@ -5,13 +5,13 @@ namespace Emitter
 {
     public abstract class BaseEmitter
     {
-        protected readonly IMessagesPrinter _printer;
+        protected readonly IMessagesPrinter? _printer;
 
-        protected BaseEmitter(IMessagesPrinter printer)
+        protected BaseEmitter(IMessagesPrinter? printer)
         {
             _printer = printer;
         }
 
-        public abstract Result Emit(Node node);
+        public abstract Result<string> Emit(Node node);
     }
 }

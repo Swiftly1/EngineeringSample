@@ -1,5 +1,5 @@
-﻿using System;
-using Common;
+﻿using Common;
+using System;
 using System.Linq;
 using System.Collections.Generic;
 
@@ -15,7 +15,7 @@ namespace AST
         {
             if (msg is null || string.IsNullOrWhiteSpace(msg.Text) || msg.DiagnosticInfo is null)
             {
-                throw new ArgumentException(nameof(msg));
+                throw new ArgumentException(null, nameof(msg));
             }
 
             _Messages.Add(msg);
