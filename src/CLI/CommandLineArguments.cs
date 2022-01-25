@@ -1,7 +1,7 @@
 ﻿#nullable enable
 using CommandLine;
 
-namespace Runner
+namespace CLI
 {
     internal class CommandLineArguments
     {

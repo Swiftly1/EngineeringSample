@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "Runner": {
+    "CLI": {
       "commandName": "Project",
       "commandLineArgs": "--ir --tree --graph"
     }

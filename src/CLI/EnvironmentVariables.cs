@@ -1,4 +1,4 @@
-﻿namespace Runner
+﻿namespace CLI
 {
     internal static class EnvironmentVariables
     {

@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30804.86
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32112.339
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AST", "src\AST\AST.csproj", "{F48475D5-6E95-4C9B-9DC1-FE19F833550A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Runner", "src\Runner\Runner.csproj", "{4F0AAC40-1C96-4CEC-A78E-E3343F36B978}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CLI", "src\CLI\CLI.csproj", "{4F0AAC40-1C96-4CEC-A78E-E3343F36B978}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Emitter", "src\Emitter\Emitter.csproj", "{66233C43-C084-4A6E-816C-EE8F7CC2151E}"
 EndProject
