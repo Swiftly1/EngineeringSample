@@ -169,13 +169,13 @@ namespace Emitter.LLVM
             {
                 var type = arg.TypeInfo.ToLLVMType();
                 var nextAlloca = scope.GetNextVariableNumber();
-                //var nextLoad = scope.GetNextVariableNumber();
+                var nextLoad = scope.GetNextVariableNumber();
 
                 PrintNewLineWrapper($"%{nextAlloca} = alloca {type}, align 4", tabDepth);
                 PrintNewLineWrapper($"store {type} %{argIndex++}, {type}* %{nextAlloca}, align 4", tabDepth);
-                //PrintNewLineWrapper($"%{nextLoad} = load {type}, {type}* %{nextAlloca}, align 4", tabDepth);
+                PrintNewLineWrapper($"%{nextLoad} = load {type}, {type}* %{nextAlloca}, align 4", tabDepth);
 
-                DeclareVariableWithKnownIndex(arg.Name, scope, nextAlloca);
+                DeclareVariableWithKnownIndex(arg.Name, scope, nextLoad);
             }
         }
 
