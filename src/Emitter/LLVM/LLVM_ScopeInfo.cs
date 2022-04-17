@@ -43,6 +43,7 @@ namespace Emitter.LLVM
             }
         }
 
+        // TODO: Shouldn't those counters be global?
         public int GetNextTrueBranchNumber() => TrueBranchCounter++;
 
         public int GetNextFalseBranchNumber() => FalseBranchCounter++;

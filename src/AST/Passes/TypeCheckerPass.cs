@@ -30,14 +30,14 @@ namespace AST.Passes
         {
             Exchange = exchange;
             KnownTypes = (Exchange.PassResults[TypeDiscoveryPass.PassName] as TypeDiscoveryPassResult).KnownTypes;
-            CheckTree(root);
+            TryToTransferNodeToTyped(root);
             return new TypeCheckerPassResult(PassName, Errors.DumpErrors().ToList());
         }
 
         // TODO: Would be nice if error handling was done better here
         // e.g by using Result classes
 
-        private void CheckTree(Node root)
+        private void TryToTransferNodeToTyped(Node root)
         {
             var queue = new Queue<(Node Child, Node Parent)>();
 
@@ -133,7 +133,7 @@ namespace AST.Passes
                     if (!argResult.Found)
                     {
                         Errors.AddError($"Type {argType.TypeName} is not found.", argType.Diagnostic);
-                        // in order to get more error messages.
+                        // in order to get more error messages we don't return yet.
                         argValidationFailed = true;
                     }
                     else
@@ -168,6 +168,22 @@ namespace AST.Passes
                 );
 
                 return (false, newNode);
+            }
+            else if (current is UntypedIfStatement uifs)
+            {
+                var exprType = GenerateBoundedTreeAndGetType(uifs.Condition);
+
+                if (!exprType.Found)
+                {
+                    return (true, null);
+                }
+
+                // TODO: refactor this cuz it's ugly
+                TryToTransferNodeToTyped(uifs.BranchTrue);
+                TryToTransferNodeToTyped(uifs.BranchFalse);
+
+                var newNode = new TypedIfStatement(exprType.NewNode, uifs.BranchTrue, uifs.BranchFalse, uifs.Diagnostics);
+                return (true, newNode);
             }
 
             return (false, null);
@@ -221,10 +237,13 @@ namespace AST.Passes
                     return (false, null, null);
                 }
 
-                var found = OperatorFacts.TryMatch(leftResult.TypeInfo, rightResult.TypeInfo);
+                var found = OperatorFacts.TryMatch(leftResult.TypeInfo, rightResult.TypeInfo, cue.Operator);
 
                 if (found is null)
+                {
+                    Errors.AddError($"Undefined operator - '{cue.Operator}' between '{leftResult.TypeInfo}' and '{rightResult.TypeInfo}'", cue.Diagnostics);
                     return (false, null, null);
+                }
 
                 var newExpression = new ComplexTypedExpression
                 (

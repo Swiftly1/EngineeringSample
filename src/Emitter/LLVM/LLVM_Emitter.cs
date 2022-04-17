@@ -78,7 +78,7 @@ namespace Emitter.LLVM
                 //}
                 //else
                 {
-                    var lastId = TransformExpression(rsn.ReturnExpression);
+                    var lastId = TransformExpression(rsn.ReturnExpression, tabDepth);
                     var type = rsn.ReturnExpression.TypeInfo.ToLLVMType();
                     PrintNewLineWrapper($"ret {type} %{lastId}", tabDepth);
                 }
@@ -91,6 +91,21 @@ namespace Emitter.LLVM
             {
                 _scopeManager.AddScope();
                 EmitSubNodes(node, tabDepth);
+            }
+            else if (node is TypedIfStatement tifs)
+            {
+                var lastId = TransformExpression(tifs.Condition);
+
+                var trueBranchId = _scopeManager.GetLastScope().GetNextTrueBranchNumber();
+                var falseBranchId = _scopeManager.GetLastScope().GetNextFalseBranchNumber();
+                //var endBranchId = _scopeManager.GetLastScope().GetNextEndBranchNumber();
+
+                PrintNewLineWrapper($"br i1 %{lastId}, label %true_branch_{trueBranchId}, label %false_branch_{falseBranchId}", tabDepth);
+                PrintNewLineWrapper($"true_branch_{trueBranchId}:", tabDepth);
+                EmitSubNodes(tifs.BranchTrue, tabDepth + 1);
+                PrintNewLineWrapper($"false_branch_{falseBranchId}:", tabDepth);
+                EmitSubNodes(tifs.BranchFalse, tabDepth + 1);
+                //PrintNewLineWrapper($"end_branch_{endBranchId}:", tabDepth);
             }
             else
             {
@@ -253,7 +268,8 @@ namespace Emitter.LLVM
             else if (expr.TypeInfo == TypeFacts.GetBoolean())
             {
                 // TODO: %3 = icmp sgt >>i32<< %1, %2
-                // porównanie wymagas podania typu argumentów, zatem czy pobranie typu lewej strony będzie poprawne?
+                // comparison requires specifying type of args, so
+                // will taking type of just left side be fine?
 
                 var type = expr.Left.TypeInfo.ToLLVMType();
                 var op = expr.Operator.OperatorConverter();
