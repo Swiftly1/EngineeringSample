@@ -1,11 +1,12 @@
 ﻿using Common;
 using AST.Trees.Expressions.Untyped;
+using AST.Trees.Expressions.Typed;
 
-namespace AST.Trees.Statements.Untyped
+namespace AST.Trees.Statements.Typed
 {
-    public class UntypedIfStatement : StatementNode
+    public class TypedIfStatement : StatementNode
     {
-        public UntypedIfStatement(UntypedExpression condition, BodyNode branchTrue, BodyNode branchFalse, DiagnosticInfo diag) : base(diag)
+        public TypedIfStatement(TypedExpression condition, BodyNode branchTrue, BodyNode branchFalse, DiagnosticInfo diag) : base(diag)
         {
             Condition = condition;
 
@@ -17,7 +18,7 @@ namespace AST.Trees.Statements.Untyped
             this.AddChild(branchFalse ?? new BodyNode(diag, null));
         }
 
-        public UntypedExpression Condition { get; }
+        public TypedExpression Condition { get; }
 
         public BodyNode BranchTrue => Children[0] as BodyNode;
 
@@ -25,7 +26,7 @@ namespace AST.Trees.Statements.Untyped
 
         public override string ToString()
         {
-            return $"UntypedIf - {Condition}";
+            return $"TypedIf - {Condition}";
         }
     }
 }

@@ -6,10 +6,10 @@
         Multiplication,
         Addition,
         Substraction,
-        Greater,
+        GreaterThan,
         GreaterOrEqual,
-        Fewer,
-        FewerOrEqual,
+        LessThan,
+        LessOrEqual,
         Equal,
         NotEqual
     }
