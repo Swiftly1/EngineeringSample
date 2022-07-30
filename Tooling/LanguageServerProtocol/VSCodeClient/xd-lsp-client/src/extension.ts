@@ -13,18 +13,18 @@ let socket: Socket;
 export async function activate(context: vscode.ExtensionContext)
 {
 	const disposable = vscode.commands.registerCommand('extension.xd', async () =>
-  {
-     await connectFunc();
+	{
+		await connectFunc();
 
-      var obj = 
-      {
-          jsonrpc: "2.0",
-          method: "Test",
-          params: []
-      };
+		var obj = 
+		{
+		  jsonrpc: "2.0",
+		  method: "Test",
+		  params: []
+		};
 
-      var json = JSON.stringify(obj);
-      sendMessage(socket, json);
+		var json = JSON.stringify(obj);
+		sendMessage(socket, json);
 	});
 
 	context.subscriptions.push(disposable);
