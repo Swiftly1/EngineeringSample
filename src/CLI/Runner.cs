@@ -91,6 +91,13 @@ public class Runner
                 return;
             }
 
+            if (!new DirectoryInfo(args.LLVMDirectory).Exists)
+            {
+                printer.Color = ConsoleColor.Red;
+                printer.PrintColorNewLine($"LLVM directory not found. Path: '{args.LLVMDirectory}'"!);
+                return;
+            }
+
             SaveIRAndRunLLVM(args, emit_result.Data);
         }
         else
