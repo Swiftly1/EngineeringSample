@@ -4,7 +4,6 @@ using System.Linq;
 using Common.Lexing;
 using AST.Trees.Miscs;
 using AST.Miscs.Matching;
-using AST.Trees.Statements;
 using AST.Trees.Expressions;
 using System.Collections.Generic;
 using AST.Trees.Statements.Untyped;
@@ -171,7 +170,7 @@ namespace AST.Builders
                 return new ResultDiag<UntypedIfStatement>(node_with_two_branches);
             }
 
-            private ResultDiag<AssignmentStatement> TryMatchVariableReAssignment(List<LexElement> items, UntypedScopeContext scopeContext)
+            private ResultDiag<UntypedAssignmentStatement> TryMatchVariableReAssignment(List<LexElement> items, UntypedScopeContext scopeContext)
             {
                 var name = items[0] as LexWord;
 
@@ -179,11 +178,11 @@ namespace AST.Builders
                 var result = TryMatchExpression(skipped, scopeContext);
 
                 if (!result.Success)
-                    return result.ToFailedResult<AssignmentStatement>();
+                    return result.ToFailedResult<UntypedAssignmentStatement>();
 
-                var assignStatement = new AssignmentStatement(name.Value, result.Data, name.Diagnostics);
+                var assignStatement = new UntypedAssignmentStatement(name.Value, result.Data, name.Diagnostics);
 
-                return new ResultDiag<AssignmentStatement>(assignStatement);
+                return new ResultDiag<UntypedAssignmentStatement>(assignStatement);
             }
 
             private ResultDiag<UntypedVariableDeclarationStatement> TryMatchVariableDeclaration(List<LexElement> items, UntypedScopeContext scopeContext)
@@ -199,7 +198,7 @@ namespace AST.Builders
 
                 var vdn = new UntypedVariableDeclarationStatement(name, typeName, result.Data, scopeContext, name.Diagnostics);
 
-                var basic_type_info = new BasicVariableDescription { VariableName = vdn.VariableName, TypeName = vdn.DesiredType };
+                var basic_type_info = new BasicVariableDescription(vdn.VariableName, vdn.DesiredType);
 
                 scopeContext.DeclareVariable(basic_type_info);
 

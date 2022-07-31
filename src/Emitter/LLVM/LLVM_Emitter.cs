@@ -57,6 +57,10 @@ namespace Emitter.LLVM
                 }
 
                 EmitSubNodes(node, tabDepth + 1);
+
+                if (fn.Type.Name == "void")
+                    PrintNewLineWrapper("ret void", tabDepth + 1);
+
                 PrintNewLineWrapper("}", tabDepth);
                 PrintNewLineWrapper("", tabDepth);
             }

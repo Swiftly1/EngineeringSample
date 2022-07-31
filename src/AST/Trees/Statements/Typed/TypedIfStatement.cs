@@ -26,7 +26,7 @@ namespace AST.Trees.Statements.Typed
 
         public override string ToString()
         {
-            return $"TypedIf - {Condition}";
+            return $"TypedIfStatement - {Condition}";
         }
     }
 }

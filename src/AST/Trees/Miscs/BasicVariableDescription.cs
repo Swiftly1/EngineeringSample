@@ -2,10 +2,6 @@
 {
     public class BasicVariableDescription
     {
-        public BasicVariableDescription()
-        {
-        }
-
         public BasicVariableDescription(string variableName, string typeName)
         {
             VariableName = variableName;
@@ -15,6 +11,8 @@
         public string VariableName { get; set; }
 
         public string TypeName { get; set; }
+
+        public bool IsConstant { get; set; } = false;
 
         public override string ToString()
         {

@@ -60,7 +60,7 @@ namespace AST.Trees.Expressions
                 return left;
 
             var @operator = _Current as LexCharacter;
-            var higher_prior_operators = new[] { LexingElement.Star, LexingElement.Slash, LexingElement.GreaterOrEqual, 
+            var higher_prior_operators = new[] { LexingElement.Star, LexingElement.Slash, LexingElement.GreaterOrEqual,
                 LexingElement.GreaterThan, LexingElement.LessOrEqual, LexingElement.LessThan };
 
             while (higher_prior_operators.Contains(@operator.Kind))
