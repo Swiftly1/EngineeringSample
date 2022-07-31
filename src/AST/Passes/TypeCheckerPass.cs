@@ -30,14 +30,14 @@ namespace AST.Passes
         {
             Exchange = exchange;
             KnownTypes = (Exchange.PassResults[TypeDiscoveryPass.PassName] as TypeDiscoveryPassResult).KnownTypes;
-            TryToTransferNodeToTyped(root);
+            TryToMapUntypedNodeToTyped(root);
             return new TypeCheckerPassResult(PassName, Errors.DumpErrors().ToList());
         }
 
         // TODO: Would be nice if error handling was done better here
         // e.g by using Result classes
 
-        private void TryToTransferNodeToTyped(Node root)
+        private void TryToMapUntypedNodeToTyped(Node root)
         {
             var queue = new Queue<(Node Child, Node Parent)>();
 
@@ -75,8 +75,9 @@ namespace AST.Passes
                 var type = vds.DesiredType;
 
                 var result = FindTypeByName(type);
+                var usesVar = vds.DesiredType == "var";
 
-                if (!result.Found)
+                if (!result.Found && !usesVar)
                 {
                     Errors.AddError($"Type {type} is not found.", current.Diagnostics);
                     return (true, null);
@@ -90,13 +91,21 @@ namespace AST.Passes
                 }
 
                 // TODO: Support inheritance
-                if (result.TypeInfo != exprType.TypeInfo)
+                if (!usesVar && result.TypeInfo != exprType.TypeInfo)
                 {
                     Errors.AddError($"Cannot assign type {exprType.TypeInfo.Name} to {result.TypeInfo.Name}.", current.Diagnostics);
                     return (true, null);
                 }
 
                 var newNode = new TypedVariableDeclarationStatement(vds.VariableName, exprType.NewNode, exprType.TypeInfo, vds.ScopeContext, vds.Diagnostics);
+
+                var declaration = newNode.ScopeContext.DeclaredVariablesList.First(x => x.VariableName == vds.VariableName && x.TypeName == type);
+                declaration.IsConstant = exprType.NewNode.IsConstant();
+
+                if (usesVar)
+                {
+                    declaration.TypeName = exprType.TypeInfo.Name;
+                }
 
                 return (true, newNode);
             }
@@ -179,14 +188,41 @@ namespace AST.Passes
                 }
 
                 // TODO: refactor this cuz it's ugly
-                TryToTransferNodeToTyped(uifs.BranchTrue);
-                TryToTransferNodeToTyped(uifs.BranchFalse);
+                TryToMapUntypedNodeToTyped(uifs.BranchTrue);
+                TryToMapUntypedNodeToTyped(uifs.BranchFalse);
 
                 var newNode = new TypedIfStatement(exprType.NewNode, uifs.BranchTrue, uifs.BranchFalse, uifs.Diagnostics);
                 return (true, newNode);
             }
+            else if (current is UntypedAssignmentStatement uas)
+            {
+                var bounded = GenerateBoundedTreeAndGetType(uas.Expression);
 
-            return (false, null);
+                if (!bounded.Found)
+                {
+                    return (true, null);
+                }
+
+                var newNode = new TypedAssignmentStatement(uas.Name, bounded.NewNode, uas.Diagnostics);
+
+                return (true, newNode);
+            }
+            else if (current is RootNode)
+            {
+                return (false, null);
+            }
+            else if (current is BodyNode)
+            {
+                return (false, null);
+            }
+            else if (current is NamespaceNode)
+            {
+                return (false, null);
+            }
+            else
+            {
+                throw new Exception($"Unsupported Node - {current.GetType()}");
+            }
         }
 
         private (bool Success, Node IncorrectNode) EnsureCorrectReturnTypeAtAllBranches(UntypedFunctionNode ufn, TypeInfo typeInfo)
@@ -339,7 +375,7 @@ namespace AST.Passes
                     return (false, null, null);
                 }
 
-                var newExpr = new TypedVariableUseExpression(uvue.VariableName, found.Data, uvue.ScopeContext, uvue.Diagnostics);
+                var newExpr = new TypedVariableUseExpression(uvue.VariableName, found.Data.ScopeDescription.IsConstant, found.Data.TypeInfo, uvue.ScopeContext, uvue.Diagnostics);
 
                 uvue.CopyTo(newExpr);
 
@@ -349,7 +385,7 @@ namespace AST.Passes
             throw new NotImplementedException($"Node type {expression.GetType()} is not handled");
         }
 
-        private Result<TypeInfo> TryFindVariableInScope(UntypedScopeContext scopeContext, string variableName)
+        private Result<(TypeInfo TypeInfo, BasicVariableDescription ScopeDescription)> TryFindVariableInScope(UntypedScopeContext scopeContext, string variableName)
         {
             var found = scopeContext.DeclaredVariablesList.FirstOrDefault(x => x.VariableName == variableName);
 
@@ -359,15 +395,15 @@ namespace AST.Passes
 
                 if (typeResult.Found)
                 {
-                    return Result<TypeInfo>.Ok(typeResult.TypeInfo);
+                    return Result<(TypeInfo TypeInfo, BasicVariableDescription ScopeDescription)>.Ok((typeResult.TypeInfo, found));
                 }
                 else
                 {
-                    return Result<TypeInfo>.Error($"Type '{found.TypeName}' for variable with name '{variableName}' is not found.");
+                    return Result<(TypeInfo TypeInfo, BasicVariableDescription ScopeDescription)>.Error($"Type '{found.TypeName}' for variable with name '{variableName}' is not found.");
                 }
             }
 
-            return Result<TypeInfo>.Error($"Variable with name '{variableName}' does not exist in this scope.");
+            return Result<(TypeInfo TypeInfo, BasicVariableDescription ScopeDescription)>.Error($"Variable with name '{variableName}' does not exist in this scope.");
         }
 
         private void ReplaceNode(Node parent, Node specific_child, Node overwrittenNode)

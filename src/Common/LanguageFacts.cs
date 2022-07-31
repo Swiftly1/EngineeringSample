@@ -18,6 +18,7 @@ namespace Common
             { "char", LexingElement.Type },
             { "double", LexingElement.Type },
             { "void", LexingElement.Type },
+            { "var", LexingElement.Type },
 
             { "if", LexingElement.If },
             { "else", LexingElement.Else },
