@@ -8,6 +8,7 @@ using AST.Miscs.Matching;
 using System.Collections.Generic;
 using AST.Trees.Declarations.Untyped;
 using Text2Abstraction.LexicalElements;
+using System;
 
 namespace AST.Builders
 {
@@ -37,10 +38,24 @@ namespace AST.Builders
                         MatcherUtils
                         .Match(LexingElement.AccessibilityModifier, LexingElement.Type, LexingElement.Word, LexingElement.OpenParenthesis);
 
+                    var containerMatcher =
+                        MatcherUtils
+                        .Match(LexingElement.AccessibilityModifier, LexingElement.Container, LexingElement.Word, LexingElement.OpenBracket);
+
                     if (functionMatcher.Evaluate(TakeToEnd(), out var fMatcherResult))
                     {
                         var ahead = TryGetAhead(fMatcherResult.Items.Count, true);
                         var result = TryMatchFunction(ahead.Items, node.ScopeContext);
+
+                        if (result.Success)
+                            node.Children.Add(result.Data);
+                        else
+                            _errors.AddMessages(result.Messages);
+                    }
+                    else if (containerMatcher.Evaluate(TakeToEnd(), out var containerMatcherResult))
+                    {
+                        var ahead = TryGetAhead(containerMatcherResult.Items.Count, includeCurrent: true);
+                        var result = TryMatchContainer(ahead.Items, node.ScopeContext);
 
                         if (result.Success)
                             node.Children.Add(result.Data);
@@ -59,6 +74,34 @@ namespace AST.Builders
                 }
 
                 return new ResultDiag<Node>(node);
+            }
+
+            private ResultDiag<UntypedContainerNode> TryMatchContainer(List<LexElement> items, UntypedScopeContext parentScope)
+            {
+                var result = GetTillClosed(LexingElement.OpenBracket, LexingElement.ClosedBracket);
+                if (!result.Success)
+                {
+                    return result.ToFailedResult<UntypedContainerNode>();
+                }
+
+                var accessModifier = items[0] as LexKeyword;
+                var containerName = items[1] as LexKeyword;
+
+                var fieldsResult = ExtractionHelpers.ExtractContainerFieldList(result.Data);
+
+                if (!fieldsResult.Success)
+                    return new ResultDiag<UntypedContainerNode>(Message.CreateError(fieldsResult.Message, containerName.Diagnostics));
+
+                var node = new UntypedContainerNode
+                (
+                    items[1].Diagnostics,
+                    containerName,
+                    accessModifier,
+                    new UntypedScopeContext(parentScope, $"container_{containerName.Value}"),
+                    fieldsResult.Data
+                );
+
+                return new ResultDiag<UntypedContainerNode>(node);
             }
 
             private ResultDiag<UntypedFunctionNode> TryMatchFunction(List<LexElement> matched, UntypedScopeContext parentScope)
@@ -82,7 +125,7 @@ namespace AST.Builders
 
                 string functionName = matched[2] as LexWord;
 
-                var argsResult = FunctionHelpers.ExtractFunctionParametersInfo(result.Data);
+                var argsResult = ExtractionHelpers.ExtractFunctionParametersInfo(result.Data);
 
                 if (!argsResult.Success)
                 {
@@ -119,7 +162,7 @@ namespace AST.Builders
                     body.Data,
                     argsResult.Data,
                     desiredType.Diagnostics,
-                    accessModifier.Diagnostics,
+                    accessModifier,
                     context
                 );
 

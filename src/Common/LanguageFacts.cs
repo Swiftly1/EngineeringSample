@@ -24,6 +24,7 @@ namespace Common
             { "else", LexingElement.Else },
 
             { "return", LexingElement.Return },
+            { "container", LexingElement.Container },
         };
     }
 }

@@ -7,8 +7,30 @@ using Text2Abstraction.LexicalElements;
 
 namespace AST.Trees.Miscs
 {
-    internal static class FunctionHelpers
+    internal static class ExtractionHelpers
     {
+        internal static Result<List<ContainerField>> ExtractContainerFieldList(List<LexElement> data)
+        {
+            var withoutComma = data.Where((x, i) => (i + 1) % 3 != 0).ToList();
+
+            if (withoutComma.Count % 2 != 0)
+            {
+                return Result<List<ContainerField>>.Error("Every field should be made of type name and its name.");
+            }
+
+            var fields = new List<ContainerField>();
+
+            for (int i = 0; i < withoutComma.Count; i += 2)
+            {
+                var type = withoutComma[i] as LexKeyword;
+                var fieldName = withoutComma[i + 1] as LexWord;
+                var field = new ContainerField(fieldName.Value, type.Value, fieldName.Diagnostics, type.Diagnostics);
+                fields.Add(field);
+            }
+
+            return Result<List<ContainerField>>.Ok(fields);
+        }
+
         internal static Result<List<Argument>> ExtractFunctionParametersInfo(List<LexElement> data)
         {
             var withoutComma = data.Where((x, i) => (i + 1) % 3 != 0).ToList();

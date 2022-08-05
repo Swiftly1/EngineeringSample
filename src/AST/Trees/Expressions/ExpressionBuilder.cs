@@ -98,7 +98,7 @@ namespace AST.Trees.Expressions
                     // function call e.g 2 + test(expression, expression...)
                     MoveNext();
                     var result = GetTillClosed(LexingElement.OpenParenthesis, LexingElement.ClosedParenthesis);
-                    var args = FunctionHelpers.ExtractFunctionCallParameters(result.Data, ScopeContext);
+                    var args = ExtractionHelpers.ExtractFunctionCallParameters(result.Data, ScopeContext);
 
                     if (!args.Success)
                         throw new ASTException(args.Message, left.Diagnostics);

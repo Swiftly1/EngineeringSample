@@ -173,7 +173,7 @@ namespace AST.Passes
                     typeResult.TypeInfo,
                     ufn.ScopeContext,
                     ufn.TypeDiagnostics,
-                    ufn.AccessibilityModifierDiagnostics
+                    ufn.AccessibilityModifier
                 );
 
                 return (false, newNode);
@@ -206,6 +206,10 @@ namespace AST.Passes
                 var newNode = new TypedAssignmentStatement(uas.Name, bounded.NewNode, uas.Diagnostics);
 
                 return (true, newNode);
+            }
+            else if (current is UntypedContainerNode ucn)
+            {
+                throw new NotImplementedException();
             }
             else if (current is RootNode)
             {
