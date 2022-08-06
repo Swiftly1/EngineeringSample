@@ -38,6 +38,7 @@
         If,
         Else,
         Return,
-        Container
+        Container,
+        New
     }
 }

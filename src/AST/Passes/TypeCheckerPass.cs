@@ -75,7 +75,7 @@ namespace AST.Passes
                 var type = vds.DesiredType;
 
                 var result = FindTypeByName(type);
-                var usesVar = vds.DesiredType == "var";
+                var usesVar = vds.DesiredType == LanguageFacts.Var;
 
                 if (!result.Found && !usesVar)
                 {
@@ -412,6 +412,53 @@ namespace AST.Passes
 
                 uvue.CopyTo(newExpr);
 
+                return (true, newExpr.TypeInfo, newExpr);
+            }
+            else if (expression is UntypedNewExpression une)
+            {
+                var resultType = FindTypeByName(une.DesiredType);
+
+                if (!resultType.Found)
+                {
+                    Errors.AddError($"Type {une.DesiredType} is not found.", une.Diagnostics);
+                    return (false, null, null);
+                }
+
+                var typedList = new List<TypedObjectInitializationParam>();
+
+                foreach (var param in une.InitializationList)
+                {
+                    var typedExpr = GenerateBoundedTreeAndGetType(param.Expression);
+
+                    if (!typedExpr.Found)
+                    {
+                        Errors.AddError($"Unable to resolve expression for param {param.Name}", param.Diagnostics);
+                        return (false, null, null);
+                    }
+
+                    typedList.Add(new TypedObjectInitializationParam
+                    (
+                        param.Name,
+                        typedExpr.NewNode,
+                        param.Diagnostics,
+                        param.Index,
+                        param.IsLast
+                    ));
+                }
+
+                var expectedType = resultType.TypeInfo as InitializableTypeInfo;
+                for (int i = 0; i < typedList.Count; i++)
+                {
+                    var typed = typedList[i];
+                    if (typed.Expression.TypeInfo.Name != expectedType.InitializationTypesOrdered[i])
+                    {
+                        Errors.AddError($"Incorrect type on object initialization list for name {typed.Name}", typed.Diagnostics);
+                        return (false, null, null);
+                    }
+                }
+
+                var newExpr = new TypedNewExpression(une.Diagnostics, resultType.TypeInfo, typedList, une.ScopeContext);
+                une.CopyTo(newExpr);
                 return (true, newExpr.TypeInfo, newExpr);
             }
 

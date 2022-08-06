@@ -4,6 +4,7 @@ using AST.Passes.Miscs;
 using AST.Passes.Results;
 using System.Collections.Generic;
 using AST.Trees.Declarations.Untyped;
+using System.Linq;
 
 namespace AST.Passes
 {
@@ -46,6 +47,17 @@ namespace AST.Passes
                     );
 
                     KnownFunctions.Add(functionInfo);
+                }
+                else if (current is UntypedContainerNode ucn)
+                {
+                    var typeInfo = new InitializableTypeInfo(ucn.Name);
+
+                    foreach (var entry in ucn.Fields)
+                    {
+                        typeInfo.InitializationTypesOrdered.Add(entry.DesiredType);
+                    }
+
+                    KnownTypes.Add(typeInfo);
                 }
 
                 foreach (var child in current.Children)

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Common
 {
@@ -38,6 +39,11 @@ namespace Common
         public List<Message> Messages { get; } = new List<Message>();
 
         public T? Data { get; }
+
+        public string MessagesToString()
+        {
+            return string.Join(", ", Messages.Select(x => x.Text));
+        }
 
         public ResultDiag<U> ToFailedResult<U>()
         {

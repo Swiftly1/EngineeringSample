@@ -84,7 +84,37 @@ namespace AST.Trees.Expressions
 
         private UntypedExpression ToExpression(LexElement left)
         {
-            if (left.Kind == LexingElement.Numerical)
+            if (left.Kind == LexingElement.New)
+            {
+                if (!MoveNext())
+                {
+                    throw new ASTException($"Unable to create instance without specified name. Location: {left.Diagnostics}", left.Diagnostics);
+                }
+
+                var type = _Current as LexWord;
+
+                if (!MoveNext())
+                {
+                    throw new ASTException($"Unable to create instance without data. Location: {left.Diagnostics}", left.Diagnostics);
+                }
+
+                var result = GetTillClosed(LexingElement.OpenBracket, LexingElement.ClosedBracket);
+
+                if (!result.Success)
+                {
+                    throw new ASTException($"Incomplete syntax for object initialization. {result.MessagesToString()}. Location: {left.Diagnostics}", left.Diagnostics);
+                }
+
+                var extractionResult = ExtractionHelpers.ExtractObjectInitializationValues(result.Data, ScopeContext);
+
+                if (!extractionResult.Success)
+                {
+                    throw new ASTException($"Incomplete syntax for object initialization. {result.MessagesToString()}. Location: {left.Diagnostics}", left.Diagnostics);
+                }
+
+                return new UntypedNewExpression(left.Diagnostics, type.Value, extractionResult.Data, ScopeContext);
+            }
+            else if (left.Kind == LexingElement.Numerical)
             {
                 var numerical = left as LexNumericalLiteral;
                 return new ConstantMathUntypedExpression(left.Diagnostics, numerical.StringValue, ScopeContext);

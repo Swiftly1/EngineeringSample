@@ -85,7 +85,7 @@ namespace AST.Builders
                 }
 
                 var accessModifier = items[0] as LexKeyword;
-                var containerName = items[1] as LexKeyword;
+                var containerName = items[2] as LexWord;
 
                 var fieldsResult = ExtractionHelpers.ExtractContainerFieldList(result.Data);
 

@@ -4,6 +4,7 @@ using Common.Lexing;
 using AST.Trees.Expressions;
 using System.Collections.Generic;
 using Text2Abstraction.LexicalElements;
+using AST.Trees.Expressions.Untyped;
 
 namespace AST.Trees.Miscs
 {
@@ -75,7 +76,7 @@ namespace AST.Trees.Miscs
                     {
                         ExpressionBuilder builder = null;
                         // simple expression
-                        if (i + 1 < data.Count && data[i + 1].Kind == LexingElement.Comma)
+                        if (i == data.Count - 1 || (i + 1 < data.Count && data[i + 1].Kind == LexingElement.Comma))
                         {
                             builder = new ExpressionBuilder(new List<LexElement> { current }, scopeContext);
                         }
@@ -105,6 +106,97 @@ namespace AST.Trees.Miscs
             }
 
             return Result<List<Expression>>.Ok(output);
+        }
+
+        internal static Result<List<UntypedObjectInitializationParam>> ExtractObjectInitializationValues(List<LexElement> data, UntypedScopeContext scopeContext)
+        {
+            var output = new List<UntypedObjectInitializationParam>();
+
+            // states: 0 = name, 1 = equal sign, 2 = expression, 3 = comma
+            var state = 0;
+
+            LexWord name = null;
+            UntypedExpression expr = null;
+            var counter = 0;
+
+            void Add()
+            {
+                var initializationObject =
+                new UntypedObjectInitializationParam
+                (
+                    name.Value,
+                    expr,
+                    name.Diagnostics,
+                    counter++,
+                    false
+                );
+                output.Add(initializationObject);
+                state = 0;
+                name = null;
+                expr = null;
+            }
+
+            for (int i = 0; i < data.Count; i++)
+            {
+                var current = data[i];
+
+                if (state == 0)
+                {
+                    name = (current as LexWord);
+                    state = 1;
+                }
+                else if (state == 1)
+                {
+                    state = 2;
+                    continue;
+                }
+                else if (state == 2)
+                {
+                    if (current.Kind == LexingElement.Comma)
+                    {
+                        return Result<List<UntypedObjectInitializationParam>>.Error($"Unexpected comma at: {current.Diagnostics}");
+                    }
+                    else
+                    {
+                        ExpressionBuilder builder = null;
+                        // simple expression
+                        if (i == data.Count - 1 || (i + 1 < data.Count && data[i + 1].Kind == LexingElement.Comma))
+                        {
+                            builder = new ExpressionBuilder(new List<LexElement> { current }, scopeContext);
+                        }
+                        else
+                        {
+                            // Nested cases like: int test = 345645 + Test(5,Test(5,6), 6);
+
+                            var elements = GetElementsThatMayContainCommas(ref i, data);
+
+                            builder = new ExpressionBuilder(elements, scopeContext);
+                        }
+
+                        var result = builder.Build();
+
+                        if (!result.Success)
+                            return Result<List<UntypedObjectInitializationParam>>.Error(result.Messages);
+
+                        expr = result.Data;
+                    }
+
+                    state = 3;
+
+                    // if last
+                    if (i == data.Count - 1)
+                    {
+                        Add();
+                    }
+                }
+                else if (state == 3)
+                {
+                    Add();
+                }
+            }
+
+            output.Last().IsLast = true;
+            return Result<List<UntypedObjectInitializationParam>>.Ok(output);
         }
 
         private static List<LexElement> GetElementsThatMayContainCommas(ref int index, List<LexElement> data)
