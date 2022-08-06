@@ -1,14 +1,16 @@
 ﻿namespace Test
 
-public container Box
+public container Position
 {
-	int a,
-	int b
+	int X,
+	int Y
 }
 
 public void TestVar()
 {
-	var q = 1;
-	var w = 2;
-	var c = q + w;
+	var location = new Position
+	{
+		X = 1,
+		Y = 2
+	};
 }
