@@ -1,13 +1,14 @@
 ﻿namespace Test
 
-public int Test(int a, int b)
+public container Box
 {
-	if (a > b)
-	{
-		return a + b;
-	}
-	else
-	{
-		return a - b;
-	}
+	int a,
+	int b
+}
+
+public void TestVar()
+{
+	var q = 1;
+	var w = 2;
+	var c = q + w;
 }

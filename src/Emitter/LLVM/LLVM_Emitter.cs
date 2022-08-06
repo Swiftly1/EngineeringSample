@@ -3,6 +3,7 @@ using System;
 using AST.Trees;
 using System.Linq;
 using System.Text;
+using AST.Trees.Miscs;
 using System.Collections.Generic;
 using AST.Trees.Statements.Typed;
 using AST.Trees.Expressions.Typed;
@@ -91,11 +92,6 @@ namespace Emitter.LLVM
             {
                 EmitSubNodes(node, tabDepth);
             }
-            else if (node is ScopeableNode)
-            {
-                _scopeManager.AddScope();
-                EmitSubNodes(node, tabDepth);
-            }
             else if (node is TypedIfStatement tifs)
             {
                 var lastId = TransformExpression(tifs.Condition);
@@ -110,6 +106,24 @@ namespace Emitter.LLVM
                 PrintNewLineWrapper($"false_branch_{falseBranchId}:", tabDepth);
                 EmitSubNodes(tifs.BranchFalse, tabDepth + 1);
                 //PrintNewLineWrapper($"end_branch_{endBranchId}:", tabDepth);
+            }
+            else if (node is TypedContainerNode tcn)
+            {
+                PrintNewLineWrapper($"%{tcn.Name} = type", tabDepth);
+                PrintNewLineWrapper("{", tabDepth);
+                EmitSubNodes(tcn, tabDepth + 1);
+                PrintNewLineWrapper("}", tabDepth);
+                PrintNewLineWrapper("", tabDepth);
+            }
+            else if (node is TypedContainerFieldNode tcfn)
+            {
+                var separator = tcfn.IsLast ? "" : ",";
+                PrintNewLineWrapper(tcfn.TypeInfo.ToLLVMType() + separator, tabDepth);
+            }
+            else if (node is ScopeableNode)
+            {
+                _scopeManager.AddScope();
+                EmitSubNodes(node, tabDepth);
             }
             else
             {

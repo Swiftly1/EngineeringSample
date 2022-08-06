@@ -209,7 +209,36 @@ namespace AST.Passes
             }
             else if (current is UntypedContainerNode ucn)
             {
-                throw new NotImplementedException();
+                var typedFields = new List<TypedContainerFieldNode>();
+
+                for (int i = 0; i < ucn.Fields.Count; i++)
+                {
+                    var field = ucn.Fields[i];
+                    var fieldTypeResult = FindTypeByName(field.DesiredType);
+
+                    if (!fieldTypeResult.Found)
+                    {
+                        Errors.AddError($"Type {field.DesiredType} is not found.", field.TypeDiagnostic);
+                    }
+                    else
+                    {
+                        typedFields.Add(new TypedContainerFieldNode
+                        (
+                            field.Name,
+                            fieldTypeResult.TypeInfo,
+                            field.NameDiagnostic,
+                            field.TypeDiagnostic,
+                            i,
+                            i == ucn.Fields.Count - 1)
+                        );
+                    }
+                }
+
+                if (ucn.Fields.Count != typedFields.Count)
+                    return (true, null);
+
+                var newNode = new TypedContainerNode(ucn.Diagnostics, ucn.Name, ucn.AccessibilityModifier, ucn.ScopeContext, typedFields);
+                return (true, newNode);
             }
             else if (current is RootNode)
             {

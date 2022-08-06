@@ -9,26 +9,26 @@ namespace AST.Trees.Miscs
 {
     internal static class ExtractionHelpers
     {
-        internal static Result<List<ContainerField>> ExtractContainerFieldList(List<LexElement> data)
+        internal static Result<List<ContainerFieldNode>> ExtractContainerFieldList(List<LexElement> data)
         {
             var withoutComma = data.Where((x, i) => (i + 1) % 3 != 0).ToList();
 
             if (withoutComma.Count % 2 != 0)
             {
-                return Result<List<ContainerField>>.Error("Every field should be made of type name and its name.");
+                return Result<List<ContainerFieldNode>>.Error("Every field should be made of type name and its name.");
             }
 
-            var fields = new List<ContainerField>();
+            var fields = new List<ContainerFieldNode>();
 
             for (int i = 0; i < withoutComma.Count; i += 2)
             {
                 var type = withoutComma[i] as LexKeyword;
                 var fieldName = withoutComma[i + 1] as LexWord;
-                var field = new ContainerField(fieldName.Value, type.Value, fieldName.Diagnostics, type.Diagnostics);
+                var field = new ContainerFieldNode(fieldName.Value, type.Value, fieldName.Diagnostics, type.Diagnostics);
                 fields.Add(field);
             }
 
-            return Result<List<ContainerField>>.Ok(fields);
+            return Result<List<ContainerFieldNode>>.Ok(fields);
         }
 
         internal static Result<List<Argument>> ExtractFunctionParametersInfo(List<LexElement> data)

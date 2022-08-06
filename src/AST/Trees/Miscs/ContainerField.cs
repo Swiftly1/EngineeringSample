@@ -2,9 +2,13 @@
 
 namespace AST.Trees.Miscs
 {
-    public class ContainerField
+    public class ContainerFieldNode : Node
     {
-        public ContainerField(string name, string desiredType, DiagnosticInfo nameDiagnostic, DiagnosticInfo typeDiagnostic)
+        public ContainerFieldNode(DiagnosticInfo diag) : base(diag)
+        {
+        }
+
+        public ContainerFieldNode(string name, string desiredType, DiagnosticInfo nameDiagnostic, DiagnosticInfo typeDiagnostic) : base(nameDiagnostic)
         {
             Name = name;
             DesiredType = desiredType;
