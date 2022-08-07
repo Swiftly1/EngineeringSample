@@ -32,7 +32,7 @@ namespace Tests.E2E.AST
             var vdn = ast.Data.Children[0].Children[0].Children[0].Children[0] as TypedVariableDeclarationStatement;
             Assert.NotNull(vdn);
             Assert.Equal("test", vdn.VariableName);
-            Assert.Equal("int32", vdn.TypeInfo.Name);
+            Assert.Equal("int", vdn.TypeInfo.Name);
 
             var expr = vdn.Expression as ComplexTypedExpression;
 

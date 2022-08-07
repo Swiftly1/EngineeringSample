@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Common
 {
@@ -8,7 +7,6 @@ namespace Common
         public static Dictionary<string, TypeInfo> TypeName2TypeMapper = new()
         {
             { "int", GetInt32() },
-            { "int32", GetInt32() },
             { "long", GetInt64() },
             { "int64", GetInt64() },
             { "double", GetDouble() },
@@ -19,50 +17,32 @@ namespace Common
 
         public static TypeInfo GetBoolean()
         {
-            return new TypeInfo
-            {
-                Name = "bool"
-            };
+            return new TypeInfo("bool");
         }
 
         public static TypeInfo GetString()
         {
-            return new TypeInfo
-            {
-                Name = "string"
-            };
+            return new TypeInfo("string");
         }
 
         public static TypeInfo GetInt64()
         {
-            return new TypeInfo
-            {
-                Name = "int64"
-            };
+            return new TypeInfo("int64");
         }
 
         public static TypeInfo GetInt32()
         {
-            return new TypeInfo
-            {
-                Name = "int32"
-            };
+            return new TypeInfo("int");
         }
 
         public static TypeInfo GetDouble()
         {
-            return new TypeInfo
-            {
-                Name = "double"
-            };
+            return new TypeInfo("double");
         }
 
         public static TypeInfo GetVoid()
         {
-            return new TypeInfo
-            {
-                Name = "void"
-            };
+            return new TypeInfo("void");
         }
     }
 }

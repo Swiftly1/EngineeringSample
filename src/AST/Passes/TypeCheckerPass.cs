@@ -75,7 +75,7 @@ namespace AST.Passes
                 var type = vds.DesiredType;
 
                 var result = FindTypeByName(type);
-                var usesVar = vds.DesiredType == "var";
+                var usesVar = vds.DesiredType == LanguageFacts.Var;
 
                 if (!result.Found && !usesVar)
                 {
@@ -173,7 +173,7 @@ namespace AST.Passes
                     typeResult.TypeInfo,
                     ufn.ScopeContext,
                     ufn.TypeDiagnostics,
-                    ufn.AccessibilityModifierDiagnostics
+                    ufn.AccessibilityModifier
                 );
 
                 return (false, newNode);
@@ -205,6 +205,39 @@ namespace AST.Passes
 
                 var newNode = new TypedAssignmentStatement(uas.Name, bounded.NewNode, uas.Diagnostics);
 
+                return (true, newNode);
+            }
+            else if (current is UntypedContainerNode ucn)
+            {
+                var typedFields = new List<TypedContainerFieldNode>();
+
+                for (int i = 0; i < ucn.Fields.Count; i++)
+                {
+                    var field = ucn.Fields[i];
+                    var fieldTypeResult = FindTypeByName(field.DesiredType);
+
+                    if (!fieldTypeResult.Found)
+                    {
+                        Errors.AddError($"Type {field.DesiredType} is not found.", field.TypeDiagnostic);
+                    }
+                    else
+                    {
+                        typedFields.Add(new TypedContainerFieldNode
+                        (
+                            field.Name,
+                            fieldTypeResult.TypeInfo,
+                            field.NameDiagnostic,
+                            field.TypeDiagnostic,
+                            i,
+                            i == ucn.Fields.Count - 1
+                        ));
+                    }
+                }
+
+                if (ucn.Fields.Count != typedFields.Count)
+                    return (true, null);
+
+                var newNode = new TypedContainerNode(ucn.Diagnostics, ucn.Name, ucn.AccessibilityModifier, ucn.ScopeContext, typedFields);
                 return (true, newNode);
             }
             else if (current is RootNode)
@@ -380,6 +413,100 @@ namespace AST.Passes
                 uvue.CopyTo(newExpr);
 
                 return (true, newExpr.TypeInfo, newExpr);
+            }
+            else if (expression is UntypedNewExpression une)
+            {
+                var resultType = FindTypeByName(une.DesiredType);
+
+                if (!resultType.Found)
+                {
+                    Errors.AddError($"Type {une.DesiredType} is not found.", une.Diagnostics);
+                    return (false, null, null);
+                }
+
+                var typedList = new List<TypedObjectInitializationParam>();
+
+                foreach (var param in une.InitializationList)
+                {
+                    var typedExpr = GenerateBoundedTreeAndGetType(param.Expression);
+
+                    if (!typedExpr.Found)
+                    {
+                        Errors.AddError($"Unable to resolve expression for param {param.Name}", param.Diagnostics);
+                        return (false, null, null);
+                    }
+
+                    typedList.Add(new TypedObjectInitializationParam
+                    (
+                        param.Name,
+                        typedExpr.NewNode,
+                        param.Diagnostics,
+                        param.Index,
+                        param.IsLast
+                    ));
+                }
+
+                var expectedType = resultType.TypeInfo as InitializableTypeInfo;
+                for (int i = 0; i < typedList.Count; i++)
+                {
+                    var typed = typedList[i];
+                    if (typed.Expression.TypeInfo.Name != expectedType.InitializationTypesOrdered[i].DesiredType)
+                    {
+                        Errors.AddError($"Incorrect type on object initialization list for name {typed.Name}", typed.Diagnostics);
+                        return (false, null, null);
+                    }
+                }
+
+                var newExpr = new TypedNewExpression(une.Diagnostics, resultType.TypeInfo, typedList, une.ScopeContext);
+                une.CopyTo(newExpr);
+                return (true, newExpr.TypeInfo, newExpr);
+            }
+            else if (expression is UntypedPropertyUsageExpression upue)
+            {
+                var found = TryFindVariableInScope(upue.ScopeContext, upue.VariableName);
+
+                if (!found.Success)
+                {
+                    Errors.AddError(found.Message, upue.Diagnostics);
+                    return (false, null, null);
+                }
+
+                var initializationList = found.Data.TypeInfo as InitializableTypeInfo;
+
+                ((string Name, string DesiredType) Details, int Index)? propertyInfo = 
+                initializationList
+                .InitializationTypesOrdered
+                .Select((x, i) => (Value: x, Index: i))
+                .FirstOrDefault(x => x.Value.Name == upue.PropertyName);
+
+                if (propertyInfo == null)
+                {
+                    var msg = $"Property with name: '{upue.PropertyName}' does not exist in type '{found.Data.TypeInfo.Name}'.";
+                    Errors.AddError(msg, upue.Diagnostics);
+                    return (false, null, null);
+                }
+
+                var type = FindTypeByName(propertyInfo.Value.Details.DesiredType);
+
+                if (!type.Found)
+                {
+                    var msg = $"Unable to resolve type of: '{upue.PropertyName}' for type '{found.Data.TypeInfo.Name}'.";
+                    Errors.AddError(msg, upue.Diagnostics);
+                    return (false, null, null);
+                }
+
+                var newExpr = new TypedPropertyUsageExpression
+                (
+                    upue.Diagnostics,
+                    found.Data.TypeInfo,
+                    type.TypeInfo,
+                    upue.VariableName,
+                    upue.PropertyName,
+                    propertyInfo.Value.Index,
+                    upue.ScopeContext
+                );
+                upue.CopyTo(newExpr);
+                return (true, found.Data.TypeInfo, newExpr);
             }
 
             throw new NotImplementedException($"Node type {expression.GetType()} is not handled");

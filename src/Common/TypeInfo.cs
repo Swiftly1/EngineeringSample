@@ -4,6 +4,11 @@ namespace Common
 {
     public class TypeInfo : IEquatable<TypeInfo>
     {
+        public TypeInfo(string name)
+        {
+            Name = name;
+        }
+
         public string Name { get; set; }
 
         public override string ToString()

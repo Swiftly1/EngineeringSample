@@ -47,6 +47,17 @@ namespace AST.Passes
 
                     KnownFunctions.Add(functionInfo);
                 }
+                else if (current is UntypedContainerNode ucn)
+                {
+                    var typeInfo = new InitializableTypeInfo(ucn.Name);
+
+                    foreach (var entry in ucn.Fields)
+                    {
+                        typeInfo.InitializationTypesOrdered.Add((entry.Name, entry.DesiredType));
+                    }
+
+                    KnownTypes.Add(typeInfo);
+                }
 
                 foreach (var child in current.Children)
                 {

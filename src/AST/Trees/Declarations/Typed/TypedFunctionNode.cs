@@ -2,6 +2,7 @@
 using System.Linq;
 using AST.Trees.Miscs;
 using System.Collections.Generic;
+using Text2Abstraction.LexicalElements;
 
 namespace AST.Trees.Declarations.Typed
 {
@@ -16,7 +17,7 @@ namespace AST.Trees.Declarations.Typed
             TypeInfo type,
             UntypedScopeContext scopeContext,
             DiagnosticInfo typeDiag,
-            DiagnosticInfo accessModDiag
+            LexKeyword accessModifier
         ) : base(diag, scopeContext)
         {
             Name = name;
@@ -24,7 +25,7 @@ namespace AST.Trees.Declarations.Typed
             Arguments = args;
             Children.Add(body);
             TypeDiagnostics = typeDiag;
-            AccessibilityModifierDiagnostics = accessModDiag;
+            AccessibilityModifier = accessModifier;
         }
 
         public string Name { get; }
@@ -37,7 +38,7 @@ namespace AST.Trees.Declarations.Typed
 
         public DiagnosticInfo TypeDiagnostics { get; set; }
 
-        public DiagnosticInfo AccessibilityModifierDiagnostics { get; set; }
+        public LexKeyword AccessibilityModifier { get; set; }
 
         public override string ToString()
         {

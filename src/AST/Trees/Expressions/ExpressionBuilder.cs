@@ -84,7 +84,37 @@ namespace AST.Trees.Expressions
 
         private UntypedExpression ToExpression(LexElement left)
         {
-            if (left.Kind == LexingElement.Numerical)
+            if (left.Kind == LexingElement.New)
+            {
+                if (!MoveNext())
+                {
+                    throw new ASTException($"Unable to create instance without specified name. Location: {left.Diagnostics}", left.Diagnostics);
+                }
+
+                var type = _Current as LexWord;
+
+                if (!MoveNext())
+                {
+                    throw new ASTException($"Unable to create instance without data. Location: {left.Diagnostics}", left.Diagnostics);
+                }
+
+                var result = GetTillClosed(LexingElement.OpenBracket, LexingElement.ClosedBracket);
+
+                if (!result.Success)
+                {
+                    throw new ASTException($"Incomplete syntax for object initialization. {result.MessagesToString()}. Location: {left.Diagnostics}", left.Diagnostics);
+                }
+
+                var extractionResult = ExtractionHelpers.ExtractObjectInitializationValues(result.Data, ScopeContext);
+
+                if (!extractionResult.Success)
+                {
+                    throw new ASTException($"Incomplete syntax for object initialization. {result.MessagesToString()}. Location: {left.Diagnostics}", left.Diagnostics);
+                }
+
+                return new UntypedNewExpression(left.Diagnostics, type.Value, extractionResult.Data, ScopeContext);
+            }
+            else if (left.Kind == LexingElement.Numerical)
             {
                 var numerical = left as LexNumericalLiteral;
                 return new ConstantMathUntypedExpression(left.Diagnostics, numerical.StringValue, ScopeContext);
@@ -98,12 +128,20 @@ namespace AST.Trees.Expressions
                     // function call e.g 2 + test(expression, expression...)
                     MoveNext();
                     var result = GetTillClosed(LexingElement.OpenParenthesis, LexingElement.ClosedParenthesis);
-                    var args = FunctionHelpers.ExtractFunctionCallParameters(result.Data, ScopeContext);
+                    var args = ExtractionHelpers.ExtractFunctionCallParameters(result.Data, ScopeContext);
 
                     if (!args.Success)
                         throw new ASTException(args.Message, left.Diagnostics);
 
                     return new UntypedFunctionCallExpression(left.Diagnostics, (left as LexWord).Value, args.Data, ScopeContext);
+                }
+                else if (ahead.Sucess && ahead.Items[0].Kind == LexingElement.Dot)
+                {
+                    MoveNext();
+                    MoveNext();
+                    var variableName = (left as LexWord).Value;
+                    var propertyName = (_Current as LexWord).Value;
+                    return new UntypedPropertyUsageExpression(left.Diagnostics, variableName, propertyName, ScopeContext);
                 }
                 else
                 {

@@ -1,13 +1,18 @@
 ﻿namespace Test
 
-public int Test(int a, int b)
+public container Position
 {
-	if (a > b)
+	int X,
+	int Y
+}
+
+public int TestVar()
+{
+	var location = new Position
 	{
-		return a + b;
-	}
-	else
-	{
-		return a - b;
-	}
+		X = 75,
+		Y = 32
+	};
+
+	return location.Y; 
 }

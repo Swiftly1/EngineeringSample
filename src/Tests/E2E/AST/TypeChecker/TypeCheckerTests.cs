@@ -69,7 +69,7 @@ namespace Tests.E2E.AST.TypeChecker
 
             Assert.False(ast.Success);
             Assert.True(ast.Messages.Any());
-            var message = "Expected expression of type 'int32' instead of 'string'. at line number '11' at position '46' at character '\"'.";
+            var message = "Expected expression of type 'int' instead of 'string'. at line number '11' at position '46' at character '\"'.";
             Assert.Equal(message, ast.Messages[0].ToString());
         }
 
@@ -108,9 +108,9 @@ namespace Tests.E2E.AST.TypeChecker
             Assert.Equal("w", w.VariableName);
             Assert.Equal("y", y.VariableName);
 
-            Assert.Equal("int32", q.TypeInfo.Name);
-            Assert.Equal("int32", w.TypeInfo.Name);
-            Assert.Equal("int32", y.TypeInfo.Name);
+            Assert.Equal("int", q.TypeInfo.Name);
+            Assert.Equal("int", w.TypeInfo.Name);
+            Assert.Equal("int", y.TypeInfo.Name);
 
             Assert.True(y.Expression.IsConstant());
             Assert.True(y.Expression is ComplexTypedExpression);

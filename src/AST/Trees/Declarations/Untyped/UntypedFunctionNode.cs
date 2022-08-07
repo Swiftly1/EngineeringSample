@@ -1,6 +1,7 @@
 ﻿using Common;
 using AST.Trees.Miscs;
 using System.Collections.Generic;
+using Text2Abstraction.LexicalElements;
 
 namespace AST.Trees.Declarations.Untyped
 {
@@ -14,7 +15,7 @@ namespace AST.Trees.Declarations.Untyped
             BodyNode body,
             List<Argument> args,
             DiagnosticInfo typeDiag,
-            DiagnosticInfo accessModDiag,
+            LexKeyword accessModifier,
             UntypedScopeContext context
         ) : base(diag, context)
         {
@@ -24,7 +25,7 @@ namespace AST.Trees.Declarations.Untyped
             Arguments = args;
             Children.Add(Body);
             TypeDiagnostics = typeDiag;
-            AccessibilityModifierDiagnostics = accessModDiag;
+            AccessibilityModifier = accessModifier;
         }
 
         public string Name { get; }
@@ -37,7 +38,7 @@ namespace AST.Trees.Declarations.Untyped
 
         public DiagnosticInfo TypeDiagnostics { get; set; }
 
-        public DiagnosticInfo AccessibilityModifierDiagnostics { get; set; }
+        public LexKeyword AccessibilityModifier { get; set; }
 
         public override string ToString()
         {

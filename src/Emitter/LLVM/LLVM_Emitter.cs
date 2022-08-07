@@ -3,6 +3,7 @@ using System;
 using AST.Trees;
 using System.Linq;
 using System.Text;
+using AST.Trees.Miscs;
 using System.Collections.Generic;
 using AST.Trees.Statements.Typed;
 using AST.Trees.Expressions.Typed;
@@ -91,11 +92,6 @@ namespace Emitter.LLVM
             {
                 EmitSubNodes(node, tabDepth);
             }
-            else if (node is ScopeableNode)
-            {
-                _scopeManager.AddScope();
-                EmitSubNodes(node, tabDepth);
-            }
             else if (node is TypedIfStatement tifs)
             {
                 var lastId = TransformExpression(tifs.Condition);
@@ -110,6 +106,24 @@ namespace Emitter.LLVM
                 PrintNewLineWrapper($"false_branch_{falseBranchId}:", tabDepth);
                 EmitSubNodes(tifs.BranchFalse, tabDepth + 1);
                 //PrintNewLineWrapper($"end_branch_{endBranchId}:", tabDepth);
+            }
+            else if (node is TypedContainerNode tcn)
+            {
+                PrintNewLineWrapper($"%{tcn.Name} = type", tabDepth);
+                PrintNewLineWrapper("{", tabDepth);
+                EmitSubNodes(tcn, tabDepth + 1);
+                PrintNewLineWrapper("}", tabDepth);
+                PrintNewLineWrapper("", tabDepth);
+            }
+            else if (node is TypedContainerFieldNode tcfn)
+            {
+                var separator = tcfn.IsLast ? "" : ",";
+                PrintNewLineWrapper(tcfn.TypeInfo.ToLLVMType() + separator, tabDepth);
+            }
+            else if (node is ScopeableNode)
+            {
+                _scopeManager.AddScope();
+                EmitSubNodes(node, tabDepth);
             }
             else
             {
@@ -150,6 +164,48 @@ namespace Emitter.LLVM
                 {
                     throw new Exception("For some reason current scope doesnt have this variable");
                 }
+            }
+            else if (expression is TypedNewExpression tne)
+            {
+                var name = tne.TypeInfo.Name;
+                var addressOfNewObj = DeclareTemporaryVariable();
+                PrintNewLineWrapper($"%{addressOfNewObj} = alloca %{name}, align 4", tabDepth);
+
+                foreach (var initializer in tne.InitializationList)
+                {
+                    var exprValue = TransformExpression(initializer.Expression);
+                    var exprType = initializer.Expression.TypeInfo.ToLLVMType();
+                    var nextInitializer = DeclareTemporaryVariable();
+                    PrintNewLineWrapper($"%{nextInitializer} = getelementptr inbounds " +
+                        $"%{name}, %{name}* %{addressOfNewObj}, {exprType} 0, {exprType} {initializer.Index}", tabDepth);
+                    PrintNewLineWrapper($"store {exprType} %{exprValue}, {exprType}* %{nextInitializer}, align 4", tabDepth);
+                }
+
+                return addressOfNewObj;
+            }
+            else if (expression is TypedPropertyUsageExpression tpue)
+            {
+                var name = tpue.ObjectTypeInfo.Name;
+                var exprType = tpue.TypeInfo.ToLLVMType();
+                var variables = _scopeManager.GetLastScope().VariablesWithinScope;
+                int? addressOfVariable = null;
+
+                if (variables.ContainsKey(tpue.VariableName))
+                {
+                    addressOfVariable = variables[tpue.VariableName];
+                }
+                else
+                {
+                    throw new Exception("For some reason current scope doesnt have this variable");
+                }
+
+                var nextInitializer = DeclareTemporaryVariable();
+                PrintNewLineWrapper($"%{nextInitializer} = getelementptr inbounds " +
+                $"%{name}, %{name}* %{addressOfVariable}, {exprType} 0, {exprType} {tpue.PropertyIndex}", tabDepth);
+
+                var loadId = DeclareTemporaryVariable();
+                PrintNewLineWrapper($"%{loadId} = load {exprType}, {exprType}* %{nextInitializer}, align 4", tabDepth);
+                return loadId;
             }
 
             throw new NotImplementedException($"TransformExpression doesn't have implementation for: {expression.GetType()}.");
