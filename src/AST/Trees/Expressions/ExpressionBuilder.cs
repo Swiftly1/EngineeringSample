@@ -135,6 +135,14 @@ namespace AST.Trees.Expressions
 
                     return new UntypedFunctionCallExpression(left.Diagnostics, (left as LexWord).Value, args.Data, ScopeContext);
                 }
+                else if (ahead.Sucess && ahead.Items[0].Kind == LexingElement.Dot)
+                {
+                    MoveNext();
+                    MoveNext();
+                    var variableName = (left as LexWord).Value;
+                    var propertyName = (_Current as LexWord).Value;
+                    return new UntypedPropertyUsageExpression(left.Diagnostics, variableName, propertyName, ScopeContext);
+                }
                 else
                 {
                     // using variable e.g 2 + a

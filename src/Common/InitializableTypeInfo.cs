@@ -8,6 +8,6 @@ namespace Common
         {
         }
 
-        public List<string> InitializationTypesOrdered { get; set; } = new List<string>();
+        public List<(string Name, string DesiredType)> InitializationTypesOrdered { get; set; } = new();
     }
 }

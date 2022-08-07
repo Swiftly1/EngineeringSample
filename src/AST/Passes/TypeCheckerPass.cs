@@ -450,7 +450,7 @@ namespace AST.Passes
                 for (int i = 0; i < typedList.Count; i++)
                 {
                     var typed = typedList[i];
-                    if (typed.Expression.TypeInfo.Name != expectedType.InitializationTypesOrdered[i])
+                    if (typed.Expression.TypeInfo.Name != expectedType.InitializationTypesOrdered[i].DesiredType)
                     {
                         Errors.AddError($"Incorrect type on object initialization list for name {typed.Name}", typed.Diagnostics);
                         return (false, null, null);
@@ -460,6 +460,53 @@ namespace AST.Passes
                 var newExpr = new TypedNewExpression(une.Diagnostics, resultType.TypeInfo, typedList, une.ScopeContext);
                 une.CopyTo(newExpr);
                 return (true, newExpr.TypeInfo, newExpr);
+            }
+            else if (expression is UntypedPropertyUsageExpression upue)
+            {
+                var found = TryFindVariableInScope(upue.ScopeContext, upue.VariableName);
+
+                if (!found.Success)
+                {
+                    Errors.AddError(found.Message, upue.Diagnostics);
+                    return (false, null, null);
+                }
+
+                var initializationList = found.Data.TypeInfo as InitializableTypeInfo;
+
+                ((string Name, string DesiredType) Details, int Index)? propertyInfo = 
+                initializationList
+                .InitializationTypesOrdered
+                .Select((x, i) => (Value: x, Index: i))
+                .FirstOrDefault(x => x.Value.Name == upue.PropertyName);
+
+                if (propertyInfo == null)
+                {
+                    var msg = $"Property with name: '{upue.PropertyName}' does not exist in type '{found.Data.TypeInfo.Name}'.";
+                    Errors.AddError(msg, upue.Diagnostics);
+                    return (false, null, null);
+                }
+
+                var type = FindTypeByName(propertyInfo.Value.Details.DesiredType);
+
+                if (!type.Found)
+                {
+                    var msg = $"Unable to resolve type of: '{upue.PropertyName}' for type '{found.Data.TypeInfo.Name}'.";
+                    Errors.AddError(msg, upue.Diagnostics);
+                    return (false, null, null);
+                }
+
+                var newExpr = new TypedPropertyUsageExpression
+                (
+                    upue.Diagnostics,
+                    found.Data.TypeInfo,
+                    type.TypeInfo,
+                    upue.VariableName,
+                    upue.PropertyName,
+                    propertyInfo.Value.Index,
+                    upue.ScopeContext
+                );
+                upue.CopyTo(newExpr);
+                return (true, found.Data.TypeInfo, newExpr);
             }
 
             throw new NotImplementedException($"Node type {expression.GetType()} is not handled");

@@ -54,7 +54,7 @@ namespace AST.Passes
 
                     foreach (var entry in ucn.Fields)
                     {
-                        typeInfo.InitializationTypesOrdered.Add(entry.DesiredType);
+                        typeInfo.InitializationTypesOrdered.Add((entry.Name, entry.DesiredType));
                     }
 
                     KnownTypes.Add(typeInfo);

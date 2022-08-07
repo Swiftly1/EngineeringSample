@@ -10,9 +10,9 @@ public int TestVar()
 {
 	var location = new Position
 	{
-		X = 1,
-		Y = 2
+		X = 75,
+		Y = 32
 	};
 
-	return location.X; 
+	return location.Y; 
 }

@@ -183,6 +183,30 @@ namespace Emitter.LLVM
 
                 return addressOfNewObj;
             }
+            else if (expression is TypedPropertyUsageExpression tpue)
+            {
+                var name = tpue.ObjectTypeInfo.Name;
+                var exprType = tpue.TypeInfo.ToLLVMType();
+                var variables = _scopeManager.GetLastScope().VariablesWithinScope;
+                int? addressOfVariable = null;
+
+                if (variables.ContainsKey(tpue.VariableName))
+                {
+                    addressOfVariable = variables[tpue.VariableName];
+                }
+                else
+                {
+                    throw new Exception("For some reason current scope doesnt have this variable");
+                }
+
+                var nextInitializer = DeclareTemporaryVariable();
+                PrintNewLineWrapper($"%{nextInitializer} = getelementptr inbounds " +
+                $"%{name}, %{name}* %{addressOfVariable}, {exprType} 0, {exprType} {tpue.PropertyIndex}", tabDepth);
+
+                var loadId = DeclareTemporaryVariable();
+                PrintNewLineWrapper($"%{loadId} = load {exprType}, {exprType}* %{nextInitializer}, align 4", tabDepth);
+                return loadId;
+            }
 
             throw new NotImplementedException($"TransformExpression doesn't have implementation for: {expression.GetType()}.");
         }
