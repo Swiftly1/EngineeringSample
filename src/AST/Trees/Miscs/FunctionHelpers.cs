@@ -167,9 +167,7 @@ namespace AST.Trees.Miscs
                         else
                         {
                             // Nested cases like: int test = 345645 + Test(5,Test(5,6), 6);
-
                             var elements = GetElementsThatMayContainCommas(ref i, data);
-
                             builder = new ExpressionBuilder(elements, scopeContext);
                         }
 
