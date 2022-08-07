@@ -44,8 +44,8 @@ namespace Tests.E2E.AST.Containers
             Assert.Equal("a", container.Fields[0].Name);
             Assert.Equal("b", container.Fields[1].Name);
 
-            Assert.Equal("int32", container.Fields[0].TypeInfo.Name);
-            Assert.Equal("int32", container.Fields[1].TypeInfo.Name);
+            Assert.Equal("int", container.Fields[0].TypeInfo.Name);
+            Assert.Equal("int", container.Fields[1].TypeInfo.Name);
         }
     }
 }
