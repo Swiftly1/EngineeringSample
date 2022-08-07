@@ -229,8 +229,8 @@ namespace AST.Passes
                             field.NameDiagnostic,
                             field.TypeDiagnostic,
                             i,
-                            i == ucn.Fields.Count - 1)
-                        );
+                            i == ucn.Fields.Count - 1
+                        ));
                     }
                 }
 
