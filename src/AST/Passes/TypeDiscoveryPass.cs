@@ -4,7 +4,6 @@ using AST.Passes.Miscs;
 using AST.Passes.Results;
 using System.Collections.Generic;
 using AST.Trees.Declarations.Untyped;
-using System.Linq;
 
 namespace AST.Passes
 {
