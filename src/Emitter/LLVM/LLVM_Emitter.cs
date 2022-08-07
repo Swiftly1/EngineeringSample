@@ -165,6 +165,24 @@ namespace Emitter.LLVM
                     throw new Exception("For some reason current scope doesnt have this variable");
                 }
             }
+            else if (expression is TypedNewExpression tne)
+            {
+                var name = tne.TypeInfo.Name;
+                var addressOfNewObj = DeclareTemporaryVariable();
+                PrintNewLineWrapper($"%{addressOfNewObj} = alloca %{name}, align 4", tabDepth);
+
+                foreach (var initializer in tne.InitializationList)
+                {
+                    var exprValue = TransformExpression(initializer.Expression);
+                    var exprType = initializer.Expression.TypeInfo.ToLLVMType();
+                    var nextInitializer = DeclareTemporaryVariable();
+                    PrintNewLineWrapper($"%{nextInitializer} = getelementptr inbounds " +
+                        $"%{name}, %{name}* %{addressOfNewObj}, {exprType} 0, {exprType} {initializer.Index}", tabDepth);
+                    PrintNewLineWrapper($"store {exprType} %{exprValue}, {exprType}* %{nextInitializer}, align 4", tabDepth);
+                }
+
+                return addressOfNewObj;
+            }
 
             throw new NotImplementedException($"TransformExpression doesn't have implementation for: {expression.GetType()}.");
         }

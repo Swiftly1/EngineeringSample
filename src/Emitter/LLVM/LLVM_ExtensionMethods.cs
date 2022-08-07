@@ -33,7 +33,7 @@ namespace Emitter.LLVM
             }
             else
             {
-                throw new NotImplementedException($"Unknwon type {t}");
+                throw new NotImplementedException($"Unknown type {t}");
             }
         }
 

@@ -6,11 +6,13 @@ public container Position
 	int Y
 }
 
-public void TestVar()
+public int TestVar()
 {
 	var location = new Position
 	{
 		X = 1,
 		Y = 2
 	};
+
+	return location.X; 
 }
