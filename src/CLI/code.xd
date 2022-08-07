@@ -11,8 +11,8 @@ public int TestVar()
 	var location = new Position
 	{
 		X = 75,
-		Y = 32
+		Y = 27
 	};
 
-	return location.Y; 
+	return location.X; 
 }

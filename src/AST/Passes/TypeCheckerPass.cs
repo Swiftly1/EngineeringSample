@@ -447,6 +447,19 @@ namespace AST.Passes
                 }
 
                 var expectedType = resultType.TypeInfo as InitializableTypeInfo;
+
+                if (typedList.Count < expectedType.InitializationTypesOrdered.Count)
+                {
+                    Errors.AddError($"You need to initialize all properties.", une.Diagnostics);
+                    return (false, null, null);
+                }
+
+                if (typedList.Count > expectedType.InitializationTypesOrdered.Count)
+                {
+                    Errors.AddError($"You're initializing more properties than the object actually has.", une.Diagnostics);
+                    return (false, null, null);
+                }
+
                 for (int i = 0; i < typedList.Count; i++)
                 {
                     var typed = typedList[i];
